@@ -22,6 +22,7 @@
             app:title="@string/Theme" />
 
         <Preference
+            app:isPreferenceVisible="false"
             android:defaultValue="default"
             android:icon="@drawable/ic_frame"
             android:title="@string/app_icon"
@@ -29,12 +30,12 @@
             app:key="ytdlnis_icon" />
 
         <ListPreference
-            android:entries="@array/accents"
-            android:entryValues="@array/accents_values"
+            android:entries="@array/ytindr_accents"
+            android:entryValues="@array/ytindr_accents_values"
             android:icon="@drawable/baseline_color_lens_24"
-            app:defaultValue="blue"
+            app:defaultValue="ytindr"
             app:key="theme_accent"
-            app:summary="Blue"
+            app:summary="@string/ytindr_tone"
             app:title="@string/accents" />
 
         <SwitchPreferenceCompat

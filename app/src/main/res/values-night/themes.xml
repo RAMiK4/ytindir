@@ -241,4 +241,42 @@
 
     </style>
 
+
+    <!-- YTindr tone -->
+    <style name="Theme.YTindr" parent="BaseTheme">
+        <item name="colorPrimary">@color/ytindr_dark_primary</item>
+        <item name="colorOnPrimary">@color/ytindr_dark_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/ytindr_dark_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/ytindr_dark_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/ytindr_dark_secondary</item>
+        <item name="colorOnSecondary">@color/ytindr_dark_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/ytindr_dark_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/ytindr_dark_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/ytindr_dark_tertiary</item>
+        <item name="colorOnTertiary">@color/ytindr_dark_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/ytindr_dark_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/ytindr_dark_onTertiaryContainer</item>
+        <item name="colorError">@color/ytindr_dark_error</item>
+        <item name="colorOnError">@color/ytindr_dark_onError</item>
+        <item name="colorErrorContainer">@color/ytindr_dark_errorContainer</item>
+        <item name="colorOnErrorContainer">@color/ytindr_dark_onErrorContainer</item>
+        <item name="android:colorBackground">@color/ytindr_dark_background</item>
+        <item name="colorOnBackground">@color/ytindr_dark_onBackground</item>
+        <item name="colorSurface">@color/ytindr_dark_surface</item>
+        <item name="colorOnSurface">@color/ytindr_dark_onSurface</item>
+        <item name="colorSurfaceVariant">@color/ytindr_dark_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/ytindr_dark_onSurfaceVariant</item>
+        <item name="colorOutline">@color/ytindr_dark_outline</item>
+        <item name="colorOutlineVariant">@color/ytindr_dark_outlineVariant</item>
+        <item name="colorSurfaceInverse">@color/ytindr_dark_inverseSurface</item>
+        <item name="colorOnSurfaceInverse">@color/ytindr_dark_inverseOnSurface</item>
+        <item name="colorPrimaryInverse">@color/ytindr_dark_inversePrimary</item>
+        <item name="colorSurfaceContainerLowest">@color/ytindr_dark_surfaceContainerLowest</item>
+        <item name="colorSurfaceContainerLow">@color/ytindr_dark_surfaceContainerLow</item>
+        <item name="colorSurfaceContainer">@color/ytindr_dark_surfaceContainer</item>
+        <item name="colorSurfaceContainerHigh">@color/ytindr_dark_surfaceContainerHigh</item>
+        <item name="colorSurfaceContainerHighest">@color/ytindr_dark_surfaceContainerHighest</item>
+        <item name="colorSurfaceDim">@color/ytindr_dark_surfaceDim</item>
+        <item name="colorSurfaceBright">@color/ytindr_dark_surfaceBright</item>
+    </style>
 </resources>

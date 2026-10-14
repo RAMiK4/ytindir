@@ -1656,4 +1656,14 @@
         <item>open</item>
     </string-array>
 
+
+    <!-- YTindr: only our own tone and Material You -->
+    <array name="ytindr_accents">
+        <item>@string/ytindr_tone</item>
+        <item>@string/material_you</item>
+    </array>
+    <array name="ytindr_accents_values">
+        <item>ytindr</item>
+        <item>Default</item>
+    </array>
 </resources>

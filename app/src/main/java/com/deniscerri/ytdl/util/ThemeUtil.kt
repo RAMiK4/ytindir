@@ -97,18 +97,12 @@ object ThemeUtil {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
 
         //update accent
-        when (sharedPreferences.getString("theme_accent","blue")) {
-            "Default" -> {
-                DynamicColors.applyToActivityIfAvailable(activity)
-                activity.setTheme(R.style.BaseTheme)
-            }
-            "blue" -> activity.setTheme(R.style.Theme_Blue)
-            "red" -> activity.setTheme(R.style.Theme_Red)
-            "green" -> activity.setTheme(R.style.Theme_Green)
-            "purple" -> activity.setTheme(R.style.Theme_Purple)
-            "yellow" -> activity.setTheme(R.style.Theme_Yellow)
-            "orange" -> activity.setTheme(R.style.Theme_Orange)
-            "monochrome" -> activity.setTheme(R.style.Theme_Monochrome)
+        // YTindr: only our own tone and Material You. Old accent values fall back to our tone.
+        if (sharedPreferences.getString("theme_accent", "ytindr") == "Default" && DynamicColors.isDynamicColorAvailable()) {
+            DynamicColors.applyToActivityIfAvailable(activity)
+            activity.setTheme(R.style.BaseTheme)
+        } else {
+            activity.setTheme(R.style.Theme_YTindr)
         }
 
         //high contrast theme
@@ -137,14 +131,9 @@ object ThemeUtil {
 
     fun getThemeColor(context: Context, colorCode: Int): Int {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-        val accent = sharedPreferences.getString("theme_accent", "blue")
-        return if (accent == "blue"){
-            "d43c3b".toInt(16)
-        }else{
-            val value = TypedValue()
-            context.theme.resolveAttribute(colorCode, value, true)
-            value.data
-        }
+        val value = TypedValue()
+        context.theme.resolveAttribute(colorCode, value, true)
+        return value.data
 
     }
 
@@ -152,68 +141,24 @@ object ThemeUtil {
      * Get the styled app name
      */
     fun getStyledAppName(context: Context): Spanned {
-        val colorPrimary = getThemeColor(context, androidx.appcompat.R.attr.colorPrimaryDark)
+        val colorPrimary = getThemeColor(context, androidx.appcompat.R.attr.colorPrimary)
         val hexColor = "#%06X".format(0xFFFFFF and colorPrimary)
-        return "<span  style='color:$hexColor';>YTDL</span>nis"
+        return "<span  style='color:$hexColor';>YT</span>indr"
             .parseAsHtml(HtmlCompat.FROM_HTML_MODE_COMPACT)
     }
 
 
+    // YTindr: the green icon is the only launcher icon. Components are only touched
+    // when their state is wrong, so the launcher shortcut doesn't flicker on every start.
+    @Suppress("UNUSED_PARAMETER")
     fun updateAppIcon(activity: Activity, theme: String, appIconMode: String) {
-        //disable old icons
+        val pm = activity.packageManager
         for (appIcon in availableIcons) {
-            val activityClass = "com.deniscerri.ytdl." + appIcon.activityAlias
-
-            // remove old icons
-            activity.packageManager.setComponentEnabledSetting(
-                ComponentName(activity.packageName, activityClass),
-                PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                PackageManager.DONT_KILL_APP
-            )
-        }
-
-        var iconMode = appIconMode
-        if (appIconMode == "Default") {
-            iconMode = theme
-        }
-
-        when (iconMode) {
-            "LightIcon" -> {
-                activity.packageManager.setComponentEnabledSetting(
-                    ComponentName(activity.packageName, "com.deniscerri.ytdl.LightIcon"),
-                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                    PackageManager.DONT_KILL_APP
-                )
-            }
-            "DarkIcon" -> {
-                activity.packageManager.setComponentEnabledSetting(
-                    ComponentName(activity.packageName, "com.deniscerri.ytdl.DarkIcon"),
-                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                    PackageManager.DONT_KILL_APP
-                )
-            }
-            "BlueIcon" -> {
-                activity.packageManager.setComponentEnabledSetting(
-                    ComponentName(activity.packageName, "com.deniscerri.ytdl.BlueIcon"),
-                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                    PackageManager.DONT_KILL_APP
-                )
-            }
-            "GreenIcon" -> {
-                activity.packageManager.setComponentEnabledSetting(
-                    ComponentName(activity.packageName, "com.deniscerri.ytdl.GreenIcon"),
-                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                    PackageManager.DONT_KILL_APP
-                )
-            }
-            // or "System"
-            else -> {
-                //set dynamic icon
-                activity.packageManager.setComponentEnabledSetting(
-                    ComponentName(activity.packageName, "com.deniscerri.ytdl.Default"),
-                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                    PackageManager.DONT_KILL_APP
-                )
+            val component = ComponentName(activity.packageName, "com.deniscerri.ytdl." + appIcon.activityAlias)
+            val wanted = if (appIcon == AppIcon.Green) PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+                else PackageManager.COMPONENT_ENABLED_STATE_DISABLED
+            if (pm.getComponentEnabledSetting(component) != wanted) {
+                pm.setComponentEnabledSetting(component, wanted, PackageManager.DONT_KILL_APP)
             }
         }
     }

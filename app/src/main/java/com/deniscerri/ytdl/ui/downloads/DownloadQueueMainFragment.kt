@@ -121,8 +121,16 @@ class DownloadQueueMainFragment : Fragment(){
             }
         })
 
+        // YTindr: scheduling is hidden, so the Scheduled tab is skipped
+        (tabLayout.getChildAt(0) as? ViewGroup)?.getChildAt(2)?.visibility = View.GONE
+        if (selectedTabIndex == 2) selectedTabIndex = 1
+
         viewPager2.registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
+                if (position == 2) {
+                    viewPager2.setCurrentItem(if (selectedTabIndex < 2) 3 else 1, true)
+                    return
+                }
                 tabLayout.selectTab(tabLayout.getTabAt(position))
                 initMenu()
                 selectedTabIndex = position

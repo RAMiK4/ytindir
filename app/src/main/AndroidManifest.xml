@@ -410,7 +410,7 @@
 
         <activity-alias
             android:name=".Default"
-            android:enabled="true"
+            android:enabled="false"
             android:icon="@mipmap/ic_launcher"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:configChanges="locale"
@@ -499,7 +499,7 @@
 
         <activity-alias
             android:name=".GreenIcon"
-            android:enabled="false"
+            android:enabled="true"
             android:exported="true"
             android:icon="@mipmap/ic_launcher_green"
             android:roundIcon="@mipmap/ic_launcher_round_green"

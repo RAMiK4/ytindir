@@ -68,7 +68,7 @@ class MoreFragment : Fragment() {
         settings = view.findViewById(R.id.settings)
 
         val appIcon = view.findViewById<ImageView>(R.id.app_icon)
-        if (mainSharedPreferences.getString("theme_accent", "blue") == "Default" && Build.VERSION.SDK_INT >= 32) {
+        if (mainSharedPreferences.getString("theme_accent", "ytindr") == "Default" && Build.VERSION.SDK_INT >= 32) {
             appIcon.backgroundTintList = MaterialColors.getColorStateList(requireContext(), R.attr.colorPrimary, ContextCompat.getColorStateList(requireContext(), R.color.icon_fg)!!)
         } else {
             appIcon.backgroundTintList = null
