@@ -595,7 +595,7 @@
     </plurals>
     <string name="bgutils_pot_generation_script">Skript na generovanie</string>
     <string name="bgutils_pot_generation_server">HTTP server</string>
-    <string name="bgutils_info">Poskytovateľ tokenu overenia pôvodu (POT) pre yt-dlp.\nAk je zapnutý, YTDLnis hostí HTTP server, ktorý generuje POT a nainštaluje súvisiaci plugin, ktorý yt-dlp používa.</string>
+    <string name="bgutils_info">Poskytovateľ tokenu overenia pôvodu (POT) pre yt-dlp.\nAk je zapnutý, YTindr hostí HTTP server, ktorý generuje POT a nainštaluje súvisiaci plugin, ktorý yt-dlp používa.</string>
     <string name="bgutils_pot_generation_script_summary">Každé volanie yt-dlp so sebou prináša dodatočnú záťaž v podobe spustenia nového procesu js runtime na vykonanie skriptu. Táto metóda sa neodporúča pri vysokej miere súbežnosti.</string>
     <string name="bgutils_pot_server_summary">Toto je JavaScript HTTP server na porte 4416. Ak je vypnutý, server sa automaticky spustí, keď sa začne vykonávať fronta sťahovania, alebo keď je naplánované sledovanie zdrojov. Na vypnutie ho musíte manuálne vypnúť z notifikácií!</string>
     <string name="please_install_package">Prosím, nainštalujte balíček %s</string>
@@ -606,7 +606,7 @@
     <string name="notset">Nenastavené</string>
     <string name="external">Externé</string>
     <string name="exit">Ukončiť</string>
-    <string name="packages_description">Balíčky sú pomocné aplikácie, ktoré YTDLnis využíva na spracovanie príkazov yt-dlp. Niektoré z nich sú už jeho súčasťou, ale môžete si nainštalovať novšie verzie, ktoré sú zverejnené, bez toho, aby ste museli aktualizovať aplikáciu. Inštalované aplikácie nahradia zapracovanú verziu, ktorú aplikácia používa.</string>
+    <string name="packages_description">Balíčky sú pomocné aplikácie, ktoré YTindr využíva na spracovanie príkazov yt-dlp. Niektoré z nich sú už jeho súčasťou, ale môžete si nainštalovať novšie verzie, ktoré sú zverejnené, bez toho, aby ste museli aktualizovať aplikáciu. Inštalované aplikácie nahradia zapracovanú verziu, ktorú aplikácia používa.</string>
     <string name="bgutils_pot_generation_script_info">Aby bolo možné používať poskytovateľa POT BgUtils, aplikácia musí stiahnuť repozitár Brainicism/bgutil-ytdlp-pot-provider z GitHubu a spustiť inštaláciu. Dokončenie tohto procesu môže chvíľu trvať. Pokračovať teraz?</string>
     <string name="check_clipboard_home_summary">Automaticky rozpoznať URL adresy v schránke na domovskej obrazovke</string>
     <string name="check_clipboard_home">Skontrolovať schránku na domovskej obrazovke</string>

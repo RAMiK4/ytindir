@@ -584,7 +584,7 @@
         <item quantity="other">Cada %d minutos</item>
     </plurals>
     <string name="bgutils_pot_generation_server">Servidor HTTP</string>
-    <string name="bgutils_info">Un proveedor de tokens de prueba-de-origen (POT) para yt-dlp.\nMientras este activo, YTDLnis crea el servidor HTTP que genera el POT e instala el plugin relacionado que usa yt-dlp.</string>
+    <string name="bgutils_info">Un proveedor de tokens de prueba-de-origen (POT) para yt-dlp.\nMientras este activo, YTindr crea el servidor HTTP que genera el POT e instala el plugin relacionado que usa yt-dlp.</string>
     <string name="bgutils_pot_generation_script">Script de generación</string>
     <string name="bgutils_pot_generation_script_summary">Cada llamada a yt-dlp implica el costo adicional de iniciar un nuevo proceso de runtime de JavaScript para ejecutar el script. Este método no se recomienda para usos con un alto nivel de concurrencia.</string>
     <string name="bgutils_pot_server_summary">Este es un servidor HTTP de JavaScript en el puerto 4416. Si está detenido, el servidor se inicia automáticamente cuando comienza a ejecutarse la cola de descargas o cuando se programa la observación de fuentes. Para apagarlo, ¡tienes que hacerlo manualmente desde las notificaciones!</string>
@@ -596,7 +596,7 @@
     <string name="notset">No establecido</string>
     <string name="external">Externo</string>
     <string name="exit">Salir</string>
-    <string name="packages_description">Los paquetes son aplicaciones de ayuda que usa YTDLnis para ayudar con los comandos de yt-dlp. Algunos de ellos vienen incluidos, pero puedes instalar nuevas versiones que se publiquen sin la necesidad de actualizar la aplicación. Los apk instalados reemplazarán las versiones incluidas que usa la aplicación.</string>
+    <string name="packages_description">Los paquetes son aplicaciones de ayuda que usa YTindr para ayudar con los comandos de yt-dlp. Algunos de ellos vienen incluidos, pero puedes instalar nuevas versiones que se publiquen sin la necesidad de actualizar la aplicación. Los apk instalados reemplazarán las versiones incluidas que usa la aplicación.</string>
     <string name="bgutils_pot_generation_script_info">Para poder usar el proveedor POT de BgUtils, la aplicación necesita descargar e instalar el repositorio Brainicism/bgutil-ytdlp-pot-provider desde github. Esto puede tomar un tiempo en completarse. ¿Deseas continuar ahora?</string>
     <string name="search_results">Resultados de búsqueda</string>
     <string name="burn_subs">Incrustar subtítulos</string>

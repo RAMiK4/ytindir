@@ -652,7 +652,7 @@
     <string name="merge_cuts">Unisci i tagli in un file</string>
     <string name="write_ytdlp_terminal">Scrivi automaticamente yt-dlp nel terminale</string>
     <string name="clear">Cancella</string>
-    <string name="welcome_title">Benvenuto su YTDLnis</string>
+    <string name="welcome_title">Benvenuto su YTindr</string>
     <string name="welcome_subtitle">Scarica video e audio utilizzando yt-dlp. Prima configuriamo alcune cose.</string>
     <string name="welcome_get_started">Inizia</string>
     <string name="welcome_restore_backup">Ripristina da backup</string>

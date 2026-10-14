@@ -581,7 +581,7 @@
         <item quantity="one">Hər dəqiqə</item>
         <item quantity="other">Hər %d dəqiqədən bir</item>
     </plurals>
-    <string name="bgutils_info">Yt-dlp üçün proof-of-origin tokeni (POT) provayderi.\nBu aktiv olduqda, YTDLnis POT generatoru olan HTTP serverini yerləşdirir və yt-dlp-nin istifadə etdiyi əlaqəli plagini quraşdırır.</string>
+    <string name="bgutils_info">Yt-dlp üçün proof-of-origin tokeni (POT) provayderi.\nBu aktiv olduqda, YTindr POT generatoru olan HTTP serverini yerləşdirir və yt-dlp-nin istifadə etdiyi əlaqəli plagini quraşdırır.</string>
     <string name="bgutils_pot_generation_script">Yaratma skripti</string>
     <string name="bgutils_pot_generation_server">HTTP Serveri</string>
     <string name="bgutils_pot_generation_script_summary">Hər bir yt-dlp çağırışı skripti icra etmək üçün yeni JS runtime prosesinin yuxarı yüklənməsinə səbəb olur. Yüksək eynivaxtlılıq istifadəsi üçün bu üsul tövsiyə olunmur.</string>
@@ -594,7 +594,7 @@
     <string name="notset">Təyin edilməyib</string>
     <string name="external">Xarici</string>
     <string name="exit">Çıx</string>
-    <string name="packages_description">Paketlər YTDLnis-in yt-dlp əmrlərinə kömək etmək üçün istifadə etdiyi köməkçi tətbiqlərdir. Onların bəziləri artıq tətbiqə daxil edilib, lakin tətbiqi yeniləməyə ehtiyac olmadan dərc olunan daha yeni versiyaları quraşdıra bilərsiniz. Quraşdırılmış APK-lar tətbiqin istifadə etdiyi daxili versiyaları əvəzləyir.</string>
+    <string name="packages_description">Paketlər YTindr-in yt-dlp əmrlərinə kömək etmək üçün istifadə etdiyi köməkçi tətbiqlərdir. Onların bəziləri artıq tətbiqə daxil edilib, lakin tətbiqi yeniləməyə ehtiyac olmadan dərc olunan daha yeni versiyaları quraşdıra bilərsiniz. Quraşdırılmış APK-lar tətbiqin istifadə etdiyi daxili versiyaları əvəzləyir.</string>
     <string name="bgutils_pot_generation_script_info">BgUtils POT Provayderin istifadə etmək üçün tətbiq GitHub-dan Brainicism/bgutil-ytdlp-pot-provider deponu yükləməli və quraşdırmanı başlatmalıdır. Bunun bitməsi bir qədər vaxt apara bilər. İndi davam edilsin?</string>
     <string name="burn_subs">Titrləri aç</string>
     <string name="check_clipboard_home_summary">Əsas ekranda buferdəki URL-ləri avtomatik aşkar et</string>
@@ -650,7 +650,7 @@
     <string name="merge_cuts">Kəsikləri bir fayla birləşdir</string>
     <string name="write_ytdlp_terminal">Konsolda yt-dlp-ni avtomatik yaz</string>
     <string name="clear">Təmizlə</string>
-    <string name="welcome_title">YTDLnis-ə Xoş Gəlmisiniz</string>
+    <string name="welcome_title">YTindr-ə Xoş Gəlmisiniz</string>
     <string name="welcome_subtitle">yt-dlp vasitəsilə video və səs yükləyin. Gəlin əvvəlcə bir neçə prosesi həyata keçirək.</string>
     <string name="welcome_get_started">Başla</string>
     <string name="welcome_restore_backup">Nüsxədən bərpa et</string>
@@ -660,7 +660,7 @@
     <string name="welcome_guide_summary">Təlimat tətbiq, yükləmə, əmr şablonları və ümumi problemlərin düzəldilməsi haqqında hər şeyi əhatə edir. Siz onu istənilən vaxt veb-saytdan aça bilərsiniz.</string>
     <string name="welcome_open_guide">Təlimatı aç</string>
     <string name="welcome_permissions_title">İcazələr</string>
-    <string name="welcome_permissions_summary">YTDLnis ən yaxşı bunlarla işləyir. Siz onları daha sonra tənzimləmələrdə dəyişdirə bilərsiniz.</string>
+    <string name="welcome_permissions_summary">YTindr ən yaxşı bunlarla işləyir. Siz onları daha sonra tənzimləmələrdə dəyişdirə bilərsiniz.</string>
     <string name="welcome_perm_storage">Yaddaş girişi</string>
     <string name="welcome_perm_storage_summary">Yükləmələrinizi cihazda saxlamaq üçün lazımdır.</string>
     <string name="welcome_perm_notifications">Bildirişlər</string>
@@ -673,7 +673,7 @@
     <string name="welcome_allowed">İcazə verilib</string>
     <string name="welcome_required">Tələb olunur</string>
     <string name="welcome_updates_title">Yeniləmələr</string>
-    <string name="welcome_updates_summary">YTDLnis-in necə yeni qalacağını seç.</string>
+    <string name="welcome_updates_summary">YTindr-in necə yeni qalacağını seç.</string>
     <string name="welcome_next">Növbəti</string>
     <string name="welcome_finish">Bitir</string>
     <string name="lyrics">Lirika</string>

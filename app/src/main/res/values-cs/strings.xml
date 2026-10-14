@@ -593,7 +593,7 @@
         <item quantity="many">Každých %d minut</item>
         <item quantity="other">Každých %d minut</item>
     </plurals>
-    <string name="bgutils_info">Poskytovatel tokenu ověření původu (POT) pro yt-dlp.\nPokud je zapnutý, YTDLnis hostí HTTP server, který generuje POT a nainstaluje související plugin, který yt-dlp používá.</string>
+    <string name="bgutils_info">Poskytovatel tokenu ověření původu (POT) pro yt-dlp.\nPokud je zapnutý, YTindr hostí HTTP server, který generuje POT a nainstaluje související plugin, který yt-dlp používá.</string>
     <string name="bgutils_pot_generation_script">Generovací skript</string>
     <string name="bgutils_pot_generation_server">HTTP server</string>
     <string name="bgutils_pot_generation_script_summary">Každé volání yt-dlp přináší režijní náklady na spuštění nového procesu js runtime pro provedení skriptu. Tato metoda se nedoporučuje pro použití s vysokou mírou souběžnosti.</string>
@@ -606,7 +606,7 @@
     <string name="notset">Není nastaveno</string>
     <string name="external">Externí</string>
     <string name="exit">Ukončit</string>
-    <string name="packages_description">Balíčky jsou pomocné aplikace, které YTDLnis využívá k usnadnění práce s příkazy yt-dlp. Některé z nich jsou již jeho součástí, ale můžete si nainstalovat novější verze, které jsou zveřejňovány, aniž byste museli aktualizovat samotnou aplikaci. Instalované aplikace nahradí zapracovanou verzi, kterou aplikace používá.</string>
+    <string name="packages_description">Balíčky jsou pomocné aplikace, které YTindr využívá k usnadnění práce s příkazy yt-dlp. Některé z nich jsou již jeho součástí, ale můžete si nainstalovat novější verze, které jsou zveřejňovány, aniž byste museli aktualizovat samotnou aplikaci. Instalované aplikace nahradí zapracovanou verzi, kterou aplikace používá.</string>
     <string name="bgutils_pot_generation_script_info">Aby bylo možné používat poskytovatele POT BgUtils, musí aplikace stáhnout repozitář Brainicism/bgutil-ytdlp-pot-provider z GitHubu a zahájit instalaci. Dokončení tohoto procesu může chvíli trvat. Chcete pokračovat?</string>
     <string name="check_clipboard_home_summary">Automaticky rozpoznat URL adresy ve schránce na domovské obrazovce</string>
     <string name="check_clipboard_home">Zkontrolovat schránku na domovské obrazovce</string>

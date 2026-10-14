@@ -10,7 +10,7 @@ plugins {
 
 def properties = new Properties()
 def versionMajor = 1
-def versionMinor = 9
+def versionMinor = 0
 def versionPatch = 0
 def versionBuild = 0 // bump for dogfood builds, public betas, etc.
 //WHEN RELEASING BETA KEEP THE SAME VERSION AS LATEST STABLE, SO USERS CAN DOWNGRADE
@@ -44,14 +44,33 @@ android {
             }
         }
     }catch(IOException ignored){}
+
+    // YTindr: every build is signed with the same key (ytindr.jks), so new APKs
+    // install over the old one without losing data. The password comes from the
+    // KEYSTORE_PASSWORD secret in GitHub Actions.
+    def ytindrKeystorePassword = System.getenv("KEYSTORE_PASSWORD")
+    if (ytindrKeystorePassword != null && ytindrKeystorePassword != "") {
+        signingConfigs {
+            debug {
+                storeFile rootProject.file("ytindr.jks")
+                storePassword ytindrKeystorePassword
+                keyAlias "ytindr"
+                keyPassword ytindrKeystorePassword
+            }
+        }
+    }
+
+    // GitHub Actions run number keeps each build's versionCode higher than the last.
+    def ciBuildNumber = (System.getenv("GITHUB_RUN_NUMBER") ?: "0").toInteger() % 1000
+
     defaultConfig {
-        applicationId "com.deniscerri.ytdl"
+        applicationId "com.rl.ytindr"
         minSdk 24
         targetSdk 36
-        versionCode versionMajor * 1000000 + versionMinor * 10000 + versionPatch * 100 + versionBuild
+        versionCode versionMajor * 10000000 + versionMinor * 100000 + versionPatch * 1000 + ciBuildNumber
         versionName "${versionMajor}.${versionMinor}.${versionPatch}${versionExt}"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        archivesBaseName = "YTDLnis-$versionName"
+        archivesBaseName = "YTindr-$versionName"
         vectorDrawables {
             useSupportLibrary true
         }
@@ -111,9 +130,9 @@ android {
 
             def abi = output.getFilter(com.android.build.OutputFile.ABI) ?: "universal"
             if (variant.flavorName == "github") {
-                output.outputFileName = "YTDLnis-${versionName}-${abi}-${variant.buildType.name}-github.apk"
+                output.outputFileName = "YTindr-${versionName}-${abi}.apk"
             } else {
-                output.outputFileName = "YTDLnis-${variant.flavorName}-${versionName}-${abi}-${variant.buildType.name}.apk"
+                output.outputFileName = "YTindr-${versionName}-${abi}.apk"
             }
         }
     }

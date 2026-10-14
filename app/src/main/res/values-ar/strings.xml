@@ -605,7 +605,7 @@
         <item quantity="many">كل %d دقيقة</item>
         <item quantity="other">كل %d دقيقة</item>
     </plurals>
-    <string name="bgutils_info">مزوّد رمز إثبات المصدر (POT) لأداة yt-dlp.\nعند تفعيله، يقوم YTDLnis باستضافة خادم HTTP الذي يولّد رمز POT، ويثبّت الإضافة المرتبطة التي تستخدمها yt-dlp.</string>
+    <string name="bgutils_info">مزوّد رمز إثبات المصدر (POT) لأداة yt-dlp.\nعند تفعيله، يقوم YTindr باستضافة خادم HTTP الذي يولّد رمز POT، ويثبّت الإضافة المرتبطة التي تستخدمها yt-dlp.</string>
     <string name="bgutils_pot_generation_script">سكربت التوليد</string>
     <string name="bgutils_pot_generation_server">خادم HTTP</string>
     <string name="bgutils_pot_generation_script_summary">كل استدعاء لـ yt-dlp يتحمّل عبء إنشاء عملية جديدة لبيئة تشغيل JavaScript لتنفيذ السكربت. لا يُنصح باستخدام هذه الطريقة في حالات الاستخدام العالي التزامن.</string>
@@ -621,7 +621,7 @@
     <string name="check_clipboard_home_summary">كشف تلقائيا للرابط في الحافظة في الشاشة الرئيسية</string>
     <string name="check_clipboard_home">تحقق من الحافظة في الشاشة الرئيسية</string>
     <string name="notset">غير محدد</string>
-    <string name="packages_description">الحزم هي تطبيقات مساعدة يستخدمها YTDLnis لدعم أوامر yt-dlp. تأتي بعض هذه الحزم مدمجة بالفعل مع التطبيق، ولكن يمكنك تثبيت إصدارات أحدث يتم إصدارها دون الحاجة إلى تحديث التطبيق نفسه؛ حيث تحل ملفات APK المثبتة هذه محل الإصدار المدمج الذي يستخدمه التطبيق.</string>
+    <string name="packages_description">الحزم هي تطبيقات مساعدة يستخدمها YTindr لدعم أوامر yt-dlp. تأتي بعض هذه الحزم مدمجة بالفعل مع التطبيق، ولكن يمكنك تثبيت إصدارات أحدث يتم إصدارها دون الحاجة إلى تحديث التطبيق نفسه؛ حيث تحل ملفات APK المثبتة هذه محل الإصدار المدمج الذي يستخدمه التطبيق.</string>
     <string name="bgutils_pot_generation_script_info">لاستخدام مزود BgUtils POT، يحتاج التطبيق إلى تحميل المستودع Brainicism/bgutil-ytdlp-pot-provider من GitHub وبدء عملية التثبيت. قد تستغرق هذه العملية بعض الوقت؛ هل تود المتابعة الآن؟</string>
     <string name="search_results">نتائج البحث</string>
     <string name="clear_info_json">مسح ملفات infojson</string>

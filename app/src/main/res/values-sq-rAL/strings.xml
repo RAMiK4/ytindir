@@ -563,7 +563,7 @@
         <item quantity="one">Cdo minutë</item>
         <item quantity="other">Every %d minuta</item>
     </plurals>
-    <string name="bgutils_info">Një ofrues i tokenit të provës së origjinës (POT) për yt-dlp.\nMe të aktivizuar, YTDLnis hap serverin HTTP që gjeneron POT dhe instalon plugin-in përkatës që përdor yt-dlp.</string>
+    <string name="bgutils_info">Një ofrues i tokenit të provës së origjinës (POT) për yt-dlp.\nMe të aktivizuar, YTindr hap serverin HTTP që gjeneron POT dhe instalon plugin-in përkatës që përdor yt-dlp.</string>
     <string name="bgutils_pot_generation_script">Skript gjenerimi</string>
     <string name="bgutils_pot_generation_server">Server HTTP</string>
     <string name="bgutils_pot_generation_script_summary">Çdo thirrje yt-dlp krijon një proces të ri të js runtime për të ekzekutuar skriptin. Kjo metodë nuk rekomandohet për përdorim me njëkohësi të lartë.</string>
@@ -576,7 +576,7 @@
     <string name="notset">Nuk është vendosur</string>
     <string name="external">I jashtëm</string>
     <string name="exit">Dil</string>
-    <string name="packages_description">Paketat janë aplikacione ndihmëse që YTDLnis përdor për të ndihmuar me komandat yt-dlp. Disa prej tyre janë tashmë të paketuara, por ju mund të instaloni versione më të reja që janë publikuar pa pasur nevojë të përditësoni aplikacionin. APK-të e instaluara zëvendësojnë versionin e paketuar që përdor aplikacioni.</string>
+    <string name="packages_description">Paketat janë aplikacione ndihmëse që YTindr përdor për të ndihmuar me komandat yt-dlp. Disa prej tyre janë tashmë të paketuara, por ju mund të instaloni versione më të reja që janë publikuar pa pasur nevojë të përditësoni aplikacionin. APK-të e instaluara zëvendësojnë versionin e paketuar që përdor aplikacioni.</string>
     <plurals name="every_hours">
         <item quantity="one">Çdo orë</item>
         <item quantity="other">Çdo %d orë</item>
@@ -649,7 +649,7 @@
     <string name="download_anyway">Shkarko gjithsesi</string>
     <string name="write_ytdlp_terminal">Shkruaj yt-dlp në terminal automatikisht</string>
     <string name="clear">Pastro</string>
-    <string name="welcome_title">Mirë se vini në YTDLnis</string>
+    <string name="welcome_title">Mirë se vini në YTindr</string>
     <string name="welcome_subtitle">Shkarko video dhe audio duke përdorur yt-dlp. Le të sitemohemi në fillim.</string>
     <string name="welcome_get_started">Fillo</string>
     <string name="welcome_restore_backup">Rikthe të dhënat nga kopja rezervë</string>
@@ -659,7 +659,7 @@
     <string name="welcome_guide_summary">Udhëzuesi përfshin gjithçka rreth aplikacionit: shkarkimin, modelet e komandave dhe zgjidhjen e problemeve të zakonshme. Mund ta hapni atë në çdo kohë përmes faqes së internetit.</string>
     <string name="welcome_open_guide">Hap udhëzuesin</string>
     <string name="welcome_permissions_title">Lejet</string>
-    <string name="welcome_permissions_summary">YTDLnis funksionon më së miri me këto. Mund t\'i ndryshoni më vonë te cilësimet.</string>
+    <string name="welcome_permissions_summary">YTindr funksionon më së miri me këto. Mund t\'i ndryshoni më vonë te cilësimet.</string>
     <string name="welcome_perm_storage">Aksesi i hapësirës së ruajtjes</string>
     <string name="welcome_perm_storage_summary">Nevojitet për të ruajtur shkarkimet tuaja në pajisje.</string>
     <string name="welcome_perm_notifications">Njoftimet</string>
@@ -672,7 +672,7 @@
     <string name="welcome_allowed">Lejuar</string>
     <string name="welcome_required">E detyrueshme</string>
     <string name="welcome_updates_title">Përditësimet</string>
-    <string name="welcome_updates_summary">Zgjidh si YTDLnis qëndron i përditësuar.</string>
+    <string name="welcome_updates_summary">Zgjidh si YTindr qëndron i përditësuar.</string>
     <string name="welcome_next">Tjetra</string>
     <string name="welcome_finish">Përfundo</string>
     <string name="lyrics">Teksti</string>

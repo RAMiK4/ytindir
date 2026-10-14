@@ -592,7 +592,7 @@
         <item quantity="many">Кожні %d хвилини</item>
         <item quantity="other">Кожні %d хвилини</item>
     </plurals>
-    <string name="bgutils_info">Постачальник токенів підтвердження походження (POT) для yt-dlp.\nЯкщо ця опція увімкнена, YTDLnis запускає HTTP-сервер, який генерує POT і встановлює відповідний плагін, що використовує yt-dlp.</string>
+    <string name="bgutils_info">Постачальник токенів підтвердження походження (POT) для yt-dlp.\nЯкщо ця опція увімкнена, YTindr запускає HTTP-сервер, який генерує POT і встановлює відповідний плагін, що використовує yt-dlp.</string>
     <string name="bgutils_pot_generation_script">Скрипт генерації</string>
     <string name="bgutils_pot_generation_server">HTTP Сервер</string>
     <string name="bgutils_pot_generation_script_summary">Кожен виклик yt-dlp спричиняє додаткові витрати на створення нового процесу виконання js для запуску скрипта. Цей метод не рекомендується використовувати при високому рівні паралелізму.</string>
@@ -605,7 +605,7 @@
     <string name="notset">Не вказано</string>
     <string name="external">Зовнішній</string>
     <string name="exit">Вихід</string>
-    <string name="packages_description">Пакети це допоміжні застосунки, які YTDLnis використовує для допомоги з командами yt-dlp. Деякі з них вже входять до комплекту, але ви можете встановити новіші версії, опубліковані без необхідності оновлення застосунка. Встановлені apk\'s замінюють версію, що постачається в комплекті, яку використовує застосунок.</string>
+    <string name="packages_description">Пакети це допоміжні застосунки, які YTindr використовує для допомоги з командами yt-dlp. Деякі з них вже входять до комплекту, але ви можете встановити новіші версії, опубліковані без необхідності оновлення застосунка. Встановлені apk\'s замінюють версію, що постачається в комплекті, яку використовує застосунок.</string>
     <string name="bgutils_pot_generation_script_info">Щоб використовувати постачальника POT від BgUtils, застосунку потрібно завантажити репозиторій Brainicism/bgutil-ytdlp-pot-provider з github та розпочати встановлення. Це може зайняти деякий час. Продовжити зараз?</string>
     <string name="burn_subs">Записати субтитри</string>
     <string name="check_clipboard_home_summary">Автоматично виявляти URLs у буфері обміну на головному екрані</string>
@@ -663,7 +663,7 @@
     <string name="merge_cuts">Об’єднати обрізані фрагменти в один файл</string>
     <string name="write_ytdlp_terminal">Автоматично введіть yt-dlp у терміналі</string>
     <string name="clear">Очистити</string>
-    <string name="welcome_title">Ласкаво просимо до YTDLnis</string>
+    <string name="welcome_title">Ласкаво просимо до YTindr</string>
     <string name="welcome_subtitle">Завантажуйте відео й аудіо за допомогою yt-dlp. Спершу підготуємо кілька речей.</string>
     <string name="welcome_get_started">Розпочнімо</string>
     <string name="welcome_restore_backup">Відновити з резервної копії</string>
@@ -673,7 +673,7 @@
     <string name="welcome_guide_summary">Посібник містить усе про застосунок: завантаження, шаблони команд і способи розв’язання поширених проблем. Ви можете відкрити його будь-коли на вебсайті.</string>
     <string name="welcome_open_guide">Відкрити посібник</string>
     <string name="welcome_permissions_title">Довзволи</string>
-    <string name="welcome_permissions_summary">YTDLnis найкраще працює з цими параметрами. Ви можете змінити їх пізніше в налаштуваннях.</string>
+    <string name="welcome_permissions_summary">YTindr найкраще працює з цими параметрами. Ви можете змінити їх пізніше в налаштуваннях.</string>
     <string name="welcome_perm_storage">Доступ до сховища</string>
     <string name="welcome_perm_storage_summary">Потрібно, аби зберегти завантажені файли на пристрій.</string>
     <string name="welcome_perm_notifications">Сповіщення</string>
@@ -686,7 +686,7 @@
     <string name="welcome_allowed">Дозволено</string>
     <string name="welcome_required">Необхідно</string>
     <string name="welcome_updates_title">Оновлення</string>
-    <string name="welcome_updates_summary">Виберіть, як YTDLnis залишатиметься актуальним.</string>
+    <string name="welcome_updates_summary">Виберіть, як YTindr залишатиметься актуальним.</string>
     <string name="welcome_next">Далі</string>
     <string name="welcome_finish">Завершити</string>
     <string name="lyrics">Тексти пісень</string>

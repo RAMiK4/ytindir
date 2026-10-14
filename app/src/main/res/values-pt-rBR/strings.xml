@@ -587,7 +587,7 @@
         <item quantity="many">A cada %d meses</item>
         <item quantity="other">A cada %d meses</item>
     </plurals>
-    <string name="bgutils_info">Um provedor de token de prova de origem (POT) para yt-dlp.\nCom ele ativado, o YTDLnis hospeda o servidor HTTP que gera o POT e instala o plugin relacionado que o yt-dlp utiliza.</string>
+    <string name="bgutils_info">Um provedor de token de prova de origem (POT) para yt-dlp.\nCom ele ativado, o YTindr hospeda o servidor HTTP que gera o POT e instala o plugin relacionado que o yt-dlp utiliza.</string>
     <string name="bgutils_pot_generation_server">Servidor HTTP</string>
     <string name="bgutils_pot_generation_script_summary">Cada chamada do yt-dlp acarreta a sobrecarga de iniciar um novo processo de tempo de execução (runtime) de JS para executar o script. Este método não é recomendado para cenários de alta concorrência.</string>
     <string name="bgutils_pot_server_summary">Este é um servidor HTTP em JavaScript, na porta 4416. Se estiver inativo, ele inicia automaticamente quando a fila de downloads começa a ser executada ou quando a verificação de fontes é agendada. Para encerrá-lo, é preciso fazê-lo manualmente através das notificações!</string>
@@ -600,7 +600,7 @@
     <string name="notset">Não definido</string>
     <string name="external">Externo</string>
     <string name="exit">Sair</string>
-    <string name="packages_description">Pacotes são aplicativos auxiliares que o YTDLnis utiliza para auxiliar na execução de comandos do yt-dlp. Alguns deles já vêm integrados ao aplicativo, mas você pode instalar versões mais recentes disponibilizadas sem precisar atualizar o próprio YTDLnis. Os APKs instalados substituem a versão integrada utilizada pelo aplicativo.</string>
+    <string name="packages_description">Pacotes são aplicativos auxiliares que o YTindr utiliza para auxiliar na execução de comandos do yt-dlp. Alguns deles já vêm integrados ao aplicativo, mas você pode instalar versões mais recentes disponibilizadas sem precisar atualizar o próprio YTindr. Os APKs instalados substituem a versão integrada utilizada pelo aplicativo.</string>
     <string name="bgutils_pot_generation_script_info">Para usar o BgUtils POT Provider, o aplicativo precisa baixar o repositório Brainicism/bgutil-ytdlp-pot-provider do GitHub e iniciar a instalação. Isso pode levar algum tempo para ser concluído. Deseja prosseguir agora?</string>
     <string name="burn_subs">Gravar legendas</string>
     <string name="check_clipboard_home_summary">Detectar automaticamente URLs na área de transferência a partir da tela inicial</string>
