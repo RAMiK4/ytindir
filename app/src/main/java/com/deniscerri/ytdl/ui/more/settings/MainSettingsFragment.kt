@@ -124,7 +124,7 @@ class MainSettingsFragment : PreferenceFragmentCompat() {
         }
 
         val updating = findPreference<Preference>("updating")
-        updating?.summary = "${getString(R.string.update_ytdl)}$separator ${getString(R.string.packages)}"
+        updating?.summary = "${getString(R.string.update_ytdl)}$separator ${getString(R.string.update_app)}"
         updating?.setOnPreferenceClickListener {
             navController.navigate(R.id.action_mainSettingsFragment_to_updateSettingsFragment)
             true

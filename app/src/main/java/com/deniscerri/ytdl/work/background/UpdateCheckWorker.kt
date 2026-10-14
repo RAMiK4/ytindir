@@ -26,7 +26,7 @@ class UpdateCheckWorker(
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
         val newRelease = updateUtil.tryGetNewVersion()
-        if (newRelease.isSuccess && BuildConfig.FLAVOR == "github") {
+        if (newRelease.isSuccess && UpdateUtil.APP_UPDATES_ENABLED) {
             notificationUtil.showNewAppUpdate(newRelease.getOrNull()!!.tag_name)
         }
 

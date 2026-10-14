@@ -34,8 +34,13 @@ class UpdateUtil(var context: Context) {
         Pair<String, RuntimeManager.UpdateChannel>("master", RuntimeManager.UpdateChannel.MASTER)
     )
 
-    private fun String.tagNameToVersionNumber() : Int {
-        return this.replace("-beta", "").replace(".", "").padEnd(10,'0').toInt()
+    // YTindr: tags look like v1.3.0-build9. Versions are compared as
+    // (major, minor, patch, build) so a rebuild of the same version still counts as newer.
+    private fun String.tagNameToVersionNumber() : Long {
+        val m = Regex("""(\d+)\.(\d+)\.(\d+)(?:.*?build(\d+))?""").find(this) ?: return 0L
+        val (major, minor, patch, build) = m.destructured
+        return major.toLong() * 1_000_000_000L + minor.toLong() * 1_000_000L +
+            patch.toLong() * 1_000L + (build.toLongOrNull() ?: 0L)
     }
 
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
@@ -49,7 +54,7 @@ class UpdateUtil(var context: Context) {
             }
 
             val currentVersion = BuildConfig.VERSION_NAME
-            val currentVerNumber = currentVersion.tagNameToVersionNumber()
+            val currentVerNumber = "$currentVersion-build${BuildConfig.CI_BUILD}".tagNameToVersionNumber()
 
             val useBeta = sharedPreferences.getBoolean("update_beta", false)
             var isInLatest = true
@@ -91,7 +96,7 @@ class UpdateUtil(var context: Context) {
     }
 
     fun getGithubReleases(): List<GithubRelease> {
-        val url = "https://api.github.com/repos/deniscerri/ytdlnis/releases"
+        val url = "https://api.github.com/repos/$APP_REPO/releases"
         val conn: HttpURLConnection
         var json = listOf<GithubRelease>()
         try {
@@ -165,11 +170,10 @@ class UpdateUtil(var context: Context) {
     suspend fun downloadReleaseApk(release: GithubRelease, onProgress: (Long) -> Unit) : Result<File> {
         return withContext(Dispatchers.IO) {
             try {
+                // YTindr releases carry a single arm64 APK
                 val releaseVersion = release.assets.firstOrNull {
-                    it.name.contains(Build.SUPPORTED_ABIS[0])
-                    && !it.name.contains("foss")
-                    && !it.name.contains("izzy")
-                }!!
+                    it.name.endsWith(".apk") && it.name.contains("arm64")
+                } ?: release.assets.first { it.name.endsWith(".apk") }
                 File(FileUtil.getDefaultApksPath()).mkdirs()
                 val tempApk = File(FileUtil.getDefaultApksPath(), "${releaseVersion.browser_download_url.split("/").last()}")
 
@@ -213,6 +217,9 @@ class UpdateUtil(var context: Context) {
     }
 
     companion object {
+        const val APP_REPO = "RAMiK4/ytindr"
+        // YTindr: every build (foss included) can update itself from APP_REPO releases
+        const val APP_UPDATES_ENABLED = true
         var updatingYTDL = false
         var updatingApp = false
     }

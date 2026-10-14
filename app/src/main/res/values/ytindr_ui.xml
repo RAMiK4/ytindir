@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- YTindr: yüzen cam alt menü ve liste kartları -->
+<resources>
+    <color name="ytindr_nav_bg">#E6FFFFFF</color>
+    <color name="ytindr_nav_stroke">#1A000000</color>
+    <item name="ytindr_nav_padded" type="id"/>
+
+    <style name="YTindr.Shape.Card" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">20dp</item>
+    </style>
+    <style name="YTindr.Shape.Thumb" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">14dp</item>
+    </style>
+</resources>

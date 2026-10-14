@@ -40,7 +40,7 @@ object UpdateSettingsModule : SettingModule {
             }
             "app_update_screen" -> {
                 pref.apply {
-                    summary = "${BuildConfig.VERSION_NAME} (${File(context.applicationInfo.nativeLibraryDir).name}) (${BuildConfig.FLAVOR})"
+                    summary = "${BuildConfig.VERSION_NAME} (${File(context.applicationInfo.nativeLibraryDir).name})"
                     setOnPreferenceClickListener {
                         host.requestNavigate(R.id.appUpdateSettingsFragment)
                         true

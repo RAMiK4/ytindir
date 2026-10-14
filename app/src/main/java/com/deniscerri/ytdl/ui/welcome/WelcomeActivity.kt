@@ -110,6 +110,7 @@ class WelcomeActivity : AppCompatActivity() {
 
         preferences.edit(commit = true) {
             putBoolean("update_app", viewModel.updateApp)
+            putBoolean("ytindr_app_updates_migrated", true)
             putBoolean("auto_update_ytdlp", viewModel.autoUpdateYtdlp)
             putString("ytdlp_source", viewModel.ytdlpSource)
             putString("ytdlp_source_label", label)
@@ -124,6 +125,7 @@ class WelcomeActivity : AppCompatActivity() {
     fun onBackupRestored(settingsRestored: Boolean) {
         preferences.edit(commit = true) {
             putBoolean("asked_auto_update_preferences", true)
+            putBoolean("ytindr_app_updates_migrated", true)
             putBoolean(PREF_COMPLETED, true)
         }
         if (settingsRestored) {

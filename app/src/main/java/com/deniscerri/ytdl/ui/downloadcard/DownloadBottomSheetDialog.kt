@@ -46,6 +46,7 @@ import com.deniscerri.ytdl.ui.more.cookies.WebViewActivity
 import com.deniscerri.ytdl.util.UiUtil
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.deniscerri.ytdl.util.FloatingNavUtil
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -134,6 +135,8 @@ class DownloadBottomSheetDialog : BottomSheetDialogFragment() {
 
         dialog.setOnShowListener {
             behavior = BottomSheetBehavior.from(view.parent as View)
+            // YTindr: blurred cover behind the card
+            FloatingNavUtil.styleDownloadSheet(dialog, view.parent as? View, result.thumb)
             val displayMetrics = DisplayMetrics()
             requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
             if(resources.getBoolean(R.bool.isTablet) || resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){

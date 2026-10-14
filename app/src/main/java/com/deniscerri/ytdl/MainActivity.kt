@@ -13,6 +13,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowInsets
 import android.widget.CheckBox
 import android.widget.LinearLayout
@@ -59,8 +60,10 @@ import com.deniscerri.ytdl.util.NavbarUtil.applyNavBarStyle
 import com.deniscerri.ytdl.util.ThemeUtil
 import com.deniscerri.ytdl.util.UiUtil
 import com.deniscerri.ytdl.util.UpdateUtil
+import com.deniscerri.ytdl.util.FloatingNavUtil
 import com.deniscerri.ytdl.work.background.UpdateCheckWorker
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.color.MaterialColors
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.elevation.SurfaceColors
@@ -112,8 +115,10 @@ class MainActivity : BaseActivity() {
         }
         CrashListener(this).registerExceptionHandler()
         ThemeUtil.updateTheme(this)
-        window.navigationBarColor = SurfaceColors.SURFACE_2.getColor(this)
+        // YTindr: the nav floats, so the system bar matches the screen background
+        window.navigationBarColor = MaterialColors.getColor(this, android.R.attr.colorBackground, SurfaceColors.SURFACE_2.getColor(this))
         setContentView(R.layout.activity_main)
+        FloatingNavUtil.register(this)
         context = baseContext
 
         resultViewModel = ViewModelProvider(this)[ResultViewModel::class.java]
@@ -319,11 +324,9 @@ class MainActivity : BaseActivity() {
     fun hideBottomNavigation(){
         navigationBarView?.apply {
             if (this is BottomNavigationView){
-                this@MainActivity.findViewById<FragmentContainerView>(R.id.frame_layout).updateLayoutParams<ConstraintLayout.LayoutParams> {
-                    bottomToTop = ConstraintLayout.LayoutParams.UNSET
-                    bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID
-                }
-                this.animate()?.translationY(this.height.toFloat())?.setDuration(300)?.withEndAction {
+                // YTindr: the floating nav sits over the content, so only slide it away
+                val bottomMargin = (this.layoutParams as? ViewGroup.MarginLayoutParams)?.bottomMargin ?: 0
+                this.animate()?.translationY((this.height + bottomMargin).toFloat())?.setDuration(300)?.withEndAction {
                     this.visibility = View.GONE
                 }?.start()
             }else if (this is NavigationRailView){
@@ -349,10 +352,7 @@ class MainActivity : BaseActivity() {
     fun showBottomNavigation(){
         navigationBarView?.apply {
             if (this is BottomNavigationView){
-                this@MainActivity.findViewById<FragmentContainerView>(R.id.frame_layout).updateLayoutParams<ConstraintLayout.LayoutParams> {
-                    bottomToTop = R.id.bottomNavigationView
-                    bottomToBottom = ConstraintLayout.LayoutParams.UNSET
-                }
+                this.visibility = View.VISIBLE
                 this.animate()?.translationY(0F)?.setDuration(300)?.withEndAction {
                     this.visibility = View.VISIBLE
                 }?.start()
@@ -490,7 +490,12 @@ class MainActivity : BaseActivity() {
     }
 
     private fun callAutoUpdates(firstRun : Boolean = false) {
-        if (BuildConfig.FLAVOR == "github" && preferences.getBoolean("update_app", false)) {
+        // YTindr: app updates used to be off in this build; turn them on once for existing installs
+        if (!preferences.getBoolean("ytindr_app_updates_migrated", false)) {
+            preferences.edit().putBoolean("update_app", true).putBoolean("ytindr_app_updates_migrated", true).apply()
+            UpdateCheckWorker.schedule(applicationContext)
+        }
+        if (UpdateUtil.APP_UPDATES_ENABLED && preferences.getBoolean("update_app", false)) {
             val updateUtil = UpdateUtil(this)
             CoroutineScope(Dispatchers.IO).launch {
                 val res = updateUtil.tryGetNewVersion()

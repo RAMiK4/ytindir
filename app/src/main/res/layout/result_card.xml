@@ -19,7 +19,7 @@
             android:id="@+id/result_card_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:cardCornerRadius="20dp"
+            app:cardCornerRadius="24dp"
             app:cardElevation="0dp"
             app:cardBackgroundColor="?attr/colorSurfaceContainer"
             app:strokeColor="?attr/colorPrimary"

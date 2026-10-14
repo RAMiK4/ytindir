@@ -24,7 +24,7 @@ import kotlinx.coroutines.withContext
 
 
 object AppUpdateSettingsModule : SettingModule {
-    private val canUpdateApp = BuildConfig.FLAVOR == "github"
+    private val canUpdateApp = UpdateUtil.APP_UPDATES_ENABLED
 
     override fun bindLogic(pref: Preference, host: SettingHost) {
         val context = pref.context
@@ -41,9 +41,10 @@ object AppUpdateSettingsModule : SettingModule {
                 }
             }
             "app_channel" -> {
-                host.findPref("app_update_channel_category")?.isVisible = canUpdateApp
+                // YTindr: there is only one release channel
+                host.findPref("app_update_channel_category")?.isVisible = false
                 (pref as UpdateChannelPreference).apply {
-                    isVisible = canUpdateApp
+                    isVisible = false
                     setChannels(listOf(
                         "stable" to context.getString(R.string.channel_stable),
                         "beta" to context.getString(R.string.channel_beta)

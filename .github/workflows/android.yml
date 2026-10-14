@@ -47,7 +47,7 @@ jobs:
           VERSION=$(ls $DIR/*arm64-v8a*.apk | sed -E 's/.*YTindr-(.*)-arm64-v8a\.apk/\1/')
           TAG="v${VERSION}-build${{ github.run_number }}"
           mkdir -p out
-          cp $DIR/*arm64-v8a*.apk out/YTindr-arm64.apk
+          cp $DIR/*arm64-v8a*.apk "out/YTindr-v${VERSION}_arm64.apk"
           # Release notes: the commit message without its trailer lines
           git log -1 --format=%B | grep -v -E '^(Co-Authored-By|Claude-Session):' | sed -e :a -e '/^\n*$/{$d;N;ba' -e '}' > notes.md
           gh release create "$TAG" out/*.apk \

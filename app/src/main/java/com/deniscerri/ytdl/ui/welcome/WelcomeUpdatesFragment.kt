@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import com.deniscerri.ytdl.BuildConfig
+import com.deniscerri.ytdl.util.UpdateUtil
 import com.deniscerri.ytdl.R
 import com.deniscerri.ytdl.database.viewmodel.WelcomeViewModel
 import com.deniscerri.ytdl.ui.more.settings.updating.setUpChannels
@@ -34,7 +35,7 @@ class WelcomeUpdatesFragment : Fragment(R.layout.fragment_welcome_updates) {
             viewModel.updateApp = it
         }
         // app updates are only offered by the GitHub build
-        appRow.isVisible = BuildConfig.FLAVOR == "github"
+        appRow.isVisible = UpdateUtil.APP_UPDATES_ENABLED
 
         bindSwitch(view.findViewById(R.id.update_ytdl), R.drawable.ic_update, R.string.auto_update_ytdlp, R.string.auto_update_ytdlp_summary, viewModel.autoUpdateYtdlp) {
             viewModel.autoUpdateYtdlp = it

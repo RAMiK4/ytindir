@@ -53,7 +53,7 @@ class HistoryPaginatedAdapter(onItemClickListener: OnItemClickListener, activity
         this.onItemClickListener = onItemClickListener
         this.activity = activity
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
-        useDownloadCardDesign = sharedPreferences.getBoolean("history_use_download_card_design", false)
+        useDownloadCardDesign = sharedPreferences.getBoolean("history_use_download_card_design", true)
     }
 
     class ViewHolder(itemView: View, onItemClickListener: OnItemClickListener?) : RecyclerView.ViewHolder(itemView) {

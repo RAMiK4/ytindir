@@ -12,18 +12,19 @@
 
 </div>
 
-YTindr, [yt-dlp](https://github.com/yt-dlp/yt-dlp) kullanan kişisel bir indirme uygulamasıdır. YouTube'un yanında Instagram, TikTok, X (Twitter), Facebook, SoundCloud, Vimeo ve yt-dlp'nin desteklediği [binlerce siteden](https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md) indirme yapabilir. [YTDLnis](https://github.com/deniscerri/ytdlnis) tabanlıdır; gereksiz özellikleri gizlenmiş, görünümü yenilenmiş ve sitelerdeki değişikliklere karşı kendi kendini güncelleyecek şekilde ayarlanmıştır.
+YTindr, [yt-dlp](https://github.com/yt-dlp/yt-dlp) kullanan kişisel bir indirme uygulamasıdır. yt-dlp'nin desteklediği [1000'den fazla siteden](https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md) ses ve video indirebilir. [YTDLnis](https://github.com/deniscerri/ytdlnis) tabanlıdır; gereksiz özellikleri gizlenmiş, görünümü yenilenmiş ve sitelerdeki değişikliklere karşı kendi kendini güncelleyecek şekilde ayarlanmıştır.
 
 ## ✨ Özellikler
 
-- 🎵 **Ses ve video indirme**, format ve kalite seçimiyle: YouTube, Instagram, TikTok, X ve daha fazlası
+- 🎵 **Ses ve video indirme**, format ve kalite seçimiyle, 1000'den fazla siteden
 - ✂️ **Kesme**: dakika ve saniye girerek videonun sadece bir bölümünü indirme
-- 📤 **Paylaş menüsünden indirme**: YouTube, Instagram, TikTok gibi uygulamalarda "Paylaş"a basıp direkt indirme
+- 📤 **Paylaş menüsünden indirme**: bir uygulamada "Paylaş"a basıp linki direkt indirme
 - 🔁 **Kendini onarma**: yt-dlp nightly kanalından otomatik güncellenir; bir indirme hata verirse (örneğin bir site değişikliği yüzünden) yt-dlp'yi güncelleyip indirmeyi bir kez daha kendiliğinden dener
 - 📋 **Hata kaydını tek dokunuşla kopyalama**
-- 🍪 Çerez desteği: üyelik veya yaş doğrulaması gereken videolar için
+- 🍪 Çerez desteği: kendi hesabınızla açtığınız içerikler için
 - 🎨 Kendi **YTindr** renk tonu ya da **Material You**; açık ve koyu tema
 - 📶 Wi-Fi ve mobil veride indirme
+- 🔄 Uygulama içi güncelleme: yeni sürüm çıkınca uygulama haber verir
 
 ## 🙈 Gizlenen özellikler
 
@@ -41,3 +42,7 @@ Her `main` güncellemesinde GitHub Actions yeni bir arm64 APK derleyip otomatik 
 - **[yt-dlp](https://github.com/yt-dlp/yt-dlp)** ve **[youtubedl-android](https://github.com/yausername/youtubedl-android)**
 
 Bu proje, orijinali gibi **[GPL-3.0](LICENSE)** lisansı altındadır.
+
+## ⚖️ Sorumluluk
+
+YTindr yalnızca indirme hakkınız olan içerikler için tasarlanmıştır. Kullandığınız sitelerin kullanım koşullarına ve telif haklarına uymak kullanıcının sorumluluğundadır.
