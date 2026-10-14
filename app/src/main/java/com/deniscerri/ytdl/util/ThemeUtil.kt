@@ -147,7 +147,7 @@ object ThemeUtil {
      * Get the styled app name
      */
     fun getStyledAppName(context: Context): Spanned {
-        // YTindr logo: "YT" in the accent colour, set in the Unbounded display font
+        // YTindr logo: "YT" in the accent colour, set in the YTindr logo font
         val colorPrimary = getThemeColor(context, androidx.appcompat.R.attr.colorPrimary)
         val text = SpannableStringBuilder("YTindr")
         text.setSpan(ForegroundColorSpan(colorPrimary), 0, 2, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
@@ -157,9 +157,9 @@ object ThemeUtil {
         return text
     }
 
-    /** YTindr display font (Unbounded ExtraBold) used for the logo and big titles. */
+    /** YTindr logo font: Archivo Expanded Black, with the "i" dot and "d" lined up to the capitals. Only holds the logo letters. */
     fun getDisplayTypeface(context: Context): Typeface? =
-        runCatching { ResourcesCompat.getFont(context, R.font.ytindr_display) }.getOrNull()
+        runCatching { ResourcesCompat.getFont(context, R.font.ytindr_logo) }.getOrNull()
 
     private class DisplayTypefaceSpan(private val typeface: Typeface) : MetricAffectingSpan() {
         override fun updateDrawState(tp: TextPaint) { tp.typeface = typeface }

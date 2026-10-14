@@ -15,6 +15,7 @@ import android.widget.ImageView
 import android.widget.ScrollView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.graphics.ColorUtils
+import androidx.core.view.ViewCompat
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -42,6 +43,14 @@ import jp.wasabeef.picasso.transformations.BlurTransformation
 object FloatingNavUtil {
 
     fun register(activity: FragmentActivity) {
+        activity.findViewById<View>(R.id.bottomNavigationView)?.let { nav ->
+            if (nav is BottomNavigationView) {
+                // keep labels and the press ripple inside the rounded pill
+                nav.clipToOutline = true
+                // the nav floats above the system bar; don't let it grow by the system inset
+                ViewCompat.setOnApplyWindowInsetsListener(nav) { _, insets -> insets }
+            }
+        }
         activity.supportFragmentManager.registerFragmentLifecycleCallbacks(
             object : FragmentManager.FragmentLifecycleCallbacks() {
                 override fun onFragmentViewCreated(fm: FragmentManager, f: Fragment, v: View, savedInstanceState: Bundle?) {

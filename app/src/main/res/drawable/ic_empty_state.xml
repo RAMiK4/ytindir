@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- YTindr boş ekran çizimi: halka içinde dalga-ok -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="140dp" android:height="140dp"
+    android:viewportWidth="200" android:viewportHeight="200">
+    <path android:pathData="M100,8 A92,92 0 1 1 99.99,8 Z" android:fillColor="?attr/colorPrimaryContainer" android:fillAlpha="0.35"/>
+    <path android:pathData="M100,30 A70,70 0 1 1 99.99,30 Z" android:fillColor="?attr/colorPrimaryContainer" android:fillAlpha="0.55"/>
+    <group android:scaleX="0.62" android:scaleY="0.62" android:translateX="38" android:translateY="38">
+        <path android:pathData="M60,70 L60,96 M80,52 L80,104 M100,40 L100,112 M120,52 L120,104 M140,70 L140,96 M64,132 L100,160 L136,132"
+            android:strokeColor="?attr/colorPrimary" android:strokeWidth="14"
+            android:strokeLineCap="round" android:strokeLineJoin="round" android:fillColor="#00000000"/>
+    </group>
+</vector>

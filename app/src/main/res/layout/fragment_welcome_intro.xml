@@ -27,7 +27,6 @@
             android:layout_marginTop="24dp"
             android:gravity="center"
             android:text="@string/welcome_title"
-            android:fontFamily="@font/ytindr_display"
             android:textAppearance="?attr/textAppearanceHeadlineMedium" />
 
         <TextView

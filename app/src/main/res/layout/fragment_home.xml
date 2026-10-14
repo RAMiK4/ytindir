@@ -232,6 +232,8 @@
 
             <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
                 android:id="@+id/copied_url_fab"
+                style="@style/Widget.Material3.ExtendedFloatingActionButton.Icon.Primary"
+                app:shapeAppearanceOverlay="@style/YTindr.Shape.Card"
                 android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -245,6 +247,8 @@
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/download_all_fab"
+                style="@style/Widget.Material3.ExtendedFloatingActionButton.Icon.Primary"
+                app:shapeAppearanceOverlay="@style/YTindr.Shape.Card"
             android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -256,6 +260,8 @@
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/download_selected_fab"
+                style="@style/Widget.Material3.ExtendedFloatingActionButton.Icon.Primary"
+                app:shapeAppearanceOverlay="@style/YTindr.Shape.Card"
             android:visibility="gone"
             app:elevation="0dp"
             android:layout_width="wrap_content"

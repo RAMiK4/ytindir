@@ -26,11 +26,15 @@
     <style name="YTindr.LogoTitle" parent="TextAppearance.Material3.TitleLarge">
         <item name="android:textSize">25sp</item>
         <item name="android:letterSpacing">-0.02</item>
-        <item name="fontFamily">@font/ytindr_display</item>
-        <item name="android:fontFamily">@font/ytindr_display</item>
+        <item name="fontFamily">@font/ytindr_logo</item>
+        <item name="android:fontFamily">@font/ytindr_logo</item>
     </style>
-    <style name="YTindr.DisplayTitle" parent="TextAppearance.Material3.HeadlineSmall">
-        <item name="fontFamily">@font/ytindr_display</item>
-        <item name="android:fontFamily">@font/ytindr_display</item>
+    <!-- YTindr: alt menü etiketleri kapsülün içinde kalsın -->
+    <style name="YTindr.NavLabel" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:textSize">11sp</item>
+        <item name="android:maxLines">1</item>
+    </style>
+    <style name="YTindr.NavLabel.Active">
+        <item name="android:textStyle">bold</item>
     </style>
 </resources>

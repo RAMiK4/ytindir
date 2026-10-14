@@ -17,7 +17,7 @@
             android:id="@+id/active_download_card_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:cardCornerRadius="20dp"
+            app:cardCornerRadius="24dp"
             app:cardElevation="0dp"
             android:checkable="true"
             app:strokeWidth="0dp"
@@ -35,9 +35,10 @@
                 android:id="@+id/progress"
                 android:layout_width="match_parent"
                 app:trackColor="#000"
+                app:indicatorColor="?attr/colorPrimary"
                 android:layout_height="match_parent"
                 android:layout_gravity="bottom"
-                android:alpha="0.3"
+                android:alpha="0.35"
                 android:scaleY="200"/>
 
             <androidx.constraintlayout.widget.ConstraintLayout
