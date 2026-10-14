@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- YTindr ikonu: ok biçiminde biten "Y" -->
+<!-- YTindr ikonu: ses dalgası ve aşağı ok -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp" android:height="108dp"
     android:viewportWidth="108" android:viewportHeight="108">
     <group android:scaleX="0.36" android:scaleY="0.36" android:translateX="18" android:translateY="18">
-        <path android:pathData="M58,44 L100,92 L142,44 M100,92 L100,156 M70,122 L100,156 L130,122" android:strokeColor="#00FF88" android:strokeAlpha="0.07" android:strokeWidth="44" android:strokeLineCap="round" android:strokeLineJoin="round" android:fillColor="#00000000"/>
-        <path android:pathData="M58,44 L100,92 L142,44 M100,92 L100,156 M70,122 L100,156 L130,122" android:strokeColor="#00FF88" android:strokeAlpha="0.14" android:strokeWidth="34" android:strokeLineCap="round" android:strokeLineJoin="round" android:fillColor="#00000000"/>
-        <path android:pathData="M58,44 L100,92 L142,44 M100,92 L100,156 M70,122 L100,156 L130,122" android:strokeColor="#00FF88" android:strokeAlpha="0.22" android:strokeWidth="28" android:strokeLineCap="round" android:strokeLineJoin="round" android:fillColor="#00000000"/>
-        <path android:pathData="M58,44 L100,92 L142,44 M100,92 L100,156 M70,122 L100,156 L130,122" android:strokeColor="#00FF88" android:strokeAlpha="1" android:strokeWidth="22" android:strokeLineCap="round" android:strokeLineJoin="round" android:fillColor="#00000000"/>
+        <path android:pathData="M60,70 L60,96 M80,52 L80,104 M100,40 L100,112 M120,52 L120,104 M140,70 L140,96 M64,132 L100,160 L136,132" android:strokeColor="#00FF88" android:strokeAlpha="0.07" android:strokeWidth="36" android:strokeLineCap="round" android:strokeLineJoin="round" android:fillColor="#00000000"/>
+        <path android:pathData="M60,70 L60,96 M80,52 L80,104 M100,40 L100,112 M120,52 L120,104 M140,70 L140,96 M64,132 L100,160 L136,132" android:strokeColor="#00FF88" android:strokeAlpha="0.14" android:strokeWidth="26" android:strokeLineCap="round" android:strokeLineJoin="round" android:fillColor="#00000000"/>
+        <path android:pathData="M60,70 L60,96 M80,52 L80,104 M100,40 L100,112 M120,52 L120,104 M140,70 L140,96 M64,132 L100,160 L136,132" android:strokeColor="#00FF88" android:strokeAlpha="0.22" android:strokeWidth="20" android:strokeLineCap="round" android:strokeLineJoin="round" android:fillColor="#00000000"/>
+        <path android:pathData="M60,70 L60,96 M80,52 L80,104 M100,40 L100,112 M120,52 L120,104 M140,70 L140,96 M64,132 L100,160 L136,132" android:strokeColor="#00FF88" android:strokeAlpha="1" android:strokeWidth="14" android:strokeLineCap="round" android:strokeLineJoin="round" android:fillColor="#00000000"/>
     </group>
 </vector>

@@ -113,9 +113,14 @@
 
             <Button
                 android:id="@+id/bottomsheet_download_button"
-                style="@style/Widget.Material3.Button.ElevatedButton.Icon"
+                style="@style/Widget.Material3.Button.Icon"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="52dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:paddingHorizontal="22dp"
+                android:textStyle="bold"
+                app:cornerRadius="26dp"
                 android:autoLink="all"
                 android:elevation="0dp"
                 android:outlineProvider="none"
@@ -134,11 +139,22 @@
             android:id="@+id/download_tablayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:backgroundTint="@android:color/transparent"
-            app:tabGravity="start"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginVertical="12dp"
+            android:background="@drawable/bg_tab_segment"
+            android:padding="4dp"
+            app:tabGravity="fill"
+            app:tabMode="fixed"
             app:tabMinWidth="0dp"
-            app:tabMode="scrollable">
+            app:tabIndicator="@drawable/bg_tab_pill"
+            app:tabIndicatorColor="?attr/colorPrimaryContainer"
+            app:tabIndicatorFullWidth="true"
+            app:tabIndicatorGravity="stretch"
+            app:tabIndicatorAnimationMode="elastic"
+            app:tabRippleColor="@android:color/transparent"
+            app:tabSelectedTextColor="?attr/colorOnPrimaryContainer"
+            app:tabTextColor="?attr/colorOnSurfaceVariant"
+            app:tabTextAppearance="@style/YTindr.TabText">
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"

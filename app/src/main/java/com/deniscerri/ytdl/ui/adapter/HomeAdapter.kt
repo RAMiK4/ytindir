@@ -81,9 +81,8 @@ class HomeAdapter(onItemClickListener: OnItemClickListener, activity: Activity) 
         val author = card.findViewById<TextView>(R.id.author)
         author.text = video.author
         val duration = card.findViewById<TextView>(R.id.duration)
-        if (video.duration.isNotEmpty() && video.duration != "-1") {
-            duration.text = video.duration
-        }
+        duration.text = if (video.duration.isNotEmpty() && video.duration != "-1") video.duration else ""
+        duration.visibility = if (duration.text.isNullOrBlank()) View.GONE else View.VISIBLE
 
         // BUTTONS ----------------------------------
         val videoURL = video.url
