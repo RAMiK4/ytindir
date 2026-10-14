@@ -701,4 +701,5 @@
     <string name="lyrics_plain">Обычный текст</string>
     <string name="embed_lyrics_summary">Загрузить тексты песен с lrclib.net и встроить их в аудиофайлы для скачивания</string>
     <string name="save_lrc_file_summary">Сохранить синхронизированные тексты песен в формате .lrc рядом с загруженными аудиофайлами</string>
+    <string name="based_on_ytdlnis">Основано на YTDLnis</string>
 </resources>

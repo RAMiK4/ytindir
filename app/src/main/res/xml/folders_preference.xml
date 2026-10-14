@@ -15,6 +15,7 @@
         app:title="@string/video_directory" />
 
     <Preference
+        app:isPreferenceVisible="false"
         android:defaultValue=""
         app:icon="@drawable/ic_terminal"
         app:key="command_path"

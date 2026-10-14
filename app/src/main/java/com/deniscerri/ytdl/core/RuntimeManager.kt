@@ -84,8 +84,7 @@ object RuntimeManager {
         PackageItem("Python", Python),
         PackageItem("FFmpeg", FFmpeg),
         PackageItem("NodeJS", NodeJS),
-        PackageItem("Deno", Deno),
-        PackageItem("Aria2c", Aria2c)
+        PackageItem("Deno", Deno)
     )
 
     fun init(appContext: Context) {

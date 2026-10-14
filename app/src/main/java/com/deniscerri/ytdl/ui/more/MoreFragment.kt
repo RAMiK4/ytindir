@@ -2,16 +2,13 @@ package com.deniscerri.ytdl.ui.more
 
 import android.content.Intent
 import android.content.SharedPreferences
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -19,12 +16,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import com.deniscerri.ytdl.MainActivity
+import com.deniscerri.ytdl.BuildConfig
 import com.deniscerri.ytdl.R
 import com.deniscerri.ytdl.database.viewmodel.DownloadViewModel
 import com.deniscerri.ytdl.ui.more.settings.SettingsActivity
 import com.deniscerri.ytdl.ui.more.terminal.TerminalActivity
 import com.deniscerri.ytdl.util.NavbarUtil
-import com.google.android.material.color.MaterialColors
+import com.deniscerri.ytdl.util.ThemeUtil
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
 import kotlin.system.exitProcess
@@ -67,12 +65,8 @@ class MoreFragment : Fragment() {
         terminateApp = view.findViewById(R.id.terminate)
         settings = view.findViewById(R.id.settings)
 
-        val appIcon = view.findViewById<ImageView>(R.id.app_icon)
-        if (mainSharedPreferences.getString("theme_accent", "ytindr") == "Default" && Build.VERSION.SDK_INT >= 32) {
-            appIcon.backgroundTintList = MaterialColors.getColorStateList(requireContext(), R.attr.colorPrimary, ContextCompat.getColorStateList(requireContext(), R.color.icon_fg)!!)
-        } else {
-            appIcon.backgroundTintList = null
-        }
+        view.findViewById<TextView>(R.id.app_title).text = ThemeUtil.getStyledAppName(requireContext())
+        view.findViewById<TextView>(R.id.app_version).text = "${getString(R.string.version)} ${BuildConfig.VERSION_NAME}"
 
         var showingTerminal = false
         var showingDownloads = false
@@ -87,6 +81,8 @@ class MoreFragment : Fragment() {
         terminal.isVisible = !showingTerminal
         downloads.isVisible = !showingDownloads
         downloadQueue.isVisible = !showingDownloadQueue
+        view.findViewById<View>(R.id.more_divider_1).isVisible = downloads.isVisible && downloadQueue.isVisible
+        view.findViewById<View>(R.id.more_divider_2).isVisible = downloads.isVisible || downloadQueue.isVisible
 
         // YTindr: hidden features
         terminal.isVisible = false

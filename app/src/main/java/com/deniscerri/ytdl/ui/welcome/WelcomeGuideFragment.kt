@@ -16,6 +16,6 @@ class WelcomeGuideFragment : Fragment(R.layout.fragment_welcome_guide) {
     }
 
     private companion object {
-        const val GUIDE_URL = "https://ytdlnis.org"
+        const val GUIDE_URL = "https://github.com/RAMiK4/ytindr#readme"
     }
 }

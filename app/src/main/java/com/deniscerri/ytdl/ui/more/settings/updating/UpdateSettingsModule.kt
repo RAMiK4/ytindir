@@ -49,7 +49,7 @@ object UpdateSettingsModule : SettingModule {
             }
             "packages" -> {
                 pref.apply {
-                    summary = "Python, FFmpeg, Aria2c, NodeJS, Deno"
+                    summary = "Python, FFmpeg, NodeJS, Deno"
                     setOnPreferenceClickListener {
                         host.requestNavigate(R.id.packagesFragment)
                         false

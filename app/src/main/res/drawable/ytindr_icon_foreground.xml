@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- YTindr ikonu: ok biçiminde biten "Y" -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <group android:scaleX="0.36" android:scaleY="0.36" android:translateX="18" android:translateY="18">
+        <path android:pathData="M60,46 L100,94 L140,46 M100,94 L100,154 M78,132 L100,154 L122,132" android:strokeColor="#00FF88" android:strokeAlpha="0.07" android:strokeWidth="40" android:strokeLineCap="round" android:strokeLineJoin="round" android:fillColor="#00000000"/>
+        <path android:pathData="M60,46 L100,94 L140,46 M100,94 L100,154 M78,132 L100,154 L122,132" android:strokeColor="#00FF88" android:strokeAlpha="0.14" android:strokeWidth="30" android:strokeLineCap="round" android:strokeLineJoin="round" android:fillColor="#00000000"/>
+        <path android:pathData="M60,46 L100,94 L140,46 M100,94 L100,154 M78,132 L100,154 L122,132" android:strokeColor="#00FF88" android:strokeAlpha="0.22" android:strokeWidth="24" android:strokeLineCap="round" android:strokeLineJoin="round" android:fillColor="#00000000"/>
+        <path android:pathData="M60,46 L100,94 L140,46 M100,94 L100,154 M78,132 L100,154 L122,132" android:strokeColor="#00FF88" android:strokeAlpha="1" android:strokeWidth="18" android:strokeLineCap="round" android:strokeLineJoin="round" android:fillColor="#00000000"/>
+    </group>
+</vector>

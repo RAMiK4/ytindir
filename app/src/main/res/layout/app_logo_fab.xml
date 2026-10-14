@@ -6,7 +6,7 @@
     android:contentDescription="@string/more"
     android:src="@drawable/ic_app_icon"
     app:maxImageSize="70dp"
-    app:tint="@color/icon_fg"
+    app:tint="@null"
     android:backgroundTint="#00000000"
     app:borderWidth="0dp"
     xmlns:android="http://schemas.android.com/apk/res/android" />

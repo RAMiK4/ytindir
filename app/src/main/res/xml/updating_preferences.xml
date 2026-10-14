@@ -12,6 +12,7 @@
             app:title="@string/ytdlp" />
 
         <Preference
+        app:isPreferenceVisible="false"
             android:icon="@drawable/ic_update_app"
             app:key="app_update_screen"
             app:title="@string/app" />
@@ -22,6 +23,7 @@
             app:title="@string/packages" />
 
         <ListPreference
+        app:isPreferenceVisible="false"
             app:icon="@drawable/baseline_install_mobile_24"
             android:defaultValue="system"
             android:entries="@array/apk_install_methods"

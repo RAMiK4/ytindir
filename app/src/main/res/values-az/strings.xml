@@ -688,4 +688,5 @@
     <string name="lyrics_plain">Aydın mətn</string>
     <string name="embed_lyrics_summary">Mahnı sözlərini lrclib.net-dən əldə et və səs yükləmələrində yerləşdir</string>
     <string name="save_lrc_file_summary">Sinxronlaşdırılmış sözləri səs yükləmələrin yanında .lrc faylı kimi saxla</string>
+    <string name="based_on_ytdlnis">YTDLnis əsasında</string>
 </resources>

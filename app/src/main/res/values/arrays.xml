@@ -136,7 +136,7 @@
         <item>@string/system</item>
         <item>English</item>
         <item>العربية</item>
-        <item>Azərbaycanca</item>
+        <item>Русский</item>
         <item>Asamiya</item>
         <item>বাংলা</item>
         <item>বাংলা (India)</item>
@@ -184,7 +184,7 @@
         <item>system</item>
         <item>en</item>
         <item>ar</item>
-        <item>az</item>
+        <item>ru</item>
         <item>as</item>
         <item>bn</item>
         <item>bn-IN</item>
@@ -1035,7 +1035,7 @@
         <item>am</item>
         <item>ar</item>
         <item>as</item>
-        <item>az</item>
+        <item>ru</item>
         <item>be</item>
         <item>bg</item>
         <item>bn</item>
@@ -1190,7 +1190,7 @@
         <item>am</item> <!-- Amharic -->
         <item>ar</item> <!-- Arabic -->
         <item>hy</item> <!-- Armenian -->
-        <item>az</item> <!-- Azerbaijani -->
+        <item>ru</item> <!-- Azerbaijani -->
         <item>eu</item> <!-- Basque -->
         <item>be</item> <!-- Belarusian -->
         <item>bn</item> <!-- Bengali -->
@@ -1672,12 +1672,12 @@
         <item>@string/system</item>
         <item>English</item>
         <item>Türkçe</item>
-        <item>Azərbaycanca</item>
+        <item>Русский</item>
     </string-array>
     <string-array name="ytindr_language_values">
         <item>system</item>
         <item>en</item>
         <item>tr</item>
-        <item>az</item>
+        <item>ru</item>
     </string-array>
 </resources>

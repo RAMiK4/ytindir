@@ -103,7 +103,7 @@ class MainSettingsFragment : PreferenceFragmentCompat() {
         }
 
         val folders = findPreference<Preference>("folders")
-        folders?.summary = "${getString(R.string.music_directory)}$separator ${getString(R.string.video_directory)}$separator ${getString(R.string.command_directory)}"
+        folders?.summary = "${getString(R.string.music_directory)}$separator ${getString(R.string.video_directory)}$separator ${getString(R.string.cache_directory)}"
         folders?.setOnPreferenceClickListener {
             navController.navigate(R.id.action_mainSettingsFragment_to_folderSettingsFragment)
             true
@@ -117,14 +117,14 @@ class MainSettingsFragment : PreferenceFragmentCompat() {
         }
 
         val processing = findPreference<Preference>("processing")
-        processing?.summary = "${getString(R.string.sponsorblock)}$separator ${getString(R.string.embed_subtitles)}$separator ${getString(R.string.add_chapters)}"
+        processing?.summary = "${getString(R.string.audio_format)}$separator ${getString(R.string.video_format)}$separator ${getString(R.string.add_chapters)}"
         processing?.setOnPreferenceClickListener {
             navController.navigate(R.id.action_mainSettingsFragment_to_processingSettingsFragment)
             true
         }
 
         val updating = findPreference<Preference>("updating")
-        updating?.summary = "${getString(R.string.update_ytdl)}$separator ${getString(R.string.update_app)}"
+        updating?.summary = "${getString(R.string.update_ytdl)}$separator ${getString(R.string.packages)}"
         updating?.setOnPreferenceClickListener {
             navController.navigate(R.id.action_mainSettingsFragment_to_updateSettingsFragment)
             true
@@ -151,6 +151,14 @@ class MainSettingsFragment : PreferenceFragmentCompat() {
         backup = findPreference("backup")
         restore = findPreference("restore")
         backupPath = findPreference("backup_path")
+
+        findPreference<Preference>("app_version")?.apply {
+            summary = BuildConfig.VERSION_NAME
+            setOnPreferenceClickListener {
+                UiUtil.copyToClipboard("YTindr ${BuildConfig.VERSION_NAME}", requireActivity())
+                true
+            }
+        }
 
         findPreference<Preference>("package_name")?.apply {
             summary = BuildConfig.APPLICATION_ID

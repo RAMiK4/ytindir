@@ -603,4 +603,5 @@
     <string name="check_clipboard_home">Ana ekranda panoyu kontrol edin</string>
     <string name="clear_info_json">Infojsons\'ları temizle</string>
     <string name="burn_subs">Altyazıları açın</string>
+    <string name="based_on_ytdlnis">YTDLnis tabanlı</string>
 </resources>

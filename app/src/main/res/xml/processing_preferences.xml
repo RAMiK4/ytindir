@@ -140,6 +140,7 @@
             app:title="@string/preferred_audio_codec" />
 
         <SwitchPreferenceCompat
+        app:isPreferenceVisible="false"
             android:widgetLayout="@layout/preferece_material_switch"
             app:defaultValue="false"
             app:icon="@drawable/ic_format"
@@ -157,6 +158,7 @@
             app:title="@string/audio_format" />
 
         <EditTextPreference
+        app:isPreferenceVisible="false"
             app:key="format_id_audio"
             app:defaultValue=""
             app:icon="@drawable/ic_format_id"
@@ -164,6 +166,7 @@
             app:title="@string/preferred_format_id" />
 
         <SwitchPreferenceCompat
+        app:isPreferenceVisible="false"
             android:widgetLayout="@layout/preferece_material_switch"
             app:defaultValue="false"
             app:icon="@drawable/baseline_audio_file_24"
@@ -311,6 +314,7 @@
             app:title="@string/video_quality" />
 
         <EditTextPreference
+        app:isPreferenceVisible="false"
             app:key="format_id"
             app:defaultValue=""
             app:icon="@drawable/ic_format_id"
@@ -318,6 +322,7 @@
             app:title="@string/preferred_format_id" />
 
         <ListPreference
+        app:isPreferenceVisible="false"
             android:defaultValue=""
             android:entries="@array/internal_plugin_ffmpeg_preset"
             android:entryValues="@array/internal_plugin_ffmpeg_preset_values"

@@ -11,6 +11,7 @@
             app:key="ytdlp_channel" />
 
         <Preference
+        app:isPreferenceVisible="false"
             android:icon="@drawable/baseline_source_24"
             app:key="ytdlp_source_label"
             app:title="@string/custom_channels" />

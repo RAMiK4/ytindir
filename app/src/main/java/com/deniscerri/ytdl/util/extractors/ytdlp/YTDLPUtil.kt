@@ -1004,13 +1004,7 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
             }
         }
 
-        val aria2 = sharedPreferences.getBoolean("aria2", false)
-        if (aria2) {
-            ytDlRequest.addOption("--downloader", "libaria2c.so")
-            //request.addOption("--external-downloader-args", "aria2c:\"--summary-interval=1\"")
-            //ytDlRequest.addOption("--no-check-certificates")
-            //request.addOption("--external-downloader-args", "aria2c:\"--check-certificate=false\"")
-        }
+        // YTindr: aria2c is not shipped, yt-dlp always uses its own downloader
 
         val concurrentFragments = sharedPreferences.getInt("concurrent_fragments", 1)
         if (concurrentFragments > 1) request.addOption("-N", concurrentFragments)

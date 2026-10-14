@@ -98,6 +98,7 @@
             app:title="@string/api_key" />
 
         <ListPreference
+        app:isPreferenceVisible="false"
             android:defaultValue="YT_DLP"
             android:entries="@array/data_fetching_extractor_youtube"
             android:entryValues="@array/data_fetching_extractor_youtube_values"
@@ -107,6 +108,7 @@
             app:title="@string/data_fetching_extractor_youtube" />
 
         <ListPreference
+        app:isPreferenceVisible="false"
             android:defaultValue="yt-dlp"
             android:entries="@array/formats_source"
             android:entryValues="@array/formats_source_values"
@@ -117,6 +119,7 @@
 
 
         <SwitchPreferenceCompat
+        app:isPreferenceVisible="false"
             android:widgetLayout="@layout/preferece_material_switch"
             app:defaultValue="false"
             app:icon="@drawable/baseline_format_quote_24"

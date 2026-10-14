@@ -61,6 +61,10 @@
 
     <PreferenceCategory android:title="@string/about" >
         <Preference
+            app:icon="@drawable/ic_update"
+            app:key="app_version"
+            app:title="@string/version" />
+        <Preference
             app:icon="@drawable/baseline_exit_to_app_24"
             app:key="package_name"
             app:title="@string/package_name" />
@@ -122,15 +126,25 @@
             app:title="@string/license">
             <intent
                 android:action="android.intent.action.VIEW"
-                android:data="https://github.com/deniscerri/ytdlnis/blob/main/LICENSE" />
+                android:data="https://github.com/RAMiK4/ytindr/blob/main/LICENSE" />
         </Preference>
 
         <Preference
             app:icon="@drawable/ic_code"
             app:key="rreth"
-            app:summary="https://github.com/deniscerri/ytdlnis"
-            app:allowDividerBelow="true"
+            app:summary="github.com/RAMiK4/ytindr"
             app:title="@string/source_code">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://github.com/RAMiK4/ytindr" />
+        </Preference>
+
+        <Preference
+            app:icon="@drawable/ic_code"
+            app:key="based_on"
+            app:summary="github.com/deniscerri/ytdlnis"
+            app:allowDividerBelow="true"
+            app:title="@string/based_on_ytdlnis">
             <intent
                 android:action="android.intent.action.VIEW"
                 android:data="https://github.com/deniscerri/ytdlnis" />

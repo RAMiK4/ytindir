@@ -2,5 +2,5 @@
 <locale-config xmlns:android="http://schemas.android.com/apk/res/android">
     <locale android:name="en"/>
     <locale android:name="tr"/>
-    <locale android:name="az"/>
+    <locale android:name="ru"/>
 </locale-config>

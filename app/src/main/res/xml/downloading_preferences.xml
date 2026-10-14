@@ -59,6 +59,7 @@
             app:title="@string/download_over_metered_networks" />
 
         <SwitchPreferenceCompat
+        app:isPreferenceVisible="false"
             android:widgetLayout="@layout/preferece_material_switch"
             app:defaultValue="false"
             android:icon="@drawable/ic_ipv4"
@@ -75,6 +76,7 @@
             app:title="@string/use_cookies" />
 
         <EditTextPreference
+        app:isPreferenceVisible="false"
             android:icon="@drawable/baseline_network_locked_24"
             app:key="proxy"
             app:defaultValue=""
@@ -104,6 +106,7 @@
             app:isPreferenceVisible="false" />
 
         <SeekBarPreference
+        app:isPreferenceVisible="false"
             android:defaultValue="1"
             android:icon="@drawable/ic_lines"
             android:max="25"
@@ -130,25 +133,18 @@
             app:title="@string/limit_rate" />
 
         <EditTextPreference
+        app:isPreferenceVisible="false"
             android:icon="@drawable/baseline_settings_input_component_24"
             app:key="buffer_size"
             app:summary="@string/buffer_size_summary"
             app:title="@string/buffer_size" />
 
         <EditTextPreference
+        app:isPreferenceVisible="false"
             android:icon="@drawable/ic_clock"
             app:key="socket_timeout"
             android:summary="@string/socket_timeout_description"
             app:title="@string/socket_timeout"/>
-
-        <SwitchPreferenceCompat
-            android:widgetLayout="@layout/preferece_material_switch"
-            app:defaultValue="false"
-            android:icon="@drawable/ic_speed"
-            android:key="aria2"
-            app:summary="@string/aria2_summary"
-            android:disableDependentsState="true"
-            app:title="aria2c" />
 
         <SwitchPreferenceCompat
         app:isPreferenceVisible="false"
@@ -169,6 +165,7 @@
             app:title="@string/cleanup_leftover_downloads" />
 
         <EditTextPreference
+        app:isPreferenceVisible="false"
             app:key="retries"
             android:icon="@drawable/ic_retries"
             android:defaultValue=""
@@ -176,6 +173,7 @@
             app:title="@string/retries" />
 
         <EditTextPreference
+        app:isPreferenceVisible="false"
             app:key="fragment_retries"
             android:icon="@drawable/ic_retries"
             android:defaultValue=""
