@@ -105,7 +105,7 @@ class DownloadLogFragment : Fragment() {
         copyLog.setOnClickListener {
             val clipboard: ClipboardManager =
                 mainActivity.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-            clipboard.setText(rawLogContent)
+            clipboard.setText("YTindr ${com.deniscerri.ytdl.BuildConfig.VERSION_NAME} (${com.deniscerri.ytdl.BuildConfig.VERSION_CODE})\n\n" + rawLogContent)
             Snackbar.make(bottomAppBar, getString(R.string.copied_to_clipboard), Snackbar.LENGTH_LONG)
                 .setAnchorView(bottomAppBar)
                 .show()

@@ -27,6 +27,7 @@ import com.deniscerri.ytdl.database.enums.DownloadType
 import com.deniscerri.ytdl.database.models.HistoryItem
 import com.deniscerri.ytdl.database.models.LogItem
 import com.deniscerri.ytdl.database.repository.DownloadRepository
+import com.deniscerri.ytdl.util.UpdateUtil
 import com.deniscerri.ytdl.database.repository.LogRepository
 import com.deniscerri.ytdl.database.repository.ResultRepository
 import com.deniscerri.ytdl.util.AlarmScheduler
@@ -501,6 +502,26 @@ class DownloadWorker(
                             }
                             if (this@DownloadWorker.isStopped) return@onFailure
                             if (it is RuntimeManager.CanceledException) return@onFailure
+
+                            // YTindr: self-recovery. Most YouTube breakages are fixed by a newer yt-dlp,
+                            // so update it once and re-queue the item. Only retries when an update was
+                            // actually installed, and only once per item, so it can never loop.
+                            if (sharedPreferences.getBoolean("auto_update_ytdlp", true)
+                                && recoveryAttempted.add(downloadItem.id)
+                                && dao.getActiveDownloadsList().count { a -> a.id != downloadItem.id } == 0) {
+                                val updateRes = runCatching { UpdateUtil(context).updateYTDL() }.getOrNull()
+                                if (updateRes?.status == UpdateUtil.YTDLPUpdateStatus.DONE) {
+                                    tempFileDir.delete()
+                                    val note = "\n[YTindr] ${it.message?.lines()?.lastOrNull { l -> l.isNotBlank() } ?: "Error"}\n" +
+                                        "[YTindr] ${updateRes.message}. Retrying download...\n"
+                                    if (logDownloads) {
+                                        logRepo.update(note, logItem.id)
+                                    }
+                                    downloadItem.status = DownloadRepository.Status.Queued.toString()
+                                    dao.update(downloadItem)
+                                    return@onFailure
+                                }
+                            }
                             if (it.message?.contains("JSONDecodeError") == true) {
                                 val cachePath = FileUtil.getInfoJsonPath(context)
                                 val infoJsonName = MessageDigest.getInstance("MD5")
@@ -573,6 +594,8 @@ class DownloadWorker(
 
 
     companion object {
+        // YTindr: items that already got one update-and-retry in this process
+        private val recoveryAttempted: MutableSet<Long> = java.util.Collections.synchronizedSet(mutableSetOf())
         val runningYTDLInstances: MutableList<Long> = mutableListOf()
         const val TAG = "DownloadWorker"
         private val downloadLock = Mutex()

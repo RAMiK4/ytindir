@@ -44,10 +44,9 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           DIR=app/build/outputs/apk/foss/release
-          VERSION=$(ls $DIR/*universal*.apk | sed -E 's/.*YTindr-(.*)-universal\.apk/\1/')
+          VERSION=$(ls $DIR/*arm64-v8a*.apk | sed -E 's/.*YTindr-(.*)-arm64-v8a\.apk/\1/')
           TAG="v${VERSION}-build${{ github.run_number }}"
           mkdir -p out
-          cp $DIR/*universal*.apk out/YTindr-universal.apk
           cp $DIR/*arm64-v8a*.apk out/YTindr-arm64.apk
           # Release notes: the commit message without its trailer lines
           git log -1 --format=%B | grep -v -E '^(Co-Authored-By|Claude-Session):' | sed -e :a -e '/^\n*$/{$d;N;ba' -e '}' > notes.md

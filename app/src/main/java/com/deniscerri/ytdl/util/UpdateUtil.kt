@@ -130,7 +130,7 @@ class UpdateUtil(var context: Context) {
             updatingYTDL = true
 
             try {
-                val channel = if (c.isNullOrBlank()) sharedPreferences.getString("ytdlp_source", "stable") else c
+                val channel = if (c.isNullOrBlank()) sharedPreferences.getString("ytdlp_source", "nightly") else c
 
                 when(channel) {
                     "stable", "nightly", "master" -> {

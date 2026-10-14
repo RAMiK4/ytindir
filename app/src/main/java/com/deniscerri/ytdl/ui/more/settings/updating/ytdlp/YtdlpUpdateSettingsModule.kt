@@ -80,7 +80,7 @@ object YtdlpUpdateSettingsModule : SettingModule {
     private fun restingStatus(autoUpdate: Boolean) =
         if (autoUpdate) UpdateStatusCardPreference.Status.UP_TO_DATE else UpdateStatusCardPreference.Status.UNKNOWN
 
-    private fun currentSource(preferences: SharedPreferences) = preferences.getString("ytdlp_source", "stable")!!
+    private fun currentSource(preferences: SharedPreferences) = preferences.getString("ytdlp_source", "nightly")!!
 
     private fun sourceSummary(context: Context, preferences: SharedPreferences) : String {
         val source = currentSource(preferences)

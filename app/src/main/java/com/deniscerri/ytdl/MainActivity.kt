@@ -557,7 +557,16 @@ class MainActivity : BaseActivity() {
                 }
             }
         }
-        if (preferences.getBoolean("auto_update_ytdlp", false)){
+        // YTindr: one-time defaults for existing installs: nightly yt-dlp, auto update on
+        if (!preferences.getBoolean("ytindr_defaults_v1", false)) {
+            preferences.edit {
+                putString("ytdlp_source", "nightly")
+                putBoolean("auto_update_ytdlp", true)
+                putBoolean("ytindr_defaults_v1", true)
+            }
+        }
+
+        if (preferences.getBoolean("auto_update_ytdlp", true)){
             CoroutineScope(SupervisorJob()).launch {
                 try {
                     val hasActiveQueuedDownloads = DBManager.getInstance(this@MainActivity).downloadDao.getDownloadsCountByStatus(listOf("Active", "Queued")) > 0
