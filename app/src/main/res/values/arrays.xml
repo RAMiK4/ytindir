@@ -1666,4 +1666,18 @@
         <item>ytindr</item>
         <item>Default</item>
     </array>
+
+    <!-- YTindr: shipped languages -->
+    <string-array name="ytindr_language_entries">
+        <item>@string/system</item>
+        <item>English</item>
+        <item>Türkçe</item>
+        <item>Azərbaycanca</item>
+    </string-array>
+    <string-array name="ytindr_language_values">
+        <item>system</item>
+        <item>en</item>
+        <item>tr</item>
+        <item>az</item>
+    </string-array>
 </resources>

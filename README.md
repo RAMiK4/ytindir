@@ -6,20 +6,20 @@
 
 <div align="center">
 
-[![İndir](https://img.shields.io/github/v/release/RAMiK4/ytindr?style=for-the-badge&label=%C4%B0ndir&color=2B7A1C)](https://github.com/RAMiK4/ytindr/releases/latest)
-![Android](https://img.shields.io/badge/Android-7.0%2B-43bf24?style=for-the-badge&logo=android&logoColor=white)
-![Lisans](https://img.shields.io/badge/Lisans-GPL--3.0-55624C?style=for-the-badge)
+[![İndir](https://img.shields.io/github/v/release/RAMiK4/ytindr?style=for-the-badge&label=%C4%B0ndir&color=00C46A)](https://github.com/RAMiK4/ytindr/releases/latest)
+![Android](https://img.shields.io/badge/Android-7.0%2B-00C46A?style=for-the-badge&logo=android&logoColor=white)
+![Lisans](https://img.shields.io/badge/Lisans-GPL--3.0-2C2C2C?style=for-the-badge)
 
 </div>
 
-YTindr, [yt-dlp](https://github.com/yt-dlp/yt-dlp) kullanan kişisel bir indirme uygulamasıdır. [YTDLnis](https://github.com/deniscerri/ytdlnis) tabanlıdır; gereksiz özellikleri gizlenmiş, görünümü yenilenmiş ve YouTube'daki değişikliklere karşı kendi kendini güncelleyecek şekilde ayarlanmıştır.
+YTindr, [yt-dlp](https://github.com/yt-dlp/yt-dlp) kullanan kişisel bir indirme uygulamasıdır. YouTube'un yanında Instagram, TikTok, X (Twitter), Facebook, SoundCloud, Vimeo ve yt-dlp'nin desteklediği [binlerce siteden](https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md) indirme yapabilir. [YTDLnis](https://github.com/deniscerri/ytdlnis) tabanlıdır; gereksiz özellikleri gizlenmiş, görünümü yenilenmiş ve sitelerdeki değişikliklere karşı kendi kendini güncelleyecek şekilde ayarlanmıştır.
 
 ## ✨ Özellikler
 
-- 🎵 **Ses ve video indirme**, format ve kalite seçimiyle
+- 🎵 **Ses ve video indirme**, format ve kalite seçimiyle: YouTube, Instagram, TikTok, X ve daha fazlası
 - ✂️ **Kesme**: dakika ve saniye girerek videonun sadece bir bölümünü indirme
-- 📤 **Paylaş menüsünden indirme**: YouTube'da "Paylaş"a basıp direkt indirme
-- 🔁 **Kendini onarma**: yt-dlp nightly kanalından otomatik güncellenir; bir indirme hata verirse yt-dlp'yi güncelleyip indirmeyi bir kez daha kendiliğinden dener
+- 📤 **Paylaş menüsünden indirme**: YouTube, Instagram, TikTok gibi uygulamalarda "Paylaş"a basıp direkt indirme
+- 🔁 **Kendini onarma**: yt-dlp nightly kanalından otomatik güncellenir; bir indirme hata verirse (örneğin bir site değişikliği yüzünden) yt-dlp'yi güncelleyip indirmeyi bir kez daha kendiliğinden dener
 - 📋 **Hata kaydını tek dokunuşla kopyalama**
 - 🍪 Çerez desteği: üyelik veya yaş doğrulaması gereken videolar için
 - 🎨 Kendi **YTindr** renk tonu ya da **Material You**; açık ve koyu tema
