@@ -47,6 +47,7 @@
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/adjust_subtitles"
+                android:visibility="gone"
                 style="@style/Widget.Material3.Chip.Assist.Elevated"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -153,6 +154,7 @@
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/sponsorblock_filters"
+                android:visibility="gone"
                 style="@style/Widget.Material3.Chip.Assist.Elevated"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

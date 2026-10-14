@@ -88,6 +88,12 @@ class MoreFragment : Fragment() {
         downloads.isVisible = !showingDownloads
         downloadQueue.isVisible = !showingDownloadQueue
 
+        // YTindr: hidden features
+        terminal.isVisible = false
+        logs.isVisible = false
+        commandTemplates.isVisible = false
+        observeSources.isVisible = false
+
         terminal.setOnClickListener {
             val intent = Intent(context, TerminalActivity::class.java)
             startActivity(intent)

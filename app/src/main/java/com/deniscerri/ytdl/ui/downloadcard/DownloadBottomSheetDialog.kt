@@ -219,11 +219,23 @@ class DownloadBottomSheetDialog : BottomSheetDialogFragment() {
                     }
                 }
                 else -> {
-                    tabLayout.getTabAt(2)!!.select()
-                    viewPager2.postDelayed( {
-                        viewPager2.setCurrentItem(2, false)
-                    }, 200)
+                    if (Patterns.WEB_URL.matcher(result.url).matches()) {
+                        // YTindr: no command downloads for links, fall back to video (or audio)
+                        val fallbackTab = if (isAudioOnly) 0 else 1
+                        tabLayout.getTabAt(fallbackTab)!!.select()
+                        viewPager2.setCurrentItem(fallbackTab, false)
+                    } else {
+                        tabLayout.getTabAt(2)!!.select()
+                        viewPager2.postDelayed( {
+                            viewPager2.setCurrentItem(2, false)
+                        }, 200)
+                    }
                 }
+            }
+
+            // YTindr: hide the command tab for normal links
+            if (Patterns.WEB_URL.matcher(result.url).matches()) {
+                (tabLayout.getChildAt(0) as? ViewGroup)?.getChildAt(2)?.visibility = View.GONE
             }
 
             //check if the item is coming from a text file
@@ -302,11 +314,8 @@ class DownloadBottomSheetDialog : BottomSheetDialogFragment() {
         val shownFields = sharedPreferences.getStringSet("modify_download_card", requireContext().resources.getStringArray(R.array.modify_download_card_values).toSet())!!.toList()
 
         val scheduleBtn = view.findViewById<MaterialButton>(R.id.bottomsheet_schedule_button)
-        scheduleBtn.visibility = if(shownFields.contains("schedule")){
-            View.VISIBLE
-        }else{
-            View.GONE
-        }
+        // YTindr: scheduling is hidden
+        scheduleBtn.visibility = View.GONE
         val download = view.findViewById<Button>(R.id.bottomsheet_download_button)
 
 

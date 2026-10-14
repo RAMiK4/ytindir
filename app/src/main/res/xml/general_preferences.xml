@@ -210,6 +210,7 @@
             app:title="@string/swipe_gestures_download_card" />
 
         <SwitchPreferenceCompat
+        app:isPreferenceVisible="false"
             android:widgetLayout="@layout/preferece_material_switch"
             app:defaultValue="false"
             android:icon="@drawable/baseline_share2_24"
@@ -231,6 +232,7 @@
             app:title="@string/show_download_count" />
 
         <SwitchPreferenceCompat
+        app:isPreferenceVisible="false"
             android:widgetLayout="@layout/preferece_material_switch"
             app:defaultValue="true"
             android:icon="@drawable/baseline_numbers_24"

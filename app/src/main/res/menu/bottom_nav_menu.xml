@@ -18,8 +18,4 @@
         android:visible="true"
         android:id="@+id/downloadQueueMainFragment"/>
 
-    <item android:title="@string/terminal"
-        android:icon="@drawable/ic_terminal"
-        android:visible="false"
-        android:id="@+id/terminalActivity"/>
 </menu>

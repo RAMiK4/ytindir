@@ -27,6 +27,7 @@
         android:title="@string/updating"/>
 
     <Preference
+        app:isPreferenceVisible="false"
         android:key="advanced"
         app:icon="@drawable/baseline_settings_suggest_24"
         android:title="@string/advanced"/>
@@ -64,6 +65,7 @@
             app:key="package_name"
             app:title="@string/package_name" />
         <Preference
+        app:isPreferenceVisible="false"
             app:icon="@drawable/ic_discord"
             app:key="discord"
             app:summary="https://discord.gg/WW3KYWxAPm"
@@ -74,6 +76,7 @@
         </Preference>
 
         <Preference
+        app:isPreferenceVisible="false"
             app:icon="@drawable/ic_telegram"
             app:key="telegram"
             app:summary="https://t.me/ytdlnis"
@@ -84,6 +87,7 @@
         </Preference>
 
         <Preference
+        app:isPreferenceVisible="false"
             app:icon="@drawable/ic_translate"
             app:key="translate"
             app:summary="@string/help_translate_summary"
@@ -94,12 +98,14 @@
         </Preference>
 
         <Preference
+        app:isPreferenceVisible="false"
             app:icon="@drawable/ic_translate"
             app:key="translators"
             app:summary="@string/translators_summary"
             app:title="@string/translators" />
 
         <Preference
+        app:isPreferenceVisible="false"
             app:icon="@drawable/baseline_security_24"
             app:key="security"
             app:summary="🔐 YTDLnis - Privacy Policy"

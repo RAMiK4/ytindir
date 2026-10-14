@@ -26,7 +26,6 @@ object NavbarUtil {
         "Home" to R.id.homeFragment,
         "History" to R.id.historyFragment,
         "Queue" to R.id.downloadQueueMainFragment,
-        "Terminal" to R.id.terminalActivity,
         "More" to R.id.moreFragment
     )
 
@@ -80,10 +79,14 @@ object NavbarUtil {
     }
 
     private fun getNavBarPrefs(): List<String> {
-        return settings
-            .getString("navigation_bar", "0,1,2,-3,-4")!!
+        val prefs = settings
+            .getString("navigation_bar", DEFAULT_NAV_BAR)!!
             .split(",")
+        // YTindr: the terminal tab was removed, so older 5-item settings fall back to the default
+        return if (prefs.size == 4) prefs else DEFAULT_NAV_BAR.split(",")
     }
+
+    private const val DEFAULT_NAV_BAR = "0,1,2,-3"
 
     private fun getDefaultNavBarItems(context: Context): List<MenuItem> {
         val p = PopupMenu(context, null)

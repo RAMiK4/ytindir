@@ -151,6 +151,7 @@
             app:title="aria2c" />
 
         <SwitchPreferenceCompat
+        app:isPreferenceVisible="false"
             android:widgetLayout="@layout/preferece_material_switch"
             app:defaultValue="false"
             android:icon="@drawable/ic_baseline_file_open_24"
@@ -182,7 +183,8 @@
             app:title="@string/fragment_retries" />
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/scheduling">
+    <PreferenceCategory
+        app:isPreferenceVisible="false" app:title="@string/scheduling">
         <SwitchPreferenceCompat
             android:widgetLayout="@layout/preferece_material_switch"
             app:defaultValue="false"
