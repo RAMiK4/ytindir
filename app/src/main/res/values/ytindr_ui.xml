@@ -37,4 +37,14 @@
     <style name="YTindr.NavLabel.Active">
         <item name="android:textStyle">bold</item>
     </style>
+    <style name="YTindr.Shape.Field" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">14dp</item>
+    </style>
+    <!-- YTindr: indirme kartındaki bölüm başlıkları -->
+    <style name="YTindr.SectionLabel" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+        <item name="android:letterSpacing">0.02</item>
+    </style>
 </resources>

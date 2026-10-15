@@ -650,7 +650,7 @@
     <string name="welcome_restore_failed">Could not restore this backup</string>
     <string name="welcome_restoring">Restoring backup…</string>
     <string name="welcome_guide_title">Read the guide</string>
-    <string name="welcome_guide_summary">The guide covers everything about the app, downloading, command templates and fixing common problems. You can open it any time from the website.</string>
+    <string name="welcome_guide_summary">The guide explains how to use the app, how to download and how to fix common problems. You can open it any time.</string>
     <string name="welcome_open_guide">Open guide</string>
     <string name="welcome_permissions_title">Permissions</string>
     <string name="welcome_permissions_summary">YTindr works best with these. You can change them later in the settings.</string>

@@ -119,6 +119,8 @@ import java.util.Locale
 
 
 object UiUtil {
+    private const val YTINDR_EXTRA_COMMANDS = false
+
     @SuppressLint("SetTextI18n")
     //return filesize
     fun populateFormatCard(context: Context, formatCard : MaterialCardView, chosenFormat: Format, audioFormats: List<Format>? = null, showSize: Boolean = true) : Long {
@@ -1875,7 +1877,8 @@ object UiUtil {
         if (items.size == 1) {
             extraCommands.createBadge(context, if (items.first().extraCommands.isNotBlank()) 1 else 0)
         }
-        if (sharedPreferences.getBoolean("use_extra_commands", false)){
+        // YTindr: extra yt-dlp commands are not offered in the download card
+        if (YTINDR_EXTRA_COMMANDS && sharedPreferences.getBoolean("use_extra_commands", false)){
             extraCommands.visibility = View.VISIBLE
             extraCommands.setOnClickListener {
                 extraCommandsClicked { newExtraCommandString ->
@@ -2142,7 +2145,8 @@ object UiUtil {
         if (items.size == 1) {
             extraCommands.createBadge(context, if (items.first().extraCommands.isNotBlank()) 1 else 0)
         }
-        if (sharedPreferences.getBoolean("use_extra_commands", false)){
+        // YTindr: extra yt-dlp commands are not offered in the download card
+        if (YTINDR_EXTRA_COMMANDS && sharedPreferences.getBoolean("use_extra_commands", false)){
             extraCommands.visibility = View.VISIBLE
             extraCommands.setOnClickListener {
                 extraCommandsClicked { newExtraCommandString ->

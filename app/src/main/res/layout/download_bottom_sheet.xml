@@ -146,6 +146,8 @@
             app:tabGravity="fill"
             app:tabMode="fixed"
             app:tabMinWidth="0dp"
+            app:tabInlineLabel="true"
+            app:tabIconTint="@color/ytindr_tab_icon"
             app:tabIndicator="@drawable/bg_tab_pill"
             app:tabIndicatorColor="?attr/colorPrimaryContainer"
             app:tabIndicatorFullWidth="true"
@@ -159,16 +161,19 @@
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:icon="@drawable/ic_music"
                 android:text="@string/audio" />
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:icon="@drawable/ic_video"
                 android:text="@string/video" />
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:icon="@drawable/ic_terminal"
                 android:text="@string/command" />
 
 

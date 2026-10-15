@@ -199,7 +199,8 @@ class DownloadBottomSheetDialog : BottomSheetDialogFragment() {
             result,
             currentDownloadItem,
             nonSpecific = result.url.endsWith(".txt"),
-            isIncognito = incognito
+            isIncognito = incognito,
+            showCommand = !Patterns.WEB_URL.matcher(result.url).matches()
         )
 
         viewPager2.adapter = fragmentAdapter

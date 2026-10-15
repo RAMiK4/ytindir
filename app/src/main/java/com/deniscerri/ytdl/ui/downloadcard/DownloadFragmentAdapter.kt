@@ -13,7 +13,9 @@ class DownloadFragmentAdapter (
     private var result: ResultItem?,
     private var downloadItem: DownloadItem?,
     nonSpecific: Boolean = false,
-    var isIncognito: Boolean = false
+    var isIncognito: Boolean = false,
+    // YTindr: the command page is only offered for text files, never for normal links
+    private val showCommand: Boolean = true
 ) : FragmentStateAdapter(fragmentManager, lifecycle) {
 
     fun setResultItem(res: ResultItem){
@@ -43,7 +45,7 @@ class DownloadFragmentAdapter (
     )
 
     override fun getItemCount(): Int {
-        return fragments.size
+        return if (showCommand) fragments.size else 2
     }
 
 

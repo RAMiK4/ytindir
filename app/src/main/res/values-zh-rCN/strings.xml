@@ -649,7 +649,7 @@
     <string name="welcome_restore_failed">无法恢复此备份文件</string>
     <string name="welcome_restoring">正在恢复备份…</string>
     <string name="welcome_guide_title">阅读指南</string>
-    <string name="welcome_guide_summary">本指南涵盖了关于这个应用的一切内容，包括下载、命令模板和修复常见问题。你可以随时从网站打开它。</string>
+    <string name="welcome_guide_summary">指南介绍了应用的使用、下载以及常见问题的解决方法。你可以随时打开。</string>
     <string name="welcome_open_guide">打开指南</string>
     <string name="welcome_permissions_title">权限</string>
     <string name="welcome_permissions_summary">YTindr 在获得这些权限情况下运行得最好。你之后可以在设置中更改它们。</string>
@@ -680,4 +680,5 @@
     <string name="lyrics_plain">纯文本</string>
     <string name="embed_lyrics_summary">从 lrclib.net 获取歌词并将它们嵌入音频下载中</string>
     <string name="save_lrc_file_summary">将同步的歌词保存为音频下载文件旁边的 .lrc 文件</string>
+    <string name="based_on_ytdlnis">基于 YTDLnis</string>
 </resources>

@@ -104,13 +104,20 @@ class ConfigureDownloadBottomSheetDialog(private val currentDownloadItem: Downlo
 
 
         val fragmentManager = parentFragmentManager
+        val showCommandPage = currentDownloadItem.type == DownloadType.command ||
+            !android.util.Patterns.WEB_URL.matcher(currentDownloadItem.url).matches()
         fragmentAdapter = DownloadFragmentAdapter(
             fragmentManager,
             lifecycle,
             null,
             currentDownloadItem,
-            isIncognito = incognito
+            isIncognito = incognito,
+            showCommand = showCommandPage
         )
+        // YTindr: no command page for normal links
+        if (!showCommandPage) {
+            (tabLayout.getChildAt(0) as? ViewGroup)?.getChildAt(2)?.visibility = View.GONE
+        }
 
 
         viewPager2.adapter = fragmentAdapter

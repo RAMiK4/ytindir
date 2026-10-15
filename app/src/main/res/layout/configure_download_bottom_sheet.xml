@@ -66,25 +66,41 @@
             android:id="@+id/download_tablayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:backgroundTint="@android:color/transparent"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginVertical="12dp"
+            android:background="@drawable/bg_tab_segment"
+            android:padding="4dp"
             app:tabGravity="fill"
+            app:tabMode="fixed"
             app:tabMinWidth="0dp"
-            app:tabMode="scrollable">
+            app:tabInlineLabel="true"
+            app:tabIconTint="@color/ytindr_tab_icon"
+            app:tabIndicator="@drawable/bg_tab_pill"
+            app:tabIndicatorColor="?attr/colorPrimaryContainer"
+            app:tabIndicatorFullWidth="true"
+            app:tabIndicatorGravity="stretch"
+            app:tabIndicatorAnimationMode="elastic"
+            app:tabRippleColor="@android:color/transparent"
+            app:tabSelectedTextColor="?attr/colorOnPrimaryContainer"
+            app:tabTextColor="?attr/colorOnSurfaceVariant"
+            app:tabTextAppearance="@style/YTindr.TabText">
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:icon="@drawable/ic_music"
                 android:text="@string/audio" />
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:icon="@drawable/ic_video"
                 android:text="@string/video" />
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:icon="@drawable/ic_terminal"
                 android:text="@string/command" />
 
 
