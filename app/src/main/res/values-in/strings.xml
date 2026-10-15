@@ -661,4 +661,6 @@
     <string name="embed_lyrics_summary">Ambil lirik dari lrclib.net dan sematkan ke unduhan audio</string>
     <string name="save_lrc_file_summary">Simpan lirik tersinkron sebagai file .lrc di samping audio</string>
     <string name="based_on_ytdlnis">Berbasis YTDLnis</string>
+    <string name="custom_channels">Fork kustom</string>
+    <string name="custom_channels_summary">Perbarui dari repositori rilis yt-dlp milikmu</string>
 </resources>

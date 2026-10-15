@@ -27,8 +27,10 @@ internal class StreamProcessExtractor(
         try {
             val currentLine = StringBuilder()
             var nextChar: Int
+            // YTindr: decode as UTF-8; reading raw bytes turned "ş", "ç", "—" and Cyrillic into mojibake
+            val reader: Reader = InputStreamReader(stream, StandardCharsets.UTF_8)
 
-            while (stream.read().also { nextChar = it } != -1) {
+            while (reader.read().also { nextChar = it } != -1) {
                 val c = nextChar.toChar()
 
                 if (c == '\r' || c == '\n') {

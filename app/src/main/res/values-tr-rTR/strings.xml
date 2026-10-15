@@ -679,4 +679,6 @@
     <string name="history_quick_action_summary">İndirilenler kartındaki hızlı işlem butonuna basınca yapılacak işlem</string>
     <string name="open_file">Dosyayı aç</string>
     <string name="duration">Süre</string>
+    <string name="custom_channels">Özel fork</string>
+    <string name="custom_channels_summary">Kendi yt-dlp sürüm depolarından güncelle</string>
 </resources>

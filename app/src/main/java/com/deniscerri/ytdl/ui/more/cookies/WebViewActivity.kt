@@ -47,6 +47,7 @@ open class WebViewActivity : BaseActivity() {
     @SuppressLint("SetJavaScriptEnabled")
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        com.deniscerri.ytdl.util.FloatingNavUtil.prewarmWebView(this)
         setContentView(R.layout.webview_activity)
         url = intent.getStringExtra("url") ?: return finish()
         description = intent.getStringExtra("description") ?: ""

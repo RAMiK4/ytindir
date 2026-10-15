@@ -24,6 +24,7 @@ YTindr is a personal download app powered by [yt-dlp](https://github.com/yt-dlp/
 - 🔁 **Self-repair**: yt-dlp updates itself from the nightly channel; if a download fails (for example after a website change), YTindr updates yt-dlp and retries the download once on its own
 - 🔄 **In-app updates**: the app tells you when a new YTindr version is out and installs it for you
 - 📋 **Copy the error log** with one tap
+- 🛡️ **YouTube PO token** support (BgUtils) and **custom yt-dlp sources** for videos that are hard to download
 - 🍪 **Cookie support** for content you open with your own account
 - 🎨 Its own **YTindr** colour tone or **Material You**, in light and dark themes, with a floating glass navigation bar
 - 📶 Downloads over Wi-Fi and mobile data

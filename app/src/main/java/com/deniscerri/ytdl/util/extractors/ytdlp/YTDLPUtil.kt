@@ -1637,7 +1637,17 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
                     request.addOption("-S", formatSorting.joinToString(","))
                 }
 
-                request.addOption("-f", f.toString().replace("/$".toRegex(), ""))
+                var formatString = f.toString().replace("/$".toRegex(), "")
+                if (downloadItem.downloadSections.isNotBlank()) {
+                    // YTindr: cutting goes through ffmpeg, which often fails on HLS (m3u8) audio,
+                    // so an https audio stream is tried first and the chosen one stays as fallback
+                    val first = formatString.substringBefore("/")
+                    if (first.contains("+")) {
+                        val alt = first.substringBefore("+") + "+ba[protocol^=http]"
+                        if (!formatString.startsWith("$alt/")) formatString = "$alt/$formatString"
+                    }
+                }
+                request.addOption("-f", formatString)
 
                 var copyStream = ""
 

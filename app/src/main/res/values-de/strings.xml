@@ -591,4 +591,6 @@
     <string name="embed_lyrics_summary">Liedtexte von lrclib.net holen und in Audio-Downloads einbetten</string>
     <string name="save_lrc_file_summary">Synchronisierte Liedtexte als .lrc-Datei neben dem Audio speichern</string>
     <string name="based_on_ytdlnis">Basiert auf YTDLnis</string>
+    <string name="custom_channels">Eigener Fork</string>
+    <string name="custom_channels_summary">Aus eigenen yt-dlp-Release-Repositorys aktualisieren</string>
 </resources>

@@ -678,4 +678,6 @@
     <string name="embed_lyrics_summary">Récupère les paroles sur lrclib.net et les intègre aux téléchargements audio</string>
     <string name="save_lrc_file_summary">Enregistre les paroles synchronisées en fichier .lrc à côté de l\'audio</string>
     <string name="based_on_ytdlnis">Basé sur YTDLnis</string>
+    <string name="custom_channels">Fork personnalisé</string>
+    <string name="custom_channels_summary">Mettre à jour depuis vos propres dépôts yt-dlp</string>
 </resources>

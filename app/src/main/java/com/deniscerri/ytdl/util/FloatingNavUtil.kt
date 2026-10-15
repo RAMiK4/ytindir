@@ -184,6 +184,28 @@ object FloatingNavUtil {
     private const val BACKDROP_TAG = "ytindr_backdrop"
 
     /**
+     * Creating the first WebView of the process resets the resources' configuration
+     * (day/night and locale) to the system's, so screens inflated afterwards pick up the
+     * wrong theme colours. Create a throwaway WebView once and put the configuration back.
+     */
+    @Suppress("DEPRECATION")
+    fun prewarmWebView(activity: android.app.Activity) {
+        if (webViewWarmed) return
+        val res = activity.resources
+        val appRes = activity.applicationContext.resources
+        val saved = android.content.res.Configuration(res.configuration)
+        val savedApp = android.content.res.Configuration(appRes.configuration)
+        runCatching { android.webkit.WebView(activity).destroy() }
+        runCatching {
+            res.updateConfiguration(saved, res.displayMetrics)
+            appRes.updateConfiguration(savedApp, appRes.displayMetrics)
+        }
+        webViewWarmed = true
+    }
+
+    private var webViewWarmed = false
+
+    /**
      * Text fields inside the download card's pager: a sideways drag moves the text
      * instead of switching between the Audio and Video pages.
      */

@@ -596,4 +596,6 @@
     <string name="embed_lyrics_summary">lrclib.net から歌詞を取得して音声ダウンロードに埋め込みます</string>
     <string name="save_lrc_file_summary">同期された歌詞を音声の横に .lrc ファイルとして保存します</string>
     <string name="based_on_ytdlnis">YTDLnis ベース</string>
+    <string name="custom_channels">カスタムフォーク</string>
+    <string name="custom_channels_summary">自分の yt-dlp リリースリポジトリから更新</string>
 </resources>

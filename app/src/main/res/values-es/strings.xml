@@ -674,4 +674,6 @@
     <string name="embed_lyrics_summary">Obtiene la letra de lrclib.net y la incrusta en las descargas de audio</string>
     <string name="save_lrc_file_summary">Guarda la letra sincronizada como archivo .lrc junto al audio</string>
     <string name="based_on_ytdlnis">Basado en YTDLnis</string>
+    <string name="custom_channels">Fork personalizado</string>
+    <string name="custom_channels_summary">Actualiza desde tus propios repositorios de yt-dlp</string>
 </resources>

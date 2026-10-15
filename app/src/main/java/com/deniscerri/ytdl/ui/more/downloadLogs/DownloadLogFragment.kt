@@ -31,6 +31,8 @@ import com.deniscerri.ytdl.MainActivity
 import com.deniscerri.ytdl.R
 import com.deniscerri.ytdl.database.viewmodel.LogViewModel
 import com.deniscerri.ytdl.util.FileUtil
+import com.deniscerri.ytdl.util.FloatingNavUtil
+import com.google.android.material.color.MaterialColors
 import com.deniscerri.ytdl.util.WorkerEventBus
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomappbar.BottomAppBar
@@ -67,6 +69,9 @@ class DownloadLogFragment : Fragment() {
         mainActivity = activity as MainActivity
         mainActivity.hideBottomNavigation()
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
+        // YTindr: the first WebView of the process resets the app's day/night configuration,
+        // which turned this screen and the rest of the app light. Warm it up and restore first.
+        FloatingNavUtil.prewarmWebView(requireActivity())
         return inflater.inflate(R.layout.fragment_download_log, container, false)
     }
 
@@ -203,7 +208,8 @@ class DownloadLogFragment : Fragment() {
 
         val fontSize = sharedPreferences.getFloat("log_zoom", 2f) + 13f
         val whiteSpace = if (sharedPreferences.getBoolean("wrap_text_log", false)) "pre-wrap" else "pre"
-        val baseHtml = buildHtmlWrapper(fontSize, whiteSpace)
+        val textColor = String.format("#%06X", 0xFFFFFF and MaterialColors.getColor(view, com.google.android.material.R.attr.colorOnSurface))
+        val baseHtml = buildHtmlWrapper(fontSize, whiteSpace, textColor)
 
         webView.loadDataWithBaseURL("https://appassets.androidplatform.net/", baseHtml, "text/html", "UTF-8", null)
 
@@ -244,7 +250,7 @@ class DownloadLogFragment : Fragment() {
         webView.evaluateJavascript("scrollToBottom();", null)
     }
 
-    private fun buildHtmlWrapper(fontSizePx: Float, whiteSpaceMode: String): String {
+    private fun buildHtmlWrapper(fontSizePx: Float, whiteSpaceMode: String, textColor: String): String {
         val wordBreakMode = if (whiteSpaceMode == "pre-wrap") "break-all" else "normal"
         val overflowXMode = if (whiteSpaceMode == "pre-wrap") "hidden" else "auto"
 
@@ -272,6 +278,7 @@ class DownloadLogFragment : Fragment() {
                 overflow-x: $overflowXMode;
             }
             #log-content {
+                color: $textColor;
                 font-family: monospace;
                 font-size: ${fontSizePx}px;
                 white-space: $whiteSpaceMode;

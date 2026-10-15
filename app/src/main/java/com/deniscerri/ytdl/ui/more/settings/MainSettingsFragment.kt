@@ -130,6 +130,14 @@ class MainSettingsFragment : PreferenceFragmentCompat() {
             true
         }
 
+        findPreference<Preference>("youtube_po_token")?.apply {
+            summary = "YouTube · BgUtils"
+            setOnPreferenceClickListener {
+                navController.navigate(R.id.generateYoutubePoTokensFragment)
+                true
+            }
+        }
+
         val advanced = findPreference<Preference>("advanced")
         advanced?.summary = "PO Token$separator ${getString(R.string.other_youtube_extractor_args)}"
         advanced?.setOnPreferenceClickListener {

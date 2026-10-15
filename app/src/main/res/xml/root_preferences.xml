@@ -26,6 +26,12 @@
         app:icon="@drawable/ic_update"
         android:title="@string/updating"/>
 
+    <!-- YTindr: YouTube PO token (BgUtils) for videos that need it -->
+    <Preference
+        android:key="youtube_po_token"
+        app:icon="@drawable/baseline_security_24"
+        android:title="@string/generate_potokens"/>
+
     <Preference
         app:isPreferenceVisible="false"
         android:key="advanced"

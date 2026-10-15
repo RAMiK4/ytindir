@@ -23,6 +23,7 @@ YTindr, [yt-dlp](https://github.com/yt-dlp/yt-dlp) kullanan kişisel bir indirme
 - 📤 **Paylaş menüsünden indirme**: bir uygulamada "Paylaş"a basıp linki direkt indirme
 - 🔁 **Kendini onarma**: yt-dlp nightly kanalından otomatik güncellenir; bir indirme hata verirse (örneğin bir site değişikliği yüzünden) yt-dlp'yi güncelleyip indirmeyi bir kez daha kendiliğinden dener
 - 📋 **Hata kaydını tek dokunuşla kopyalama**
+- 🛡️ **YouTube PO token** desteği (BgUtils) ve indirmesi zor videolar için **özel yt-dlp kaynakları**
 - 🍪 Çerez desteği: kendi hesabınızla açtığınız içerikler için
 - 🎨 Kendi **YTindr** renk tonu ya da **Material You**; açık ve koyu tema
 - 📶 Wi-Fi ve mobil veride indirme
