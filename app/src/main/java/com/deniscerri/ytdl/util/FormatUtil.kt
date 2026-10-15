@@ -100,11 +100,25 @@ class FormatUtil(private var context: Context) {
     }
 
 
+    private fun isDirectAudio(f: Format): Boolean {
+        val url = f.url.orEmpty()
+        if (url.contains("m3u8") || url.contains("/manifest/")) return false
+        val codec = f.acodec.trim().lowercase()
+        return codec.isNotEmpty() && codec != "none" && codec != "?" && codec != "null"
+    }
+
     @SuppressLint("RestrictedApi")
     fun sortAudioFormats(formats: List<Format>, forVideoDownload: Boolean = false) : List<Format> {
         val orderPreferences = getAudioFormatImportance(forVideoDownload)
+        // YTindr: "default/original" only means something when the video has several audio languages
+        val multipleLanguages = formats.mapNotNull { it.lang?.takeIf { l -> l.isNotBlank() } }.distinct().size > 1
 
         val comparator = Comparator<Format> { a, b ->
+            // YTindr: prefer plain https streams with a known codec over HLS (m3u8) ones, which have
+            // no codec or size and break cutting; otherwise the chosen codec and container were ignored
+            val direct = isDirectAudio(b).compareTo(isDirectAudio(a))
+            if (direct != 0) return@Comparator direct
+
             if ("prefer_drc" in orderPreferences) {
                 val comparison = (b.format_note.contains("drc", ignoreCase = true)).compareTo(
                     a.format_note.contains("drc", ignoreCase = true)
@@ -132,7 +146,8 @@ class FormatUtil(private var context: Context) {
                         val defaults = listOf("original", "default")
 
                         if (audioLanguagePreference.isBlank()) {
-                            (defaults.any { b.format_note.contains(it, true) }).compareTo(
+                            if (!multipleLanguages) 0
+                            else (defaults.any { b.format_note.contains(it, true) }).compareTo(
                                 defaults.any { a.format_note.contains(it, true) }
                             )
                         } else {

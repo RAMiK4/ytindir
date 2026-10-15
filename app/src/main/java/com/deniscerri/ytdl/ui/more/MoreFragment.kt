@@ -86,7 +86,6 @@ class MoreFragment : Fragment() {
 
         // YTindr: hidden features
         terminal.isVisible = false
-        logs.isVisible = false
         commandTemplates.isVisible = false
         observeSources.isVisible = false
 
