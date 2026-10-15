@@ -65,20 +65,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
 
-        </com.google.android.material.chip.ChipGroup>
-
-
-    </HorizontalScrollView>
-
-    <HorizontalScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:scrollbars="none">
-
-        <com.google.android.material.chip.ChipGroup
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:singleLine="true">
+        
 
 
             <com.google.android.material.chip.Chip
@@ -144,7 +131,10 @@
 
         </com.google.android.material.chip.ChipGroup>
 
+
     </HorizontalScrollView>
+
+    
 
     <HorizontalScrollView
         android:scrollbars="none"

@@ -53,6 +53,9 @@
         <item name="android:windowBackground">@drawable/bg_dialog</item>
         <item name="backgroundTint">?attr/colorSurfaceContainerHigh</item>
         <item name="elevationOverlayEnabled">false</item>
+        <!-- the dialog's own surface; also keeps it visible in the pure black (high contrast) theme -->
+        <item name="colorSurface">?attr/colorSurfaceContainerHigh</item>
+        <item name="android:colorBackground">?attr/colorSurfaceContainerHigh</item>
         <item name="materialAlertDialogTitleTextStyle">@style/YTindr.DialogTitle</item>
         <item name="shapeAppearanceOverlay">@style/YTindr.Shape.Dialog</item>
     </style>

@@ -131,7 +131,70 @@ def find_lyrics(track, artist, album, duration, lrclib_id=None):
     return None
 
 
+def _syncsafe(n):
+    return bytes([(n >> 21) & 0x7F, (n >> 14) & 0x7F, (n >> 7) & 0x7F, n & 0x7F])
+
+
+def _unsyncsafe(b):
+    return (b[0] << 21) | (b[1] << 14) | (b[2] << 7) | b[3]
+
+
+def _id3_add_uslt(path, text):
+    """YTindr: writes an ID3 USLT (lyrics) frame without mutagen."""
+    with open(path, 'rb') as f:
+        data = f.read()
+    if data[:3] == b'ID3':
+        ver, flags = data[3], data[5]
+        if flags & 0xC0:  # unsynchronisation / extended header: leave such files alone
+            raise ValueError('unsupported ID3 header')
+        size = _unsyncsafe(data[6:10])
+        tag, audio = data[10:10 + size], data[10 + size:]
+    else:
+        ver, flags, tag, audio = 4, 0, b'', data
+    if ver >= 4:
+        body = b'\x03eng\x00' + text.encode('utf-8')
+        fsize = _syncsafe(len(body))
+    else:
+        body = b'\x01eng\xff\xfe\x00\x00' + text.encode('utf-16-le')
+        fsize = len(body).to_bytes(4, 'big')
+    frame = b'USLT' + fsize + b'\x00\x00' + body
+    new_tag = frame + tag
+    header = b'ID3' + bytes([ver, 0, flags]) + _syncsafe(len(new_tag))
+    tmp = path + '.lyrics.tmp'
+    with open(tmp, 'wb') as f:
+        f.write(header + new_tag + audio)
+    os.replace(tmp, path)
+
+
+def _ffmpeg_lyrics(path, text, key):
+    """YTindr: fallback for m4a/opus/flac when mutagen is not available."""
+    import subprocess
+    ext = os.path.splitext(path)[1]
+    tmp = path + '.lyrics' + ext
+    res = subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', path, '-map', '0', '-c', 'copy',
+                          '-map_metadata', '0', '-metadata', f'{key}={text}', tmp],
+                         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    if res.returncode != 0 or not os.path.exists(tmp):
+        raise ValueError(res.stderr.decode('utf-8', 'replace').strip() or 'ffmpeg failed')
+    os.replace(tmp, path)
+
+
 def embed(path, text, synced):
+    try:
+        _embed_mutagen(path, text, synced)
+    except ImportError:
+        ext = os.path.splitext(path)[1].lower().lstrip('.')
+        if ext == 'mp3':
+            _id3_add_uslt(path, text)
+        elif ext in ('m4a', 'mp4'):
+            _ffmpeg_lyrics(path, text, 'lyrics')
+        elif ext in ('opus', 'ogg', 'oga', 'flac'):
+            _ffmpeg_lyrics(path, text, 'LYRICS')
+        else:
+            raise
+
+
+def _embed_mutagen(path, text, synced):
     ext = os.path.splitext(path)[1].lower().lstrip('.')
 
     if ext == 'mp3':
