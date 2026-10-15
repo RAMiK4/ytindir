@@ -1,7 +1,0 @@
-# What's Changed
-
-- App now can show FFmpeg output in the download card to avoid confusion on cases where it might appear as if the download is stuck but its running a ffmpeg subprocess
-- App can now downgrade to stable when in beta. You will get a popup to update to the prev stable release if you installed from github and had use beta disabled
-- Fixed app crashing if yt-dlp sources in preferences is badly written
-- Fixed app having multiple columns for format items instead of just one #800
-and more

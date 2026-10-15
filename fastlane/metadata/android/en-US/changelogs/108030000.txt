@@ -1,8 +1,0 @@
-# What's Changed
-
-- Added ability to automatically generate Po Tokens and Visitor Data
-- Fixed auto resume not working #727
-- Applied "Prefer Container over Codec" preference on default format sorting
-- Added automatic Backup
-- Added milliseconds in the cut section
-and more

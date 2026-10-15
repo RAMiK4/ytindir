@@ -3,6 +3,12 @@ name: YTindr APK
 on:
   push:
     branches: [main]
+    # documentation-only changes don't need a new release
+    paths-ignore:
+      - '**.md'
+      - '**.MD'
+      - 'docs/**'
+      - 'fastlane/**'
   workflow_dispatch:
 
 permissions:

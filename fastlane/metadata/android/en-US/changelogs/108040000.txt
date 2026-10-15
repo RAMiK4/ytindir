@@ -1,9 +1,0 @@
-# What's Changed
-## Added ability to set custom url for home recommendations
-## Formats list screen is reworked. Now it will open instantly and wont be prone to crashes and lag
-
-- Fixed app not continuously starting queued items
-- Fixed app not properly cancelling all downloads when cancel all is pressed
-- Fixed app not properly showing yt-dlp version sometimes in updating settings
-- Fixed app crashing sometimes when restoring settings with po token config
-and more

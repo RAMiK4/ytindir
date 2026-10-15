@@ -1,8 +1,0 @@
-# What's Changed
-
-- Fix app sometimes giving you dubbed audio format instead of original audio
-- Fix app crashing sometimes when pasting a link to terminal, also btw u can enable color highlight if disabled, wont crash the app i guess
-- Make sponsorblock preference clear by default
-- For playlists app now uses --lazy-playlist to load large playlists continuously in pages like newpipe does, its faster
-- Enable / Disable certain cookie records instead of all at once
-and more

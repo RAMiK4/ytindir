@@ -24,8 +24,9 @@ YTindr, [yt-dlp](https://github.com/yt-dlp/yt-dlp) kullanan kişisel bir indirme
 - 🔁 **Kendini onarma**: yt-dlp nightly kanalından otomatik güncellenir; bir indirme hata verirse (örneğin bir site değişikliği yüzünden) yt-dlp'yi güncelleyip indirmeyi bir kez daha kendiliğinden dener
 - 📋 **Hata kaydını tek dokunuşla kopyalama**
 - 🛡️ **YouTube PO token** desteği (BgUtils) ve indirmesi zor videolar için **özel yt-dlp kaynakları**
+- 🎤 **Senkronize şarkı sözleri**: lrclib.net'ten bulunur, uygulamada önizlenir ve ses dosyasına gömülür
 - 🍪 Çerez desteği: kendi hesabınızla açtığınız içerikler için
-- 🎨 Kendi **YTindr** renk tonu ya da **Material You**; açık ve koyu tema
+- 🎨 Kendi **YTindr** renk tonu ya da **Material You**; açık ve koyu tema, yüksek kontrast modu
 - 📶 Wi-Fi ve mobil veride indirme
 - 🔄 Uygulama içi güncelleme: yeni sürüm çıkınca uygulama haber verir
 - 🌍 12 dil: İngilizce, Türkçe, Rusça, İspanyolca, Portekizce (Brezilya), Almanca, Fransızca, Arapça, Endonezce, Çince, Japonca ve Korece
