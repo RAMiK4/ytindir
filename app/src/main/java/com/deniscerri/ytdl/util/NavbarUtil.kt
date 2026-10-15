@@ -86,7 +86,8 @@ object NavbarUtil {
         return if (prefs.size == 4) prefs else DEFAULT_NAV_BAR.split(",")
     }
 
-    private const val DEFAULT_NAV_BAR = "0,1,2,-3"
+    // YTindr: Home, Queue, Downloads, More
+    private const val DEFAULT_NAV_BAR = "0,3,1,2"
 
     private fun getDefaultNavBarItems(context: Context): List<MenuItem> {
         val p = PopupMenu(context, null)

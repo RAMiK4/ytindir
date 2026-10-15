@@ -6,8 +6,7 @@
     <path android:pathData="M100,8 A92,92 0 1 1 99.99,8 Z" android:fillColor="?attr/colorPrimaryContainer" android:fillAlpha="0.35"/>
     <path android:pathData="M100,30 A70,70 0 1 1 99.99,30 Z" android:fillColor="?attr/colorPrimaryContainer" android:fillAlpha="0.55"/>
     <group android:scaleX="0.62" android:scaleY="0.62" android:translateX="38" android:translateY="38">
-        <path pathData="M100.0,32.0 L148.5,60.0 L148.5,116.0 L100.0,144.0 L51.5,116.0 L51.5,60.0 L100.0,32.0 M64,147.22 L100,168.0 L136,147.22 M72,79 L72,97 M86,71 L86,105 M100,63 L100,113 M114,71 L114,105 M128,79 L128,97"
-            android:strokeColor="?attr/colorPrimary" android:strokeWidth="11"
+        <path android:pathData="M44,40 L100,84 L156,40 L100,138 Z M74,154 L126,154 A12,12 0 0 1 126,178 L74,178 A12,12 0 0 1 74,154 Z M54,16 L54,20 M54,30 L54,34 M45,25 L49,25 M59,25 L63,25 M146,17 L152,22 L146,27 M155,98 A5,5 0 1 1 165,98 A5,5 0 1 1 155,98 Z M40.5,146 A3.5,3.5 0 1 1 47.5,146 A3.5,3.5 0 1 1 40.5,146 Z" android:strokeColor="?attr/colorPrimary" android:strokeWidth="9"
             android:strokeLineCap="round" android:strokeLineJoin="round" android:fillColor="#00000000"/>
     </group>
 </vector>
