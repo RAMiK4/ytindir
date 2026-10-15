@@ -48,4 +48,20 @@
         <item name="android:letterSpacing">0.02</item>
     </style>
     <color name="ytindr_backdrop_scrim">#B8F0F0F0</color>
+    <!-- YTindr: diyaloglar - nötr koyu yüzey, ince çerçeve, kalın başlık, yeşil vurgu -->
+    <style name="ThemeOverlay.YTindr.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="android:windowBackground">@drawable/bg_dialog</item>
+        <item name="backgroundTint">?attr/colorSurfaceContainerHigh</item>
+        <item name="elevationOverlayEnabled">false</item>
+        <item name="materialAlertDialogTitleTextStyle">@style/YTindr.DialogTitle</item>
+        <item name="shapeAppearanceOverlay">@style/YTindr.Shape.Dialog</item>
+    </style>
+    <style name="YTindr.DialogTitle" parent="MaterialAlertDialog.Material3.Title.Text">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">22sp</item>
+    </style>
+    <style name="YTindr.Shape.Dialog" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">28dp</item>
+    </style>
 </resources>

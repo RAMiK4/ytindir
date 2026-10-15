@@ -8,7 +8,7 @@ import urllib.request
 from yt_dlp.postprocessor.common import PostProcessor
 
 API = 'https://lrclib.net/api'
-USER_AGENT = 'YTDLnis (https://github.com/deniscerri/ytdlnis)'
+USER_AGENT = 'YTindr (https://github.com/RAMiK4/ytindr)'
 DURATION_TOLERANCE = 5
 
 _LRC_STAMP = re.compile(r'\[(\d+):(\d+(?:\.\d+)?)\]')
@@ -25,10 +25,29 @@ def _get_json(path, params=None):
     try:
         with urllib.request.urlopen(req, timeout=10) as res:
             return json.loads(res.read().decode('utf-8'))
-    except urllib.error.HTTPError as e:
-        if e.code == 404:
-            return None
-        raise
+    except urllib.error.HTTPError:
+        # YTindr: a 400/404 on one attempt must not stop the other attempts
+        return None
+
+
+_FEAT_PART = re.compile(r'\s*[\(\[]\s*(?:feat|ft)\.?\s[^\)\]]*[\)\]]', re.IGNORECASE)
+_FEAT_TAIL = re.compile(r'\s+(?:feat|ft)\.?\s.*$', re.IGNORECASE)
+
+
+def clean_artist(artist):
+    """'Shakira and 2 more' / 'Shakira, Burna Boy' / 'Artist - Topic' -> 'Shakira'"""
+    a = re.sub(r'\s*-\s*Topic$', '', artist or '', flags=re.IGNORECASE)
+    a = re.sub(r'\s+and\s+\d+\s+more$', '', a, flags=re.IGNORECASE)
+    a = re.split(r'\s*(?:,|&|\bx\b|\bfeat\.?|\bft\.?|\bve\b|\band\b)\s*', a, flags=re.IGNORECASE)[0]
+    return a.strip()
+
+
+def clean_title(track):
+    t = _JUNK_BRACKETS.sub('', track or '')
+    t = _FEAT_PART.sub('', t)
+    t = t.split('|')[0]
+    t = _FEAT_TAIL.sub('', t)
+    return t.strip().strip('- ').strip()
 
 
 def parse_lrc(text):
@@ -54,7 +73,7 @@ def format_lrc(lines, offset=0):
     return '\n'.join(out)
 
 
-def _pick(results, duration):
+def _pick(results, duration, tolerance=DURATION_TOLERANCE):
     best = None
     for r in results or []:
         if r.get('instrumental'):
@@ -62,7 +81,7 @@ def _pick(results, duration):
         if not (r.get('syncedLyrics') or r.get('plainLyrics')):
             continue
         diff = abs((r.get('duration') or 0) - duration) if duration else 0
-        if duration and diff > DURATION_TOLERANCE:
+        if duration and diff > tolerance:
             continue
         # synced lyrics first, then closest duration
         key = (0 if r.get('syncedLyrics') else 1, diff)
@@ -75,22 +94,38 @@ def find_lyrics(track, artist, album, duration, lrclib_id=None):
     if lrclib_id:
         return _get_json(f'get/{lrclib_id}')
 
-    track_clean = _JUNK_BRACKETS.sub('', track).strip()
-    if track_clean.lower().startswith(artist.lower() + ' - '):
-        track_clean = track_clean[len(artist) + 3:]
+    channel_artist = clean_artist(artist)
+    # "Artist | Title" uploads: keep the part that is not the artist
+    parts = [p.strip() for p in (track or '').split('|') if p.strip()]
+    if len(parts) > 1 and channel_artist and clean_artist(parts[0]).lower() == channel_artist.lower():
+        track = ' | '.join(parts[1:])
+    title = clean_title(track)
+    title_artist = ''
+    if ' - ' in title:
+        left, right = title.split(' - ', 1)
+        title_artist = clean_artist(left)
+        title = clean_title(right)
+    artists = [a for i, a in enumerate([title_artist, channel_artist]) if a and a not in [title_artist, channel_artist][:i]]
 
-    if artist:
+    if artists:
         res = _get_json('get', {
-            'track_name': track_clean, 'artist_name': artist,
+            'track_name': title, 'artist_name': artists[0],
             'album_name': album, 'duration': duration or None})
         if res and (res.get('syncedLyrics') or res.get('plainLyrics')):
             return res
 
-    for params in (
-        {'track_name': track_clean, 'artist_name': artist},
-        {'q': f'{artist} {track_clean}'.strip()},
-    ):
-        res = _pick(_get_json('search', params), duration)
+    searches = [{'track_name': title, 'artist_name': a} for a in artists] + \
+               [{'q': f'{a} {title}'} for a in artists] + [{'q': title}]
+    responses = []
+    for params in searches:
+        results = _get_json('search', params)
+        res = _pick(results, duration)
+        if res:
+            return res
+        responses.append(results)
+    # video uploads are often longer than the song (intro, outro), so allow more slack
+    for results in responses:
+        res = _pick(results, duration, 45)
         if res:
             return res
     return None

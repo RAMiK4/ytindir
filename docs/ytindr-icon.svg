@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 200 200">
+  <title>YTindr</title>
+  <defs>
+    <radialGradient id="bg" cx="30%" cy="20%" r="100%">
+      <stop offset="0" stop-color="#262626"/>
+      <stop offset="1" stop-color="#0F0F0F"/>
+    </radialGradient>
+    <linearGradient id="line" gradientUnits="userSpaceOnUse" x1="40" y1="175" x2="160" y2="25">
+      <stop offset="0" stop-color="#00FF88"/>
+      <stop offset="1" stop-color="#19C6FF"/>
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="5"/>
+    </filter>
+  </defs>
+  <rect width="200" height="200" rx="44" fill="url(#bg)"/>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <g stroke="#00FF88" stroke-width="13" opacity="0.45" filter="url(#glow)">
+      <path d="M44,34 L100,78 L156,34 L100,132 Z"/>
+      <rect x="62" y="150" width="76" height="16" rx="4"/>
+    </g>
+    <g stroke="url(#line)" stroke-width="9">
+      <path d="M44,34 L100,78 L156,34 L100,132 Z"/>
+      <rect x="62" y="150" width="76" height="16" rx="4"/>
+    </g>
+  </g>
+</svg>

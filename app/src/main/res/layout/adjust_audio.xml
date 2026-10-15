@@ -50,6 +50,7 @@
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/split_by_chapters"
+                android:visibility="gone"
                 style="@style/Widget.Material3.Chip.Filter.Elevated"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

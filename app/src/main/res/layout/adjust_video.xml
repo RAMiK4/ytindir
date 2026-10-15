@@ -38,6 +38,7 @@
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chapters"
+                android:visibility="gone"
                 style="@style/Widget.Material3.Chip.Assist.Elevated"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -113,6 +114,7 @@
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/recode_video"
+                android:visibility="gone"
                 style="@style/Widget.Material3.Chip.Assist.Elevated"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -124,6 +126,7 @@
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/adjust_live_stream"
+                android:visibility="gone"
                 style="@style/Widget.Material3.Chip.Assist.Elevated"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

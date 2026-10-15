@@ -3,7 +3,6 @@
     android:width="108dp" android:height="108dp"
     android:viewportWidth="108" android:viewportHeight="108">
     <group android:scaleX="0.36" android:scaleY="0.36" android:translateX="18" android:translateY="18">
-        <path android:pathData="M44,40 L100,84 L156,40 L100,138 Z M74,154 L126,154 A12,12 0 0 1 126,178 L74,178 A12,12 0 0 1 74,154 Z" android:strokeWidth="10" android:strokeAlpha="1" android:strokeLineCap="round" android:strokeLineJoin="round" android:fillColor="#00000000" android:strokeColor="#FFFFFFFF"/>
-        <path android:pathData="M54,16 L54,20 M54,30 L54,34 M45,25 L49,25 M59,25 L63,25 M146,17 L152,22 L146,27 M155,98 A5,5 0 1 1 165,98 A5,5 0 1 1 155,98 Z M40.5,146 A3.5,3.5 0 1 1 47.5,146 A3.5,3.5 0 1 1 40.5,146 Z" android:strokeWidth="6" android:strokeAlpha="1" android:strokeLineCap="round" android:strokeLineJoin="round" android:fillColor="#00000000" android:strokeColor="#FFFFFFFF"/>
+        <path android:pathData="M44,34 L100,78 L156,34 L100,132 Z M66,150 L134,150 A4,4 0 0 1 138,154 L138,162 A4,4 0 0 1 134,166 L66,166 A4,4 0 0 1 62,162 L62,154 A4,4 0 0 1 66,150 Z" android:strokeWidth="10" android:strokeAlpha="1" android:strokeLineCap="round" android:strokeLineJoin="round" android:fillColor="#00000000" android:strokeColor="#FFFFFFFF"/>
     </group>
 </vector>
