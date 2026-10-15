@@ -1,5 +1,6 @@
 package com.deniscerri.ytdl.util
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.res.ColorStateList
 import android.graphics.RenderEffect
@@ -8,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.Gravity
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -180,6 +182,33 @@ object FloatingNavUtil {
     }
 
     private const val BACKDROP_TAG = "ytindr_backdrop"
+
+    /**
+     * Text fields inside the download card's pager: a sideways drag moves the text
+     * instead of switching between the Audio and Video pages.
+     */
+    @SuppressLint("ClickableViewAccessibility")
+    fun keepHorizontalDrag(view: View?) {
+        view ?: return
+        var startX = 0f
+        var startY = 0f
+        view.setOnTouchListener { v, e ->
+            when (e.actionMasked) {
+                MotionEvent.ACTION_DOWN -> {
+                    startX = e.x; startY = e.y
+                    v.parent?.requestDisallowInterceptTouchEvent(true)
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    val dx = kotlin.math.abs(e.x - startX)
+                    val dy = kotlin.math.abs(e.y - startY)
+                    // a mostly vertical drag still scrolls the card
+                    if (dy > dx * 1.5f && dy > 12f) v.parent?.requestDisallowInterceptTouchEvent(false)
+                }
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> v.parent?.requestDisallowInterceptTouchEvent(false)
+            }
+            false
+        }
+    }
 
     private fun dp(context: android.content.Context, value: Int): Int =
         TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, value.toFloat(), context.resources.displayMetrics).toInt()

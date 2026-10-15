@@ -113,7 +113,7 @@
 
             <Button
                 android:id="@+id/bottomsheet_download_button"
-                style="@style/Widget.Material3.Button.Icon"
+                style="@style/Widget.Material3.Button.TonalButton.Icon"
                 android:layout_width="wrap_content"
                 android:layout_height="44dp"
                 android:insetTop="0dp"
@@ -143,7 +143,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="4dp"
             android:background="@drawable/bg_tab_segment"
-            android:padding="3dp"
             app:tabGravity="fill"
             app:tabMode="fixed"
             app:tabMinWidth="0dp"

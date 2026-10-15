@@ -677,7 +677,8 @@
     <string name="welcome_subtitle">yt-dlp로 비디오와 오디오를 다운로드하세요. 먼저 몇 가지 설정을 해 봅시다.</string>
     <string name="clear">지우기</string>
     <string name="write_ytdlp_terminal">터미널에 yt-dlp 자동으로 쓰기</string>
-    <string name="welcome_guide_summary">이 도움말은 앱의 전반적인 사용법, 다운로드, 명령 템플릿, 일반적인 문제 해결 방법을 다룹니다. 웹사이트에서 언제든지 열 수 있습니다.</string>
+    <string name="welcome_guide_summary">가이드에서는 앱 사용법, 다운로드 방법, 자주 발생하는 문제 해결 방법을 설명합니다. 언제든지 열 수 있습니다.</string>
     <string name="lyrics_source">lrclib.net에서 가사 제공</string>
     <string name="merge_cuts">자른 조각을 한 파일로 병합</string>
+    <string name="based_on_ytdlnis">YTDLnis 기반</string>
 </resources>

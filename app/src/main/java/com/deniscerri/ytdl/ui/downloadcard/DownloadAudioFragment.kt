@@ -1,5 +1,6 @@
 package com.deniscerri.ytdl.ui.downloadcard
 
+import com.deniscerri.ytdl.util.FloatingNavUtil
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
@@ -131,6 +132,7 @@ class DownloadAudioFragment(private var resultItem: ResultItem? = null, private 
                     }
                 })
 
+                FloatingNavUtil.keepHorizontalDrag(title.editText)
                 author = view.findViewById(R.id.author_textinput)
                 author.visibility = if (shownFields.contains("author") && !nonSpecific) View.VISIBLE else View.GONE
                 if (author.editText?.text?.isEmpty() == true){
@@ -144,6 +146,7 @@ class DownloadAudioFragment(private var resultItem: ResultItem? = null, private 
                         downloadItem.author = p0.toString()
                     }
                 })
+                FloatingNavUtil.keepHorizontalDrag(author.editText)
 
                 if (savedInstanceState?.containsKey("updated") == true){
                     if (!listOf(resultItem?.title, downloadItem.title).contains(title.editText?.text.toString())){

@@ -27,7 +27,7 @@ YTindr, [yt-dlp](https://github.com/yt-dlp/yt-dlp) kullanan kişisel bir indirme
 - 🎨 Kendi **YTindr** renk tonu ya da **Material You**; açık ve koyu tema
 - 📶 Wi-Fi ve mobil veride indirme
 - 🔄 Uygulama içi güncelleme: yeni sürüm çıkınca uygulama haber verir
-- 🌍 10 dil: İngilizce, Türkçe, Rusça, İspanyolca, Portekizce (Brezilya), Almanca, Fransızca, Arapça, Endonezce ve Çince
+- 🌍 12 dil: İngilizce, Türkçe, Rusça, İspanyolca, Portekizce (Brezilya), Almanca, Fransızca, Arapça, Endonezce, Çince, Japonca ve Korece
 
 ## 🙈 Gizlenen özellikler
 

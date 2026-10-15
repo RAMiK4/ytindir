@@ -27,7 +27,7 @@ YTindr is a personal download app powered by [yt-dlp](https://github.com/yt-dlp/
 - 🍪 **Cookie support** for content you open with your own account
 - 🎨 Its own **YTindr** colour tone or **Material You**, in light and dark themes, with a floating glass navigation bar
 - 📶 Downloads over Wi-Fi and mobile data
-- 🌍 **10 languages**: English, Turkish, Russian, Spanish, Portuguese (Brazil), German, French, Arabic, Indonesian and Chinese (Simplified)
+- 🌍 **12 languages**: English, Turkish, Russian, Spanish, Portuguese (Brazil), German, French, Arabic, Indonesian, Chinese (Simplified), Japanese and Korean
 
 ## 🙈 Hidden features
 

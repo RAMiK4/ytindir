@@ -10,7 +10,7 @@ plugins {
 
 def properties = new Properties()
 def versionMajor = 1
-def versionMinor = 7
+def versionMinor = 8
 def versionPatch = 0
 def versionBuild = 0 // bump for dogfood builds, public betas, etc.
 //WHEN RELEASING BETA KEEP THE SAME VERSION AS LATEST STABLE, SO USERS CAN DOWNGRADE
@@ -70,8 +70,8 @@ android {
         versionCode versionMajor * 10000000 + versionMinor * 100000 + versionPatch * 1000 + ciBuildNumber
         versionName "${versionMajor}.${versionMinor}.${versionPatch}${versionExt}"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        // YTindr: ship the 10 main languages only (smaller APK)
-        resourceConfigurations += ["en", "tr", "tr-rTR", "ru", "es", "pt-rBR", "de", "fr", "ar", "in", "zh-rCN"]
+        // YTindr: ship the 12 main languages only (smaller APK)
+        resourceConfigurations += ["en", "tr", "tr-rTR", "ru", "es", "pt-rBR", "de", "fr", "ar", "in", "zh-rCN", "ja", "ko"]
         archivesBaseName = "YTindr-$versionName"
         // YTindr: the CI build number, used to compare against release tags (v1.3.0-build9)
         buildConfigField "int", "CI_BUILD", "${ciBuildNumber}"
