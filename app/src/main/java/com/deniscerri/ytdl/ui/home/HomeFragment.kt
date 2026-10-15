@@ -1,5 +1,10 @@
 package com.deniscerri.ytdl.ui.home
 
+import com.squareup.picasso.Picasso
+import androidx.core.widget.ImageViewCompat
+import android.widget.TextView
+import android.widget.ImageView
+import com.google.android.material.card.MaterialCardView
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ClipboardManager
@@ -104,6 +109,7 @@ class HomeFragment : Fragment(), HomeAdapter.OnItemClickListener, SearchSuggesti
     private var downloadSelectedFab: ExtendedFloatingActionButton? = null
     private var downloadAllFab: ExtendedFloatingActionButton? = null
     private var clipboardFab: ExtendedFloatingActionButton? = null
+    private var clipboardCard: MaterialCardView? = null
     private var homeFabs: LinearLayout? = null
     private var notificationUtil: NotificationUtil? = null
     private var downloadQueue: ArrayList<ResultItem>? = null
@@ -179,6 +185,7 @@ class HomeFragment : Fragment(), HomeAdapter.OnItemClickListener, SearchSuggesti
         downloadSelectedFab = homeFabs!!.findViewById(R.id.download_selected_fab)
         downloadAllFab = homeFabs!!.findViewById(R.id.download_all_fab)
         clipboardFab = homeFabs!!.findViewById(R.id.copied_url_fab)
+        clipboardCard = homeFabs!!.findViewById(R.id.clipboard_card)
         playlistNameFilterScrollView = view.findViewById(R.id.playlist_selection_chips_scrollview)
         playlistNameFilterChipGroup = view.findViewById(R.id.playlist_selection_chips)
 
@@ -417,12 +424,13 @@ class HomeFragment : Fragment(), HomeAdapter.OnItemClickListener, SearchSuggesti
             checkClipboard().apply {
                 this?.apply {
                     showClipboardFab = this.isNotEmpty()
-                    clipboardFab?.isVisible = showClipboardFab
+                    bindClipboardCard(this)
+                    setClipboardVisible(showClipboardFab)
                     clipboardFab?.setOnClickListener {
                         if (this.size == 1){
                             searchView?.setText(this.first())
                             showClipboardFab = false
-                            clipboardFab?.isVisible = false
+                            setClipboardVisible(false)
                             initSearch(searchView!!)
                         }else{
                             searchBar?.performClick()
@@ -667,7 +675,7 @@ class HomeFragment : Fragment(), HomeAdapter.OnItemClickListener, SearchSuggesti
 //            searchHistoryLinearLayout!!.isVisible = history.isNotEmpty()
 //            if (linkYouCopied.findViewById<TextView>(R.id.suggestion_text).text.isNotEmpty()){
 //                linkYouCopied.visibility = VISIBLE
-//                clipboardFab?.isVisible = true
+//                setClipboardVisible(true)
 //            }
 //
 //            suggestions.forEach { s ->
@@ -937,6 +945,34 @@ class HomeFragment : Fragment(), HomeAdapter.OnItemClickListener, SearchSuggesti
         }
     }
 
+    // YTindr: the copied link is shown as a card above the navigation instead of a floating button
+    private fun setClipboardVisible(visible: Boolean) {
+        clipboardFab?.isVisible = false
+        clipboardCard?.isVisible = visible
+    }
+
+    private fun bindClipboardCard(links: List<String>) {
+        val card = clipboardCard ?: return
+        card.findViewById<TextView>(R.id.clipboard_url).text =
+            if (links.size == 1) links.first() else links.joinToString("  ·  ")
+        val thumb = card.findViewById<ImageView>(R.id.clipboard_thumb)
+        val videoId = links.firstOrNull()?.let {
+            Regex("""(?:v=|youtu\.be/|shorts/|live/|embed/)([A-Za-z0-9_-]{11})""").find(it)?.groupValues?.get(1)
+        }
+        if (videoId != null && links.size == 1) {
+            ImageViewCompat.setImageTintList(thumb, null)
+            thumb.setPadding(0, 0, 0, 0)
+            Picasso.get().load("https://i.ytimg.com/vi/$videoId/mqdefault.jpg").into(thumb)
+        }
+        val open = View.OnClickListener { clipboardFab?.performClick() }
+        card.setOnClickListener(open)
+        card.findViewById<View>(R.id.clipboard_download).setOnClickListener(open)
+        card.findViewById<View>(R.id.clipboard_dismiss).setOnClickListener {
+            showClipboardFab = false
+            setClipboardVisible(false)
+        }
+    }
+
     private val contextualActionBar = object : ActionMode.Callback {
         override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
             mode!!.menuInflater.inflate(R.menu.main_menu_context, menu)
@@ -946,7 +982,7 @@ class HomeFragment : Fragment(), HomeAdapter.OnItemClickListener, SearchSuggesti
             searchBar!!.menu.forEach { it.isEnabled = false }
             (activity as MainActivity).disableBottomNavigation()
             downloadAllFab!!.isVisible = false
-            clipboardFab!!.isVisible = false
+            setClipboardVisible(false)
             return true
         }
 
@@ -1050,7 +1086,7 @@ class HomeFragment : Fragment(), HomeAdapter.OnItemClickListener, SearchSuggesti
             searchBar?.expand(appBarLayout!!)
 
             downloadAllFab!!.isVisible = showDownloadAllFab
-            clipboardFab!!.isVisible = showClipboardFab
+            setClipboardVisible(showClipboardFab)
         }
 
         suspend fun getSelectedIDs() : List<Long>{
@@ -1084,7 +1120,7 @@ class HomeFragment : Fragment(), HomeAdapter.OnItemClickListener, SearchSuggesti
         val res = text.split("\n")
         if (res.size == 1){
             showClipboardFab = false
-            clipboardFab?.isVisible = false
+            setClipboardVisible(false)
             searchView!!.setText(text)
             initSearch(searchView!!)
         }else{

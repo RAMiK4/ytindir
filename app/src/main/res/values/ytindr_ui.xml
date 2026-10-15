@@ -47,4 +47,5 @@
         <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
         <item name="android:letterSpacing">0.02</item>
     </style>
+    <color name="ytindr_backdrop_scrim">#B8F0F0F0</color>
 </resources>

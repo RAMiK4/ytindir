@@ -2,4 +2,5 @@
 <resources>
     <color name="ytindr_nav_bg">#A61B1B1B</color>
     <color name="ytindr_nav_stroke">#1AFFFFFF</color>
+    <color name="ytindr_backdrop_scrim">#8C000000</color>
 </resources>

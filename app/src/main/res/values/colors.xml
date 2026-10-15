@@ -414,7 +414,7 @@
     <!-- YTindr tone -->
     <color name="ytindr_light_primary">#006C3B</color>
     <color name="ytindr_light_onPrimary">#FFFFFF</color>
-    <color name="ytindr_light_primaryContainer">#00FF88</color>
+    <color name="ytindr_light_primaryContainer">#B4F2CE</color>
     <color name="ytindr_light_onPrimaryContainer">#00210F</color>
     <color name="ytindr_light_secondary">#4D6355</color>
     <color name="ytindr_light_onSecondary">#FFFFFF</color>

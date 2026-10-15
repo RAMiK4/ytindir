@@ -156,7 +156,7 @@ object FloatingNavUtil {
                 importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
             }
             val scrim = View(context).apply {
-                setBackgroundColor(0x8C000000.toInt())
+                setBackgroundColor(androidx.core.content.ContextCompat.getColor(context, R.color.ytindr_backdrop_scrim))
                 alpha = 0f
             }
             container.addView(image, 0, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
