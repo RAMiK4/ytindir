@@ -18,8 +18,8 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="16dp"
             android:orientation="horizontal">
 
             <com.facebook.shimmer.ShimmerFrameLayout
@@ -115,12 +115,12 @@
                 android:id="@+id/bottomsheet_download_button"
                 style="@style/Widget.Material3.Button.Icon"
                 android:layout_width="wrap_content"
-                android:layout_height="52dp"
+                android:layout_height="44dp"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
-                android:paddingHorizontal="22dp"
+                android:paddingHorizontal="18dp"
                 android:textStyle="bold"
-                app:cornerRadius="26dp"
+                app:cornerRadius="22dp"
                 android:autoLink="all"
                 android:elevation="0dp"
                 android:outlineProvider="none"
@@ -138,11 +138,12 @@
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/download_tablayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginVertical="12dp"
+            android:layout_height="46dp"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="4dp"
             android:background="@drawable/bg_tab_segment"
-            android:padding="4dp"
+            android:padding="3dp"
             app:tabGravity="fill"
             app:tabMode="fixed"
             app:tabMinWidth="0dp"

@@ -11,7 +11,7 @@
     app:cardBackgroundColor="?attr/colorSurfaceContainerHigh"
     app:cardElevation="0dp"
     app:checkedIcon="@null"
-    app:shapeAppearance="@style/YTindr.Shape.Format"
+    app:shapeAppearance="@style/YTindr.Shape.Field"
     app:strokeColor="@color/ytindr_card_stroke"
     app:strokeWidth="2dp"
     app:cardPreventCornerOverlap="true"
@@ -19,8 +19,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:paddingVertical="8dp"
-        android:paddingHorizontal="12dp"
+        android:paddingVertical="6dp"
+        android:paddingHorizontal="8dp"
         android:layout_height="wrap_content">
 
         <TextView
