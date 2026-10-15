@@ -25,7 +25,7 @@ YTindr is a personal download app powered by [yt-dlp](https://github.com/yt-dlp/
 - 🛡️ **YouTube PO token** support (BgUtils) and **custom yt-dlp sources** for videos that are hard to download
 - 🎤 **Synced lyrics** from lrclib.net, previewed in the app and embedded into the audio file
 - 🍪 **Cookie support** for content you open with your own account
-- 🎨 Its own **YTindr** colour tone or **Material You**, in light and dark themes plus a high contrast mode, with a floating glass navigation bar
+- 🎨 Its own **YTindr** colour tone or **Material You**, in light and dark themes, plus a high contrast mode (pure black for **AMOLED** screens) and a floating glass navigation bar
 - 📶 Downloads over Wi-Fi and mobile data
 - 🌍 **12 languages**: English, Turkish, Russian, Spanish, Portuguese (Brazil), German, French, Arabic, Indonesian, Chinese (Simplified), Japanese and Korean
 
