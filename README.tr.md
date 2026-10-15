@@ -1,4 +1,6 @@
-<h1 align="center">YTindr</h1>
+<p align="center">
+	<img src="docs/ytindr-social-preview.png" alt="YTindr" width="100%">
+</p>
 
 <h3 align="center">
 	Sade, hızlı ve kendini onaran Android ses/video indirici

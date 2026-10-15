@@ -1,8 +1,6 @@
-<h1 align="center">YTindr</h1>
-
-<h3 align="center">
-	A clean, fast, self-repairing audio and video downloader for Android
-</h3>
+<p align="center">
+	<img src="docs/ytindr-social-preview.png" alt="YTindr: a clean, self-repairing downloader for Android" width="100%">
+</p>
 
 <div align="center">
 
