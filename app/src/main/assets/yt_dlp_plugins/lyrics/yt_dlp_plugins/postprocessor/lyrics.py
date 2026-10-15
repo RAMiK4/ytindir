@@ -17,16 +17,59 @@ _JUNK_BRACKETS = re.compile(
     re.IGNORECASE)
 
 
+# YTindr: the yt-dlp instance running this postprocessor. Its own networking already
+# knows where the certificates are (the same one that downloads the video), so the
+# lyrics requests go through it instead of plain urllib.
+_YDL = None
+
+
+def _ssl_context():
+    import ssl
+    ctx = ssl.create_default_context()
+    candidates = []
+    try:
+        import certifi
+        candidates.append(certifi.where())
+    except Exception:
+        pass
+    candidates += [os.environ.get('SSL_CERT_FILE'), '/system/etc/security/cacerts']
+    for c in candidates:
+        if not c or not os.path.exists(c):
+            continue
+        try:
+            if os.path.isdir(c):
+                ctx.load_verify_locations(capath=c)
+            else:
+                ctx.load_verify_locations(cafile=c)
+        except Exception:
+            pass
+    return ctx
+
+
 def _get_json(path, params=None):
     url = f'{API}/{path}'
     if params:
         url += '?' + urllib.parse.urlencode({k: v for k, v in params.items() if v not in (None, '')})
-    req = urllib.request.Request(url, headers={'User-Agent': USER_AGENT})
+    headers = {'User-Agent': USER_AGENT}
+
+    if _YDL is not None:
+        try:
+            from yt_dlp.networking import Request
+            from yt_dlp.networking.exceptions import HTTPError as YdlHTTPError
+            try:
+                with _YDL.urlopen(Request(url, headers=headers)) as res:
+                    return json.loads(res.read().decode('utf-8'))
+            except YdlHTTPError:
+                # a 400/404 on one attempt must not stop the other attempts
+                return None
+        except Exception:
+            pass  # fall back to plain urllib below
+
+    req = urllib.request.Request(url, headers=headers)
     try:
-        with urllib.request.urlopen(req, timeout=10) as res:
+        with urllib.request.urlopen(req, timeout=10, context=_ssl_context()) as res:
             return json.loads(res.read().decode('utf-8'))
     except urllib.error.HTTPError:
-        # YTindr: a 400/404 on one attempt must not stop the other attempts
         return None
 
 
@@ -262,6 +305,8 @@ class LyricsPP(PostProcessor):
         if not path or not os.path.exists(path):
             return [], info
 
+        global _YDL
+        _YDL = self._downloader
         track = info.get('track') or info.get('title') or ''
         try:
             result = find_lyrics(track, self._artist(info), info.get('album') or '',

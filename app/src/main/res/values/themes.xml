@@ -241,7 +241,11 @@
 
         <item name="android:colorBackground">@android:color/white</item>
         <item name="colorSurface">@android:color/white</item>
-
+        <item name="colorSurfaceContainerLowest">#FFFFFF</item>
+        <item name="colorSurfaceContainerLow">#FAFAFA</item>
+        <item name="colorSurfaceContainer">#F7F7F7</item>
+        <item name="colorSurfaceContainerHigh">#F5F5F5</item>
+        <item name="colorSurfaceContainerHighest">#F0F0F0</item>
     </style>
 
 

@@ -107,6 +107,8 @@ object ThemeUtil {
         if (sharedPreferences.getString("theme_accent", "ytindr") == "Default" && DynamicColors.isDynamicColorAvailable()) {
             DynamicColors.applyToActivityIfAvailable(activity)
             activity.setTheme(R.style.BaseTheme)
+            // YTindr: keep the cards and dialogs only a shade off the background
+            activity.theme.applyStyle(R.style.YTindr_DynamicSurfaces, true)
         } else {
             activity.setTheme(R.style.Theme_YTindr)
         }
