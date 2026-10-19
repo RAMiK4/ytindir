@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- YTindr boş ekran çizimi: halka içinde altıgen dalga-ok -->
+<!-- YTindir boş ekran çizimi: halka içinde altıgen dalga-ok -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="140dp" android:height="140dp"
     android:viewportWidth="200" android:viewportHeight="200">

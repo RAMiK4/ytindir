@@ -1,5 +1,5 @@
 <p align="center">
-	<img src="docs/ytindr-social-preview.png" alt="YTindr" width="100%">
+	<img src="docs/ytindir-social-preview.png" alt="YTindir" width="100%">
 </p>
 
 <h3 align="center">
@@ -16,7 +16,7 @@
 
 <p align="center"><a href="README.md">English</a> · <b>Türkçe</b></p>
 
-YTindr, [yt-dlp](https://github.com/yt-dlp/yt-dlp) kullanan kişisel bir indirme uygulamasıdır. yt-dlp'nin desteklediği [1000'den fazla siteden](https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md) ses ve video indirebilir. [YTDLnis](https://github.com/deniscerri/ytdlnis) tabanlıdır; gereksiz özellikleri gizlenmiş, görünümü yenilenmiş ve sitelerdeki değişikliklere karşı kendi kendini güncelleyecek şekilde ayarlanmıştır.
+YTindir, [yt-dlp](https://github.com/yt-dlp/yt-dlp) kullanan kişisel bir indirme uygulamasıdır. yt-dlp'nin desteklediği [1000'den fazla siteden](https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md) ses ve video indirebilir. [YTDLnis](https://github.com/deniscerri/ytdlnis) tabanlıdır; gereksiz özellikleri gizlenmiş, görünümü yenilenmiş ve sitelerdeki değişikliklere karşı kendi kendini güncelleyecek şekilde ayarlanmıştır.
 
 ## ✨ Özellikler
 
@@ -28,7 +28,7 @@ YTindr, [yt-dlp](https://github.com/yt-dlp/yt-dlp) kullanan kişisel bir indirme
 - 🛡️ **YouTube PO token** desteği (BgUtils) ve indirmesi zor videolar için **özel yt-dlp kaynakları**
 - 🎤 **Senkronize şarkı sözleri**: lrclib.net'ten bulunur, uygulamada önizlenir ve ses dosyasına gömülür
 - 🍪 Çerez desteği: kendi hesabınızla açtığınız içerikler için
-- 🎨 Kendi **YTindr** renk tonu ya da **Material You**; açık ve koyu tema, yüksek kontrast modu (**AMOLED** ekranlar için saf siyah) ve yüzen cam görünümlü gezinme çubuğu
+- 🎨 Kendi **YTindir** renk tonu ya da **Material You**; açık ve koyu tema, yüksek kontrast modu (**AMOLED** ekranlar için saf siyah) ve yüzen cam görünümlü gezinme çubuğu
 - 📶 Wi-Fi ve mobil veride indirme
 - 🔄 Uygulama içi güncelleme: yeni sürüm çıkınca uygulama haber verir
 - 🌍 12 dil: İngilizce, Türkçe, Rusça, İspanyolca, Portekizce (Brezilya), Almanca, Fransızca, Arapça, Endonezce, Çince, Japonca ve Korece
@@ -45,11 +45,11 @@ Her `main` güncellemesinde GitHub Actions yeni bir arm64 APK derleyip otomatik 
 
 ## 🙏 Teşekkürler ve lisans
 
-- **[YTDLnis](https://github.com/deniscerri/ytdlnis)**: Denis Çerri ve katkıda bulunanlar. YTindr bu projenin değiştirilmiş bir sürümüdür.
+- **[YTDLnis](https://github.com/deniscerri/ytdlnis)**: Denis Çerri ve katkıda bulunanlar. YTindir bu projenin değiştirilmiş bir sürümüdür.
 - **[yt-dlp](https://github.com/yt-dlp/yt-dlp)** ve **[youtubedl-android](https://github.com/yausername/youtubedl-android)**
 
 Bu proje, orijinali gibi **[GPL-3.0](LICENSE)** lisansı altındadır.
 
 ## ⚖️ Sorumluluk
 
-YTindr yalnızca indirme hakkınız olan içerikler için tasarlanmıştır. Kullandığınız sitelerin kullanım koşullarına ve telif haklarına uymak kullanıcının sorumluluğundadır.
+YTindir yalnızca indirme hakkınız olan içerikler için tasarlanmıştır. Kullandığınız sitelerin kullanım koşullarına ve telif haklarına uymak kullanıcının sorumluluğundadır.

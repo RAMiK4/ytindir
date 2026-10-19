@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- YTindr: sade, nötr koyu diyalog zemini (yeşil ton yok) -->
+<!-- YTindir: sade, nötr koyu diyalog zemini (yeşil ton yok) -->
 <inset xmlns:android="http://schemas.android.com/apk/res/android"
     android:insetLeft="24dp" android:insetRight="24dp" android:insetTop="80dp" android:insetBottom="80dp">
     <shape android:shape="rectangle">

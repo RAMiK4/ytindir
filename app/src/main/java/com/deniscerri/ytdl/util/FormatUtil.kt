@@ -115,11 +115,11 @@ class FormatUtil(private var context: Context) {
     @SuppressLint("RestrictedApi")
     fun sortAudioFormats(formats: List<Format>, forVideoDownload: Boolean = false) : List<Format> {
         val orderPreferences = getAudioFormatImportance(forVideoDownload)
-        // YTindr: "default/original" only means something when the video has several audio languages
+        // YTindir: "default/original" only means something when the video has several audio languages
         val multipleLanguages = formats.mapNotNull { it.lang?.takeIf { l -> l.isNotBlank() } }.distinct().size > 1
 
         val comparator = Comparator<Format> { a, b ->
-            // YTindr: prefer plain https streams with a known codec over HLS (m3u8) ones, which have
+            // YTindir: prefer plain https streams with a known codec over HLS (m3u8) ones, which have
             // no codec or size and break cutting; otherwise the chosen codec and container were ignored
             val direct = isDirectAudio(b).compareTo(isDirectAudio(a))
             if (direct != 0) return@Comparator direct

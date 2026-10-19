@@ -1,6 +1,6 @@
 # Contributing
 
-YTindr is a personal fork of [YTDLnis](https://github.com/deniscerri/ytdlnis), so it does not take outside feature requests.
+YTindir is a personal fork of [YTDLnis](https://github.com/deniscerri/ytdlnis), so it does not take outside feature requests.
 
 - Problems with yt-dlp itself (a site that no longer works, a missing format) belong upstream at [yt-dlp](https://github.com/yt-dlp/yt-dlp/issues).
 - Problems that also happen in the original app belong at [YTDLnis](https://github.com/deniscerri/ytdlnis/issues).

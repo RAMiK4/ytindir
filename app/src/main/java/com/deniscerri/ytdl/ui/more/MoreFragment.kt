@@ -84,7 +84,7 @@ class MoreFragment : Fragment() {
         view.findViewById<View>(R.id.more_divider_1).isVisible = downloads.isVisible && downloadQueue.isVisible
         view.findViewById<View>(R.id.more_divider_2).isVisible = downloads.isVisible || downloadQueue.isVisible
 
-        // YTindr: hidden features
+        // YTindir: hidden features
         terminal.isVisible = false
         commandTemplates.isVisible = false
         observeSources.isVisible = false

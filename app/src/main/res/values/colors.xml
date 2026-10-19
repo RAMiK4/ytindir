@@ -411,7 +411,7 @@
     <color name="update_status_on_ok_container">#0F3D1E</color>
 
 
-    <!-- YTindr tone -->
+    <!-- YTindir tone -->
     <color name="ytindr_light_primary">#006C3B</color>
     <color name="ytindr_light_onPrimary">#FFFFFF</color>
     <color name="ytindr_light_primaryContainer">#B4F2CE</color>

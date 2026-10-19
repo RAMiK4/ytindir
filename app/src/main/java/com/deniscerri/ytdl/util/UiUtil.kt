@@ -1884,7 +1884,7 @@ object UiUtil {
         if (items.size == 1) {
             extraCommands.createBadge(context, if (items.first().extraCommands.isNotBlank()) 1 else 0)
         }
-        // YTindr: extra yt-dlp commands are not offered in the download card
+        // YTindir: extra yt-dlp commands are not offered in the download card
         if (YTINDR_EXTRA_COMMANDS && sharedPreferences.getBoolean("use_extra_commands", false)){
             extraCommands.visibility = View.VISIBLE
             extraCommands.setOnClickListener {
@@ -2152,7 +2152,7 @@ object UiUtil {
         if (items.size == 1) {
             extraCommands.createBadge(context, if (items.first().extraCommands.isNotBlank()) 1 else 0)
         }
-        // YTindr: extra yt-dlp commands are not offered in the download card
+        // YTindir: extra yt-dlp commands are not offered in the download card
         if (YTINDR_EXTRA_COMMANDS && sharedPreferences.getBoolean("use_extra_commands", false)){
             extraCommands.visibility = View.VISIBLE
             extraCommands.setOnClickListener {

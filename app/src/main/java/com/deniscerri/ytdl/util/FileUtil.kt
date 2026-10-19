@@ -454,7 +454,7 @@ object FileUtil {
     }
 
     fun getDefaultApplicationPath() : String {
-        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)?.absolutePath + File.separator + "YTindr"
+        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)?.absolutePath + File.separator + "YTindr" /* folder keeps its first name so existing libraries stay in one place */
     }
 
     fun getDownloadArchivePath(context: Context) : String {

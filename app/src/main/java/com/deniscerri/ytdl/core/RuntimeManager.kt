@@ -642,7 +642,7 @@ object RuntimeManager {
         //TODO
         //env["NODE_OPTIONS"] = NODE_OPTIONS
         env["TERM"] = "xterm-256color"
-        // YTindr: always run Python, yt-dlp and ffmpeg in UTF-8 so titles in any language stay intact
+        // YTindir: always run Python, yt-dlp and ffmpeg in UTF-8 so titles in any language stay intact
         env["PYTHONUTF8"] = "1"
         env["PYTHONIOENCODING"] = "utf-8"
         env["LANG"] = "C.UTF-8"

@@ -203,7 +203,7 @@ class CookieViewModel(private val application: Application) : AndroidViewModel(a
 
                 val dir = File("${FileUtil.getCachePath(application)}/Cookie Backups")
                 dir.mkdirs()
-                val saveFile = File("${dir.absolutePath}/YTindr_Cookies.txt")
+                val saveFile = File("${dir.absolutePath}/YTindir_Cookies.txt")
 
                 saveFile.delete()
                 saveFile.createNewFile()

@@ -1657,7 +1657,7 @@
     </string-array>
 
 
-    <!-- YTindr: only our own tone and Material You -->
+    <!-- YTindir: only our own tone and Material You -->
     <array name="ytindr_accents">
         <item>@string/ytindr_tone</item>
         <item>@string/material_you</item>
@@ -1667,7 +1667,7 @@
         <item>Default</item>
     </array>
 
-    <!-- YTindr: shipped languages -->
+    <!-- YTindir: shipped languages -->
     <string-array name="ytindr_language_entries">
         <item>@string/system</item>
         <item>English</item>

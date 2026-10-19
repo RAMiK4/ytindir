@@ -34,12 +34,12 @@ object LrcLibUtil {
         val query = params.filterValues { !it.isNullOrBlank() }
             .map { "${it.key}=${URLEncoder.encode(it.value, "UTF-8")}" }
             .joinToString("&")
-        // YTindr: a failed request (400, timeout...) used to throw and skip every other attempt,
+        // YTindir: a failed request (400, timeout...) used to throw and skip every other attempt,
         // so lyrics always ended up "not found"
         return runCatching {
             val conn = URL("$API/$path" + if (query.isNotEmpty()) "?$query" else "").openConnection() as HttpURLConnection
             try {
-                conn.setRequestProperty("User-Agent", "YTindr (https://github.com/RAMiK4/ytindr)")
+                conn.setRequestProperty("User-Agent", "YTindir (https://github.com/RAMiK4/ytindr)")
                 conn.connectTimeout = 8000
                 conn.readTimeout = 10000
                 if (conn.responseCode !in 200..299) null

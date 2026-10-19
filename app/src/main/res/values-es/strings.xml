@@ -584,7 +584,7 @@
         <item quantity="other">Cada %d minutos</item>
     </plurals>
     <string name="bgutils_pot_generation_server">Servidor HTTP</string>
-    <string name="bgutils_info">Un proveedor de tokens de prueba-de-origen (POT) para yt-dlp.\nMientras este activo, YTindr crea el servidor HTTP que genera el POT e instala el plugin relacionado que usa yt-dlp.</string>
+    <string name="bgutils_info">Un proveedor de tokens de prueba-de-origen (POT) para yt-dlp.\nMientras este activo, YTindir crea el servidor HTTP que genera el POT e instala el plugin relacionado que usa yt-dlp.</string>
     <string name="bgutils_pot_generation_script">Script de generación</string>
     <string name="bgutils_pot_generation_script_summary">Cada llamada a yt-dlp implica el costo adicional de iniciar un nuevo proceso de runtime de JavaScript para ejecutar el script. Este método no se recomienda para usos con un alto nivel de concurrencia.</string>
     <string name="bgutils_pot_server_summary">Este es un servidor HTTP de JavaScript en el puerto 4416. Si está detenido, el servidor se inicia automáticamente cuando comienza a ejecutarse la cola de descargas o cuando se programa la observación de fuentes. Para apagarlo, ¡tienes que hacerlo manualmente desde las notificaciones!</string>
@@ -596,7 +596,7 @@
     <string name="notset">No establecido</string>
     <string name="external">Externo</string>
     <string name="exit">Salir</string>
-    <string name="packages_description">Los paquetes son aplicaciones de ayuda que usa YTindr para ayudar con los comandos de yt-dlp. Algunos de ellos vienen incluidos, pero puedes instalar nuevas versiones que se publiquen sin la necesidad de actualizar la aplicación. Los apk instalados reemplazarán las versiones incluidas que usa la aplicación.</string>
+    <string name="packages_description">Los paquetes son aplicaciones de ayuda que usa YTindir para ayudar con los comandos de yt-dlp. Algunos de ellos vienen incluidos, pero puedes instalar nuevas versiones que se publiquen sin la necesidad de actualizar la aplicación. Los apk instalados reemplazarán las versiones incluidas que usa la aplicación.</string>
     <string name="bgutils_pot_generation_script_info">Para poder usar el proveedor POT de BgUtils, la aplicación necesita descargar e instalar el repositorio Brainicism/bgutil-ytdlp-pot-provider desde github. Esto puede tomar un tiempo en completarse. ¿Deseas continuar ahora?</string>
     <string name="search_results">Resultados de búsqueda</string>
     <string name="burn_subs">Incrustar subtítulos</string>
@@ -635,7 +635,7 @@
     <string name="retry_all">Reintentar todo</string>
     <string name="download_anyway">Descargar de todos modos</string>
     <string name="clear">Borrar</string>
-    <string name="welcome_title">Bienvenido a YTindr</string>
+    <string name="welcome_title">Bienvenido a YTindir</string>
     <string name="welcome_subtitle">Descarga video y audio con yt-dlp. Primero configuremos algunas cosas.</string>
     <string name="welcome_get_started">Empezar</string>
     <string name="welcome_restore_backup">Restaurar copia de seguridad</string>
@@ -645,7 +645,7 @@
     <string name="welcome_guide_summary">La guía explica cómo usar la app, descargar y resolver problemas comunes. Puedes abrirla cuando quieras.</string>
     <string name="welcome_open_guide">Abrir guía</string>
     <string name="welcome_permissions_title">Permisos</string>
-    <string name="welcome_permissions_summary">YTindr funciona mejor con estos permisos. Puedes cambiarlos más tarde en los ajustes.</string>
+    <string name="welcome_permissions_summary">YTindir funciona mejor con estos permisos. Puedes cambiarlos más tarde en los ajustes.</string>
     <string name="welcome_perm_storage">Acceso al almacenamiento</string>
     <string name="welcome_perm_storage_summary">Necesario para guardar tus descargas en el dispositivo.</string>
     <string name="welcome_perm_notifications">Notificaciones</string>
@@ -658,7 +658,7 @@
     <string name="welcome_allowed">Permitido</string>
     <string name="welcome_required">Obligatorio</string>
     <string name="welcome_updates_title">Actualizaciones</string>
-    <string name="welcome_updates_summary">Elige cómo se mantiene YTindr actualizado.</string>
+    <string name="welcome_updates_summary">Elige cómo se mantiene YTindir actualizado.</string>
     <string name="welcome_next">Siguiente</string>
     <string name="welcome_finish">Terminar</string>
     <string name="lyrics">Letra</string>

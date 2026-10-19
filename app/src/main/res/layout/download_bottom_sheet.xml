@@ -156,7 +156,7 @@
             app:tabRippleColor="@android:color/transparent"
             app:tabSelectedTextColor="?attr/colorOnPrimaryContainer"
             app:tabTextColor="?attr/colorOnSurfaceVariant"
-            app:tabTextAppearance="@style/YTindr.TabText">
+            app:tabTextAppearance="@style/YTindir.TabText">
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"

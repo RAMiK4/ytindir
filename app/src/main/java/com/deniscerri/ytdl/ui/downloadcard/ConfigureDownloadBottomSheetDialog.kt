@@ -114,7 +114,7 @@ class ConfigureDownloadBottomSheetDialog(private val currentDownloadItem: Downlo
             isIncognito = incognito,
             showCommand = showCommandPage
         )
-        // YTindr: no command page for normal links
+        // YTindir: no command page for normal links
         if (!showCommandPage) {
             (tabLayout.getChildAt(0) as? ViewGroup)?.getChildAt(2)?.visibility = View.GONE
         }

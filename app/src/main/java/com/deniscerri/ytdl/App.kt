@@ -91,7 +91,7 @@ class App : Application() {
             PreferenceManager.setDefaultValues(this, R.xml.ytdlp_update_preferences, true)
             PreferenceManager.setDefaultValues(this, R.xml.app_update_preferences, true)
             PreferenceManager.setDefaultValues(this, R.xml.advanced_preferences, true)
-            // YTindr: recommended defaults for new installs (existing settings are never touched)
+            // YTindir: recommended defaults for new installs (existing settings are never touched)
             sp.edit()
                 .putString("ytdlnis_theme", "Dark")
                 .putString("audio_format", "mp3")

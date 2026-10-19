@@ -503,7 +503,7 @@ class DownloadWorker(
                             if (this@DownloadWorker.isStopped) return@onFailure
                             if (it is RuntimeManager.CanceledException) return@onFailure
 
-                            // YTindr: self-recovery. Most YouTube breakages are fixed by a newer yt-dlp,
+                            // YTindir: self-recovery. Most YouTube breakages are fixed by a newer yt-dlp,
                             // so update it once and re-queue the item. Only retries when an update was
                             // actually installed, and only once per item, so it can never loop.
                             if (sharedPreferences.getBoolean("auto_update_ytdlp", true)
@@ -512,8 +512,8 @@ class DownloadWorker(
                                 val updateRes = runCatching { UpdateUtil(context).updateYTDL() }.getOrNull()
                                 if (updateRes?.status == UpdateUtil.YTDLPUpdateStatus.DONE) {
                                     tempFileDir.delete()
-                                    val note = "\n[YTindr] ${it.message?.lines()?.lastOrNull { l -> l.isNotBlank() } ?: "Error"}\n" +
-                                        "[YTindr] ${updateRes.message}. Retrying download...\n"
+                                    val note = "\n[YTindir] ${it.message?.lines()?.lastOrNull { l -> l.isNotBlank() } ?: "Error"}\n" +
+                                        "[YTindir] ${updateRes.message}. Retrying download...\n"
                                     if (logDownloads) {
                                         logRepo.update(note, logItem.id)
                                     }
@@ -594,7 +594,7 @@ class DownloadWorker(
 
 
     companion object {
-        // YTindr: items that already got one update-and-retry in this process
+        // YTindir: items that already got one update-and-retry in this process
         private val recoveryAttempted: MutableSet<Long> = java.util.Collections.synchronizedSet(mutableSetOf())
         val runningYTDLInstances: MutableList<Long> = mutableListOf()
         const val TAG = "DownloadWorker"

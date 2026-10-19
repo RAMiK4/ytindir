@@ -1020,7 +1020,7 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
             }
         }
 
-        // YTindr: aria2c is not shipped, yt-dlp always uses its own downloader
+        // YTindir: aria2c is not shipped, yt-dlp always uses its own downloader
 
         val concurrentFragments = sharedPreferences.getInt("concurrent_fragments", 1)
         if (concurrentFragments > 1) request.addOption("-N", concurrentFragments)
@@ -1618,6 +1618,8 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
                         "resolution" -> {
                             if (hasGenericResulutionFormat.isNotBlank()) {
                                 formatSorting.add("res:${hasGenericResulutionFormat}")
+                                // YTindir: at a capped resolution, take the highest frame rate available
+                                formatSorting.add("fps")
                             }
                         }
                         "container" -> {
@@ -1655,7 +1657,7 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
 
                 var formatString = f.toString().replace("/$".toRegex(), "")
                 if (downloadItem.downloadSections.isNotBlank()) {
-                    // YTindr: cutting goes through ffmpeg, which often fails on HLS (m3u8) audio,
+                    // YTindir: cutting goes through ffmpeg, which often fails on HLS (m3u8) audio,
                     // so an https audio stream is tried first and the chosen one stays as fallback
                     val first = formatString.substringBefore("/")
                     if (first.contains("+")) {

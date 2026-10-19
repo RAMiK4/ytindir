@@ -945,7 +945,7 @@ class HomeFragment : Fragment(), HomeAdapter.OnItemClickListener, SearchSuggesti
         }
     }
 
-    // YTindr: the copied link is shown as a card above the navigation instead of a floating button
+    // YTindir: the copied link is shown as a card above the navigation instead of a floating button
     private fun setClipboardVisible(visible: Boolean) {
         clipboardFab?.isVisible = false
         clipboardCard?.isVisible = visible

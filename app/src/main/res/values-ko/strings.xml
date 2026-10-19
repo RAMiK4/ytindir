@@ -578,7 +578,7 @@
     <string name="bgutils_pot_generation_server">HTTP 서버</string>
     <string name="please_install_package">%s 패키지를 설치하세요</string>
     <string name="please_install_package_or_package">%1$s 패키지나 %2$s 패키지를 설치하세요</string>
-    <string name="bgutils_info">yt-dlp용 Proof-of-origin 토큰 (POT) 제공자입니다.\n켜면 YTindr에서 POT를 생성하고 yt-dlp 관련 플러그인을 설치하는 HTTP 서버를 호스팅합니다.</string>
+    <string name="bgutils_info">yt-dlp용 Proof-of-origin 토큰 (POT) 제공자입니다.\n켜면 YTindir에서 POT를 생성하고 yt-dlp 관련 플러그인을 설치하는 HTTP 서버를 호스팅합니다.</string>
     <string name="bgutils_pot_generation_script_summary">yt-dlp 호출 시마다 스크립트를 실행하기 위해 새로운 JavaScript 런타임 프로세스가 생성되는 오버헤드가 발생합니다. 이 방법은 동시 접속량이 많은 경우에는 권장되지 않습니다.</string>
     <string name="bgutils_pot_server_summary">4416번 포트에서 실행되는 자바스크립트 HTTP 서버입니다. 서버가 꺼진 경우, 다운로드 대기열의 실행이 시작되거나 소스 관찰 작업이 예약되면 자동으로 서버가 시작됩니다. 서버를 완전히 종료하려면 알림에서 수동으로 종료해야 합니다!</string>
     <string name="installation_method">APK 설치 방식</string>
@@ -588,7 +588,7 @@
     <string name="external">외부</string>
     <string name="exit">종료</string>
     <string name="bgutils_pot_generation_script_info">BgUtils POT 제공자를 사용하려면, GitHub에서 Brainicism/bgutil-ytdlp-pot-provider 저장소를 다운로드하고 설치 과정을 실행해야 합니다. 끝내려면 다소 시간이 걸릴 수 있습니다. 지금 진행하시겠습니까?</string>
-    <string name="packages_description">패키지는 YTindr가 yt-dlp 명령을 실행하는 데 도움을 주는 애플리케이션입니다. 일부 패키지는 이미 내장되어 있지만, 앱을 업데이트하지 않고도 새로 출시된 버전을 설치할 수 있습니다. 설치된 APK 파일은 앱에서 쓰이는 내장 버전을 대체합니다.</string>
+    <string name="packages_description">패키지는 YTindir가 yt-dlp 명령을 실행하는 데 도움을 주는 애플리케이션입니다. 일부 패키지는 이미 내장되어 있지만, 앱을 업데이트하지 않고도 새로 출시된 버전을 설치할 수 있습니다. 설치된 APK 파일은 앱에서 쓰이는 내장 버전을 대체합니다.</string>
     <string name="check_clipboard_home_summary">홈 화면에서 클립보드 내 URL 자동 감지</string>
     <string name="check_clipboard_home">홈 화면에서 클립보드 확인</string>
     <string name="burn_subs">자막 굽기</string>
@@ -653,7 +653,7 @@
     <string name="embed_lyrics">가사 내장</string>
     <string name="embed_lyrics_summary">lrclib.net에서 가사를 가져와 다운로드한 오디오에 내장</string>
     <string name="welcome_updates_title">업데이트</string>
-    <string name="welcome_updates_summary">YTindr를 최신 상태로 유지할 방법을 선택하세요.</string>
+    <string name="welcome_updates_summary">YTindir를 최신 상태로 유지할 방법을 선택하세요.</string>
     <string name="welcome_allow">허용</string>
     <string name="welcome_allowed">허용됨</string>
     <string name="welcome_required">필요</string>
@@ -666,14 +666,14 @@
     <string name="welcome_perm_storage_summary">다운로드해 기기에 저장하려면 필요합니다.</string>
     <string name="welcome_perm_storage">저장공간 접근</string>
     <string name="welcome_permissions_title">권한</string>
-    <string name="welcome_permissions_summary">이런 권한이 있으면 YTindr가 잘 동작합니다. 나중에 설정에서 변경할 수 있습니다.</string>
+    <string name="welcome_permissions_summary">이런 권한이 있으면 YTindir가 잘 동작합니다. 나중에 설정에서 변경할 수 있습니다.</string>
     <string name="welcome_open_guide">도움말 열기</string>
     <string name="welcome_guide_title">도움말 읽기</string>
     <string name="welcome_restoring">백업 복원 중…</string>
     <string name="welcome_restore_failed">이 백업을 복원할 수 없습니다</string>
     <string name="welcome_restore_backup">백업에서 복원</string>
     <string name="welcome_get_started">시작하기</string>
-    <string name="welcome_title">YTindr 이용을 환영합니다</string>
+    <string name="welcome_title">YTindir 이용을 환영합니다</string>
     <string name="welcome_subtitle">yt-dlp로 비디오와 오디오를 다운로드하세요. 먼저 몇 가지 설정을 해 봅시다.</string>
     <string name="clear">지우기</string>
     <string name="write_ytdlp_terminal">터미널에 yt-dlp 자동으로 쓰기</string>

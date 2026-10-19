@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- YTindr: sade "Daha fazla" ekranı - logo başlığı ve yuvarlak köşeli gruplar -->
+<!-- YTindir: sade "Daha fazla" ekranı - logo başlığı ve yuvarlak köşeli gruplar -->
 <androidx.core.widget.NestedScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -53,51 +53,51 @@
             </LinearLayout>
         </LinearLayout>
 
-        <com.google.android.material.card.MaterialCardView style="@style/YTindr.MoreCard">
+        <com.google.android.material.card.MaterialCardView style="@style/YTindir.MoreCard">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
                 <TextView
                     android:id="@+id/downloads"
-                    style="@style/YTindr.MoreRow"
+                    style="@style/YTindir.MoreRow"
                     android:text="@string/downloads"
                     app:drawableStartCompat="@drawable/ic_downloads" />
                 <View android:id="@+id/more_divider_1" android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginStart="60dp" android:background="?attr/colorOutlineVariant" android:alpha="0.5"/>
                 <TextView
                     android:id="@+id/download_queue"
-                    style="@style/YTindr.MoreRow"
+                    style="@style/YTindir.MoreRow"
                     android:text="@string/download_queue"
                     app:drawableStartCompat="@drawable/baseline_downloading_24" />
                 <View android:id="@+id/more_divider_2" android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginStart="60dp" android:background="?attr/colorOutlineVariant" android:alpha="0.5"/>
                 <TextView
                     android:id="@+id/cookies"
-                    style="@style/YTindr.MoreRow"
+                    style="@style/YTindir.MoreRow"
                     android:text="@string/cookies"
                     app:drawableStartCompat="@drawable/baseline_cookie_24" />
                 <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginStart="60dp" android:background="?attr/colorOutlineVariant" android:alpha="0.5"/>
                 <TextView
                     android:id="@+id/logs"
-                    style="@style/YTindr.MoreRow"
+                    style="@style/YTindir.MoreRow"
                     android:text="@string/logs"
                     app:drawableStartCompat="@drawable/ic_baseline_file_open_24" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <com.google.android.material.card.MaterialCardView style="@style/YTindr.MoreCard">
+        <com.google.android.material.card.MaterialCardView style="@style/YTindir.MoreCard">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
                 <TextView
                     android:id="@+id/settings"
-                    style="@style/YTindr.MoreRow"
+                    style="@style/YTindir.MoreRow"
                     android:text="@string/settings"
                     app:drawableStartCompat="@drawable/ic_settings" />
                 <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginStart="60dp" android:background="?attr/colorOutlineVariant" android:alpha="0.5"/>
                 <TextView
                     android:id="@+id/terminate"
-                    style="@style/YTindr.MoreRow"
+                    style="@style/YTindir.MoreRow"
                     android:text="@string/kill_app"
                     app:drawableStartCompat="@drawable/ic_power" app:drawableTint="?attr/colorError"/>
             </LinearLayout>

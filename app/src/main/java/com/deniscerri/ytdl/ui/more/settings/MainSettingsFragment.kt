@@ -163,7 +163,7 @@ class MainSettingsFragment : PreferenceFragmentCompat() {
         findPreference<Preference>("app_version")?.apply {
             summary = BuildConfig.VERSION_NAME
             setOnPreferenceClickListener {
-                UiUtil.copyToClipboard("YTindr ${BuildConfig.VERSION_NAME}", requireActivity())
+                UiUtil.copyToClipboard("YTindir ${BuildConfig.VERSION_NAME}", requireActivity())
                 true
             }
         }

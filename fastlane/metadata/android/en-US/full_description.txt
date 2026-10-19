@@ -1,4 +1,4 @@
-<b>YTindr</b> is a clean, modern audio and video downloader powered by yt-dlp. It is based on YTDLnis, with the advanced tools tucked away and a setup that keeps itself working when websites change.
+<b>YTindir</b> is a clean, modern audio and video downloader powered by yt-dlp. It is based on YTDLnis, with the advanced tools tucked away and a setup that keeps itself working when websites change.
 
 <b>Features</b>
 
@@ -10,7 +10,7 @@
 - In-app updates
 - YouTube PO token support and custom yt-dlp sources
 - Cookie support for content you open with your own account
-- YTindr colours or Material You, light and dark themes, high contrast mode
+- YTindir colours or Material You, light and dark themes, high contrast mode
 - 12 languages
 
-YTindr is meant only for content you have the right to download.
+YTindir is meant only for content you have the right to download.

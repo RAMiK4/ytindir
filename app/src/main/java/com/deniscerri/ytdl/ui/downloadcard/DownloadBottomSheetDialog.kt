@@ -135,7 +135,7 @@ class DownloadBottomSheetDialog : BottomSheetDialogFragment() {
 
         dialog.setOnShowListener {
             behavior = BottomSheetBehavior.from(view.parent as View)
-            // YTindr: blurred cover behind the card
+            // YTindir: blurred cover behind the card
             FloatingNavUtil.styleDownloadSheet(dialog, view.parent as? View, result.thumb)
             val displayMetrics = DisplayMetrics()
             requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
@@ -224,7 +224,7 @@ class DownloadBottomSheetDialog : BottomSheetDialogFragment() {
                 }
                 else -> {
                     if (Patterns.WEB_URL.matcher(result.url).matches()) {
-                        // YTindr: no command downloads for links, fall back to video (or audio)
+                        // YTindir: no command downloads for links, fall back to video (or audio)
                         val fallbackTab = if (isAudioOnly) 0 else 1
                         tabLayout.getTabAt(fallbackTab)!!.select()
                         viewPager2.setCurrentItem(fallbackTab, false)
@@ -237,7 +237,7 @@ class DownloadBottomSheetDialog : BottomSheetDialogFragment() {
                 }
             }
 
-            // YTindr: hide the command tab for normal links
+            // YTindir: hide the command tab for normal links
             if (Patterns.WEB_URL.matcher(result.url).matches()) {
                 (tabLayout.getChildAt(0) as? ViewGroup)?.getChildAt(2)?.visibility = View.GONE
             }
@@ -318,7 +318,7 @@ class DownloadBottomSheetDialog : BottomSheetDialogFragment() {
         val shownFields = sharedPreferences.getStringSet("modify_download_card", requireContext().resources.getStringArray(R.array.modify_download_card_values).toSet())!!.toList()
 
         val scheduleBtn = view.findViewById<MaterialButton>(R.id.bottomsheet_schedule_button)
-        // YTindr: scheduling is hidden
+        // YTindir: scheduling is hidden
         scheduleBtn.visibility = View.GONE
         val download = view.findViewById<Button>(R.id.bottomsheet_download_button)
 

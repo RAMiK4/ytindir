@@ -552,7 +552,7 @@
     <string name="retry_all">Alle wiederholen</string>
     <string name="download_anyway">Trotzdem herunterladen</string>
     <string name="clear">Leeren</string>
-    <string name="welcome_title">Willkommen bei YTindr</string>
+    <string name="welcome_title">Willkommen bei YTindir</string>
     <string name="welcome_subtitle">Lade Video und Audio mit yt-dlp herunter. Lass uns zuerst ein paar Dinge einrichten.</string>
     <string name="welcome_get_started">Los geht\'s</string>
     <string name="welcome_restore_backup">Aus Backup wiederherstellen</string>
@@ -562,7 +562,7 @@
     <string name="welcome_guide_summary">Die Anleitung erklärt die App, das Herunterladen und häufige Probleme. Du kannst sie jederzeit öffnen.</string>
     <string name="welcome_open_guide">Anleitung öffnen</string>
     <string name="welcome_permissions_title">Berechtigungen</string>
-    <string name="welcome_permissions_summary">YTindr funktioniert damit am besten. Du kannst sie später in den Einstellungen ändern.</string>
+    <string name="welcome_permissions_summary">YTindir funktioniert damit am besten. Du kannst sie später in den Einstellungen ändern.</string>
     <string name="welcome_perm_storage">Speicherzugriff</string>
     <string name="welcome_perm_storage_summary">Nötig, um Downloads auf dem Gerät zu speichern.</string>
     <string name="welcome_perm_notifications">Benachrichtigungen</string>
@@ -575,7 +575,7 @@
     <string name="welcome_allowed">Erlaubt</string>
     <string name="welcome_required">Erforderlich</string>
     <string name="welcome_updates_title">Updates</string>
-    <string name="welcome_updates_summary">Wähle, wie YTindr aktuell bleibt.</string>
+    <string name="welcome_updates_summary">Wähle, wie YTindir aktuell bleibt.</string>
     <string name="welcome_next">Weiter</string>
     <string name="welcome_finish">Fertig</string>
     <string name="lyrics">Liedtext</string>

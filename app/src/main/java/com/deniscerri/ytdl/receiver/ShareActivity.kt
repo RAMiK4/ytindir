@@ -37,6 +37,7 @@ import com.deniscerri.ytdl.database.viewmodel.HistoryViewModel
 import com.deniscerri.ytdl.database.viewmodel.ResultViewModel
 import com.deniscerri.ytdl.ui.BaseActivity
 import com.deniscerri.ytdl.util.Extensions.extractURL
+import com.deniscerri.ytdl.util.Extensions.isYoutubeURL
 import com.deniscerri.ytdl.util.FormatUtil
 import com.deniscerri.ytdl.util.ThemeUtil
 import kotlinx.coroutines.CoroutineScope
@@ -256,10 +257,13 @@ class ShareActivity : BaseActivity() {
                         ?.let { item.format = it }
                 }
                 if (downloadType == DownloadType.audio && audioKbps > 0) {
+                    // the bitrate is the output (e.g. mp3) bitrate, not a source to look for
                     item.audioPreferences.bitrate = "${audioKbps}k"
-                    formatUtil.getGenericAudioFormats(app.resources)
-                        .firstOrNull { it.format_id == "${audioKbps}kbps_ytdlnisgeneric" }
-                        ?.let { item.format = it }
+                    // on YouTube take the Opus stream (251): the best audio YouTube serves, full
+                    // bandwidth and a better start for re-encoding than the 128k AAC stream (140)
+                    if (url.isYoutubeURL()) {
+                        item.format = item.format.copy(format_id = "251")
+                    }
                 }
                 viewModel.queueDownloads(listOf(item))
             }.onSuccess { result ->

@@ -13,7 +13,7 @@
         android:text="@string/adjust_video"
             android:paddingTop="12dp"
             android:paddingBottom="4dp"
-            android:textAppearance="@style/YTindr.SectionLabel" />
+            android:textAppearance="@style/YTindir.SectionLabel" />
 
     <HorizontalScrollView
         android:scrollbars="none"

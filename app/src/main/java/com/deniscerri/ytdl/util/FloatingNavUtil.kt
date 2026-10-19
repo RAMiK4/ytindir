@@ -36,7 +36,7 @@ import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.BlurTransformation
 
 /**
- * YTindr UI helpers.
+ * YTindir UI helpers.
  *
  * The bottom navigation floats over the screen content. Every screen shown in the main
  * activity gets extra bottom space on its scrolling list and on its bottom-anchored

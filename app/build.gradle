@@ -10,7 +10,7 @@ plugins {
 
 def properties = new Properties()
 def versionMajor = 2
-def versionMinor = 7
+def versionMinor = 8
 def versionPatch = 0
 def versionBuild = 0 // bump for dogfood builds, public betas, etc.
 //WHEN RELEASING BETA KEEP THE SAME VERSION AS LATEST STABLE, SO USERS CAN DOWNGRADE
@@ -45,7 +45,7 @@ android {
         }
     }catch(IOException ignored){}
 
-    // YTindr: every build is signed with the same key (ytindr.jks), so new APKs
+    // YTindir: every build is signed with the same key (ytindr.jks), so new APKs
     // install over the old one without losing data. The password comes from the
     // KEYSTORE_PASSWORD secret in GitHub Actions.
     def ytindrKeystorePassword = System.getenv("KEYSTORE_PASSWORD")
@@ -70,10 +70,10 @@ android {
         versionCode versionMajor * 10000000 + versionMinor * 100000 + versionPatch * 1000 + ciBuildNumber
         versionName "${versionMajor}.${versionMinor}.${versionPatch}${versionExt}"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        // YTindr: ship the 12 main languages only (smaller APK)
+        // YTindir: ship the 12 main languages only (smaller APK)
         resourceConfigurations += ["en", "tr", "tr-rTR", "ru", "es", "pt-rBR", "de", "fr", "ar", "in", "zh-rCN", "ja", "ko"]
-        archivesBaseName = "YTindr-$versionName"
-        // YTindr: the CI build number, used to compare against release tags (v1.3.0-build9)
+        archivesBaseName = "YTindir-$versionName"
+        // YTindir: the CI build number, used to compare against release tags (v1.3.0-build9)
         buildConfigField "int", "CI_BUILD", "${ciBuildNumber}"
         vectorDrawables {
             useSupportLibrary true
@@ -134,9 +134,9 @@ android {
 
             def abi = output.getFilter(com.android.build.OutputFile.ABI) ?: "universal"
             if (variant.flavorName == "github") {
-                output.outputFileName = "YTindr-${versionName}-${abi}.apk"
+                output.outputFileName = "YTindir-${versionName}-${abi}.apk"
             } else {
-                output.outputFileName = "YTindr-${versionName}-${abi}.apk"
+                output.outputFileName = "YTindir-${versionName}-${abi}.apk"
             }
         }
     }

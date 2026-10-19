@@ -1,69 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- YTindr: yüzen cam alt menü ve liste kartları -->
+<!-- YTindir: yüzen cam alt menü ve liste kartları -->
 <resources>
     <color name="ytindr_nav_bg">#E6FFFFFF</color>
     <color name="ytindr_nav_stroke">#1A000000</color>
     <item name="ytindr_nav_padded" type="id"/>
 
-    <style name="YTindr.Shape.Card" parent="">
+    <style name="YTindir.Shape.Card" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">20dp</item>
     </style>
-    <style name="YTindr.Shape.Thumb" parent="">
+    <style name="YTindir.Shape.Thumb" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">14dp</item>
     </style>
-    <style name="YTindr.Shape.Format" parent="">
+    <style name="YTindir.Shape.Format" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">18dp</item>
     </style>
-    <style name="YTindr.TabText" parent="TextAppearance.Material3.LabelLarge">
+    <style name="YTindir.TabText" parent="TextAppearance.Material3.LabelLarge">
         <item name="android:textStyle">bold</item>
         <item name="textAllCaps">false</item>
         <item name="android:textAllCaps">false</item>
     </style>
-    <!-- YTindr: ana sayfa başlığındaki logo -->
-    <style name="YTindr.LogoTitle" parent="TextAppearance.Material3.TitleLarge">
+    <!-- YTindir: ana sayfa başlığındaki logo -->
+    <style name="YTindir.LogoTitle" parent="TextAppearance.Material3.TitleLarge">
         <item name="android:textSize">25sp</item>
         <item name="android:letterSpacing">-0.02</item>
         <item name="fontFamily">@font/ytindr_logo</item>
         <item name="android:fontFamily">@font/ytindr_logo</item>
     </style>
-    <!-- YTindr: alt menü etiketleri kapsülün içinde kalsın -->
-    <style name="YTindr.NavLabel" parent="TextAppearance.Material3.LabelSmall">
+    <!-- YTindir: alt menü etiketleri kapsülün içinde kalsın -->
+    <style name="YTindir.NavLabel" parent="TextAppearance.Material3.LabelSmall">
         <item name="android:textSize">11sp</item>
         <item name="android:maxLines">1</item>
     </style>
-    <style name="YTindr.NavLabel.Active">
+    <style name="YTindir.NavLabel.Active">
         <item name="android:textStyle">bold</item>
     </style>
-    <style name="YTindr.Shape.Field" parent="">
+    <style name="YTindir.Shape.Field" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">14dp</item>
     </style>
-    <!-- YTindr: indirme kartındaki bölüm başlıkları -->
-    <style name="YTindr.SectionLabel" parent="TextAppearance.Material3.LabelLarge">
+    <!-- YTindir: indirme kartındaki bölüm başlıkları -->
+    <style name="YTindir.SectionLabel" parent="TextAppearance.Material3.LabelLarge">
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
         <item name="android:letterSpacing">0.02</item>
     </style>
     <color name="ytindr_backdrop_scrim">#B8F0F0F0</color>
-    <!-- YTindr: diyaloglar - nötr koyu yüzey, ince çerçeve, kalın başlık, yeşil vurgu -->
-    <style name="ThemeOverlay.YTindr.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+    <!-- YTindir: diyaloglar - nötr koyu yüzey, ince çerçeve, kalın başlık, yeşil vurgu -->
+    <style name="ThemeOverlay.YTindir.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
         <item name="android:windowBackground">@drawable/bg_dialog</item>
         <item name="backgroundTint">?attr/colorSurfaceContainerHigh</item>
         <item name="elevationOverlayEnabled">false</item>
         <!-- the dialog's own surface; also keeps it visible in the pure black (high contrast) theme -->
         <item name="colorSurface">?attr/colorSurfaceContainerHigh</item>
         <item name="android:colorBackground">?attr/colorSurfaceContainerHigh</item>
-        <item name="materialAlertDialogTitleTextStyle">@style/YTindr.DialogTitle</item>
-        <item name="shapeAppearanceOverlay">@style/YTindr.Shape.Dialog</item>
+        <item name="materialAlertDialogTitleTextStyle">@style/YTindir.DialogTitle</item>
+        <item name="shapeAppearanceOverlay">@style/YTindir.Shape.Dialog</item>
     </style>
-    <style name="YTindr.DialogTitle" parent="MaterialAlertDialog.Material3.Title.Text">
+    <style name="YTindir.DialogTitle" parent="MaterialAlertDialog.Material3.Title.Text">
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">22sp</item>
     </style>
-    <style name="YTindr.Shape.Dialog" parent="">
+    <style name="YTindir.Shape.Dialog" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">28dp</item>
     </style>

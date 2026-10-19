@@ -557,7 +557,7 @@
     <string name="retry_all">すべて再試行</string>
     <string name="download_anyway">このままダウンロード</string>
     <string name="clear">消去</string>
-    <string name="welcome_title">YTindr へようこそ</string>
+    <string name="welcome_title">YTindir へようこそ</string>
     <string name="welcome_subtitle">yt-dlp で動画と音声をダウンロード。まずはいくつか設定しましょう。</string>
     <string name="welcome_get_started">はじめる</string>
     <string name="welcome_restore_backup">バックアップから復元</string>
@@ -567,7 +567,7 @@
     <string name="welcome_guide_summary">ガイドでは、アプリの使い方、ダウンロード方法、よくある問題の解決方法を説明しています。いつでも開けます。</string>
     <string name="welcome_open_guide">ガイドを開く</string>
     <string name="welcome_permissions_title">権限</string>
-    <string name="welcome_permissions_summary">YTindr はこれらの権限で最もよく動作します。後で設定から変更できます。</string>
+    <string name="welcome_permissions_summary">YTindir はこれらの権限で最もよく動作します。後で設定から変更できます。</string>
     <string name="welcome_perm_storage">ストレージへのアクセス</string>
     <string name="welcome_perm_storage_summary">ダウンロードを端末に保存するために必要です。</string>
     <string name="welcome_perm_notifications">通知</string>
@@ -580,7 +580,7 @@
     <string name="welcome_allowed">許可済み</string>
     <string name="welcome_required">必須</string>
     <string name="welcome_updates_title">アップデート</string>
-    <string name="welcome_updates_summary">YTindr の更新方法を選択します。</string>
+    <string name="welcome_updates_summary">YTindir の更新方法を選択します。</string>
     <string name="welcome_next">次へ</string>
     <string name="welcome_finish">完了</string>
     <string name="lyrics">歌詞</string>

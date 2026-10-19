@@ -104,7 +104,7 @@ class WelcomePermissionsFragment : Fragment(R.layout.fragment_welcome_permission
             },
             request = ::requestIgnoreBatteryOptimizations
         )
-        // YTindr: scheduled downloads are hidden, so the exact-alarm permission is not asked for
+        // YTindir: scheduled downloads are hidden, so the exact-alarm permission is not asked for
         if (false && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             rows += Row(
                 "alarms", R.drawable.baseline_access_alarm_24,

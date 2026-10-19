@@ -121,7 +121,7 @@ class DownloadQueueMainFragment : Fragment(){
             }
         })
 
-        // YTindr: scheduling is hidden, so the Scheduled tab is skipped
+        // YTindir: scheduling is hidden, so the Scheduled tab is skipped
         (tabLayout.getChildAt(0) as? ViewGroup)?.getChildAt(2)?.visibility = View.GONE
         if (selectedTabIndex == 2) selectedTabIndex = 1
 

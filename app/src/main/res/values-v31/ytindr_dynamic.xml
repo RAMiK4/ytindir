@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Material You: keep sub-surfaces close to the background -->
-    <style name="YTindr.DynamicSurfaces" parent="">
+    <style name="YTindir.DynamicSurfaces" parent="">
         <item name="colorSurfaceContainerLow">@android:color/system_neutral1_50</item>
         <item name="colorSurfaceContainer">@android:color/system_neutral1_50</item>
         <item name="colorSurfaceContainerHigh">@android:color/system_neutral1_50</item>

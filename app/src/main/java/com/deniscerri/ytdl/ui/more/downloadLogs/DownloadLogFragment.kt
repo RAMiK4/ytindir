@@ -69,7 +69,7 @@ class DownloadLogFragment : Fragment() {
         mainActivity = activity as MainActivity
         mainActivity.hideBottomNavigation()
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
-        // YTindr: the first WebView of the process resets the app's day/night configuration,
+        // YTindir: the first WebView of the process resets the app's day/night configuration,
         // which turned this screen and the rest of the app light. Warm it up and restore first.
         FloatingNavUtil.prewarmWebView(requireActivity())
         return inflater.inflate(R.layout.fragment_download_log, container, false)
@@ -110,7 +110,7 @@ class DownloadLogFragment : Fragment() {
         copyLog.setOnClickListener {
             val clipboard: ClipboardManager =
                 mainActivity.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-            clipboard.setText("YTindr ${com.deniscerri.ytdl.BuildConfig.VERSION_NAME} (${com.deniscerri.ytdl.BuildConfig.VERSION_CODE})\n\n" + rawLogContent)
+            clipboard.setText("YTindir ${com.deniscerri.ytdl.BuildConfig.VERSION_NAME} (${com.deniscerri.ytdl.BuildConfig.VERSION_CODE})\n\n" + rawLogContent)
             Snackbar.make(bottomAppBar, getString(R.string.copied_to_clipboard), Snackbar.LENGTH_LONG)
                 .setAnchorView(bottomAppBar)
                 .show()

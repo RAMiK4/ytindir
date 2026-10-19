@@ -82,11 +82,11 @@ object NavbarUtil {
         val prefs = settings
             .getString("navigation_bar", DEFAULT_NAV_BAR)!!
             .split(",")
-        // YTindr: the terminal tab was removed, so older 5-item settings fall back to the default
+        // YTindir: the terminal tab was removed, so older 5-item settings fall back to the default
         return if (prefs.size == 4) prefs else DEFAULT_NAV_BAR.split(",")
     }
 
-    // YTindr: Home, Queue, Downloads, More
+    // YTindir: Home, Queue, Downloads, More
     private const val DEFAULT_NAV_BAR = "0,3,1,2"
 
     private fun getDefaultNavBarItems(context: Context): List<MenuItem> {

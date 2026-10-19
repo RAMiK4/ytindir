@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Material You surfaces: only used on Android 12+ -->
-    <style name="YTindr.DynamicSurfaces" parent="">
+    <style name="YTindir.DynamicSurfaces" parent="">
     </style>
 </resources>

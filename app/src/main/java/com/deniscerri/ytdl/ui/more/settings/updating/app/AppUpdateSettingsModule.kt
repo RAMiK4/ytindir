@@ -41,7 +41,7 @@ object AppUpdateSettingsModule : SettingModule {
                 }
             }
             "app_channel" -> {
-                // YTindr: there is only one release channel
+                // YTindir: there is only one release channel
                 host.findPref("app_update_channel_category")?.isVisible = false
                 (pref as UpdateChannelPreference).apply {
                     isVisible = false

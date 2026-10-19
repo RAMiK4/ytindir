@@ -574,7 +574,7 @@
     <plurals name="every_months">
         <item quantity="other">Setiap bulan\nSetiap %d bulan</item>
     </plurals>
-    <string name="bgutils_info">Penyedia token bukti asal (POT) untuk yt-dlp.\nSaat fitur ini diaktifkan, YTindr menjalankan server HTTP yang menghasilkan POT serta menginstal plugin terkait yang digunakan oleh yt-dlp.</string>
+    <string name="bgutils_info">Penyedia token bukti asal (POT) untuk yt-dlp.\nSaat fitur ini diaktifkan, YTindir menjalankan server HTTP yang menghasilkan POT serta menginstal plugin terkait yang digunakan oleh yt-dlp.</string>
     <string name="bgutils_pot_generation_script">Skrip pembuatan</string>
     <string name="bgutils_pot_generation_server">Server HTTP</string>
     <string name="bgutils_pot_generation_script_summary">Setiap pemanggilan yt-dlp menimbulkan *overhead* berupa pembuatan proses *runtime* JS baru untuk menjalankan skrip tersebut. Metode ini tidak disarankan untuk penggunaan dengan konkurensi tinggi.</string>
@@ -587,7 +587,7 @@
     <string name="notset">Belum diatur</string>
     <string name="external">Luar</string>
     <string name="exit">Keluar</string>
-    <string name="packages_description">Paket adalah aplikasi pendukung yang digunakan YTindr untuk membantu menjalankan perintah yt-dlp. Beberapa paket sudah disertakan di dalamnya, namun Anda dapat menginstal versi terbaru yang dirilis tanpa perlu memperbarui aplikasi itu sendiri. Paket APK yang diinstal akan menggantikan versi bawaan yang digunakan oleh aplikasi tersebut.</string>
+    <string name="packages_description">Paket adalah aplikasi pendukung yang digunakan YTindir untuk membantu menjalankan perintah yt-dlp. Beberapa paket sudah disertakan di dalamnya, namun Anda dapat menginstal versi terbaru yang dirilis tanpa perlu memperbarui aplikasi itu sendiri. Paket APK yang diinstal akan menggantikan versi bawaan yang digunakan oleh aplikasi tersebut.</string>
     <string name="bgutils_pot_generation_script_info">Untuk menggunakan BgUtils POT Provider, aplikasi perlu mengunduh repositori Brainicism/bgutil-ytdlp-pot-provider dari GitHub dan memulai instalasi. Proses ini mungkin memakan waktu cukup lama. Lanjutkan sekarang?</string>
     <string name="burn_subs">Tanam subtitle</string>
     <string name="check_clipboard_home_summary">Deteksi URL secara otomatis di papan klip pada layar beranda</string>
@@ -622,7 +622,7 @@
     <string name="retry_all">Coba lagi semua</string>
     <string name="download_anyway">Tetap unduh</string>
     <string name="clear">Hapus</string>
-    <string name="welcome_title">Selamat datang di YTindr</string>
+    <string name="welcome_title">Selamat datang di YTindir</string>
     <string name="welcome_subtitle">Unduh video dan audio dengan yt-dlp. Mari atur beberapa hal dulu.</string>
     <string name="welcome_get_started">Mulai</string>
     <string name="welcome_restore_backup">Pulihkan dari cadangan</string>
@@ -632,7 +632,7 @@
     <string name="welcome_guide_summary">Panduan menjelaskan cara memakai aplikasi, mengunduh, dan mengatasi masalah umum. Kamu bisa membukanya kapan saja.</string>
     <string name="welcome_open_guide">Buka panduan</string>
     <string name="welcome_permissions_title">Izin</string>
-    <string name="welcome_permissions_summary">YTindr bekerja paling baik dengan izin ini. Kamu bisa mengubahnya nanti di pengaturan.</string>
+    <string name="welcome_permissions_summary">YTindir bekerja paling baik dengan izin ini. Kamu bisa mengubahnya nanti di pengaturan.</string>
     <string name="welcome_perm_storage">Akses penyimpanan</string>
     <string name="welcome_perm_storage_summary">Diperlukan untuk menyimpan unduhan di perangkat.</string>
     <string name="welcome_perm_notifications">Notifikasi</string>
@@ -645,7 +645,7 @@
     <string name="welcome_allowed">Diizinkan</string>
     <string name="welcome_required">Wajib</string>
     <string name="welcome_updates_title">Pembaruan</string>
-    <string name="welcome_updates_summary">Pilih cara YTindr tetap terbarui.</string>
+    <string name="welcome_updates_summary">Pilih cara YTindir tetap terbarui.</string>
     <string name="welcome_next">Berikutnya</string>
     <string name="welcome_finish">Selesai</string>
     <string name="lyrics">Lirik</string>

@@ -11,7 +11,7 @@
     app:cardBackgroundColor="?attr/colorSurfaceContainerHigh"
     app:cardElevation="0dp"
     app:checkedIcon="@null"
-    app:shapeAppearance="@style/YTindr.Shape.Field"
+    app:shapeAppearance="@style/YTindir.Shape.Field"
     app:strokeColor="@color/ytindr_card_stroke"
     app:strokeWidth="2dp"
     app:cardPreventCornerOverlap="true"

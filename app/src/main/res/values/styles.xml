@@ -82,8 +82,8 @@
     </style>
 
 
-    <!-- YTindr: "Daha fazla" ekranındaki satırlar -->
-    <style name="YTindr.MoreRow" parent="">
+    <!-- YTindir: "Daha fazla" ekranındaki satırlar -->
+    <style name="YTindir.MoreRow" parent="">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:minHeight">60dp</item>
@@ -101,7 +101,7 @@
         <item name="drawableTint">?attr/colorPrimary</item>
     </style>
 
-    <style name="YTindr.MoreCard" parent="Widget.Material3.CardView.Filled">
+    <style name="YTindir.MoreCard" parent="Widget.Material3.CardView.Filled">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginHorizontal">16dp</item>

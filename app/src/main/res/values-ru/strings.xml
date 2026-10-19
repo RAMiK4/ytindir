@@ -592,7 +592,7 @@
         <item quantity="many">Каждые %d минуты</item>
         <item quantity="other">Каждые %d минуты</item>
     </plurals>
-    <string name="bgutils_info">Поставщик токенов подтверждения происхождения (POT) для yt-dlp.\nЕсли это включено, YTindr размещает HTTP сервер, который генерирует POT и устанавливает соответствующий плагин, использующий yt-dlp.</string>
+    <string name="bgutils_info">Поставщик токенов подтверждения происхождения (POT) для yt-dlp.\nЕсли это включено, YTindir размещает HTTP сервер, который генерирует POT и устанавливает соответствующий плагин, использующий yt-dlp.</string>
     <string name="bgutils_pot_generation_script">Скрипт генерации</string>
     <string name="bgutils_pot_generation_server">HTTP Сервер</string>
     <string name="bgutils_pot_generation_script_summary">Каждый вызов yt-dlp влечет за собой накладные расходы на создание нового процесса выполнения js для запуска скрипта. Этот метод не рекомендуется для использования с высоким уровнем параллелизма.</string>
@@ -605,7 +605,7 @@
     <string name="notset">Не указано</string>
     <string name="external">Внешний</string>
     <string name="exit">Выход</string>
-    <string name="packages_description">Пакеты это вспомогательные приложения, которые YTindr использует для помощи команд yt-dlp. Некоторые из них уже входят в комплект, но вы можете установить более новые версии, опубликованные без необходимости обновления программы. Установленные apk\'s заменяют поставляемую версию в комплекте, которую использует приложение.</string>
+    <string name="packages_description">Пакеты это вспомогательные приложения, которые YTindir использует для помощи команд yt-dlp. Некоторые из них уже входят в комплект, но вы можете установить более новые версии, опубликованные без необходимости обновления программы. Установленные apk\'s заменяют поставляемую версию в комплекте, которую использует приложение.</string>
     <string name="bgutils_pot_generation_script_info">Чтобы использовать поставщика POT от BgUtils, приложение требуется загрузить репозиторий Brainicism/bgutil-ytdlp-pot-provider из github и начать установку. то может занять некоторое время. Продолжить сейчас?</string>
     <string name="burn_subs">Записать субтитры</string>
     <string name="check_clipboard_home_summary">Автоматически обнаруживать URLs в буфере обмена на главном экране</string>
@@ -663,7 +663,7 @@
     <string name="merge_cuts">Объединить вырезанные фрагменты в один файл</string>
     <string name="write_ytdlp_terminal">Автоматическая запись yt-dlp в терминале</string>
     <string name="clear">Очистить</string>
-    <string name="welcome_title">Добро пожаловать в YTindr</string>
+    <string name="welcome_title">Добро пожаловать в YTindir</string>
     <string name="welcome_subtitle">Загрузите видео и аудио с помощью yt-dlp. Давайте сначала настроим несколько вещей.</string>
     <string name="welcome_get_started">Начнём</string>
     <string name="welcome_restore_backup">Восстановление из резервной копии</string>
@@ -673,7 +673,7 @@
     <string name="welcome_guide_summary">В руководстве описано, как пользоваться приложением, скачивать и решать частые проблемы. Его можно открыть в любой момент.</string>
     <string name="welcome_open_guide">Открыть руководство</string>
     <string name="welcome_permissions_title">Разрешения</string>
-    <string name="welcome_permissions_summary">YTindr лучше всего работает с этими настройками. Их можно изменить позже в настройках.</string>
+    <string name="welcome_permissions_summary">YTindir лучше всего работает с этими настройками. Их можно изменить позже в настройках.</string>
     <string name="welcome_perm_storage">Доступ к хранилищу</string>
     <string name="welcome_perm_storage_summary">Необходимо сохранить загруженные файлы на устройстве.</string>
     <string name="welcome_perm_notifications">Уведомления</string>
@@ -686,7 +686,7 @@
     <string name="welcome_allowed">Разрешено</string>
     <string name="welcome_required">Обязательно</string>
     <string name="welcome_updates_title">Обновления</string>
-    <string name="welcome_updates_summary">Выберите, как YTindr будет обновляться.</string>
+    <string name="welcome_updates_summary">Выберите, как YTindir будет обновляться.</string>
     <string name="welcome_next">Далее</string>
     <string name="welcome_finish">Завершить</string>
     <string name="lyrics">Текст песни</string>

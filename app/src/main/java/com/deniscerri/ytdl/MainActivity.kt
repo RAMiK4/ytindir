@@ -115,7 +115,7 @@ class MainActivity : BaseActivity() {
         }
         CrashListener(this).registerExceptionHandler()
         ThemeUtil.updateTheme(this)
-        // YTindr: the nav floats, so the system bar matches the screen background
+        // YTindir: the nav floats, so the system bar matches the screen background
         window.navigationBarColor = MaterialColors.getColor(this, android.R.attr.colorBackground, SurfaceColors.SURFACE_2.getColor(this))
         setContentView(R.layout.activity_main)
         FloatingNavUtil.register(this)
@@ -336,7 +336,7 @@ class MainActivity : BaseActivity() {
     fun hideBottomNavigation(){
         navigationBarView?.apply {
             if (this is BottomNavigationView){
-                // YTindr: the floating nav sits over the content, so only slide it away
+                // YTindir: the floating nav sits over the content, so only slide it away
                 val bottomMargin = (this.layoutParams as? ViewGroup.MarginLayoutParams)?.bottomMargin ?: 0
                 this.animate()?.translationY((this.height + bottomMargin).toFloat())?.setDuration(300)?.withEndAction {
                     this.visibility = View.GONE
@@ -502,7 +502,7 @@ class MainActivity : BaseActivity() {
     }
 
     private fun callAutoUpdates(firstRun : Boolean = false) {
-        // YTindr: app updates used to be off in this build; turn them on once for existing installs
+        // YTindir: app updates used to be off in this build; turn them on once for existing installs
         if (!preferences.getBoolean("ytindr_app_updates_migrated", false)) {
             preferences.edit().putBoolean("update_app", true).putBoolean("ytindr_app_updates_migrated", true).apply()
             UpdateCheckWorker.schedule(applicationContext)
@@ -574,7 +574,7 @@ class MainActivity : BaseActivity() {
                 }
             }
         }
-        // YTindr: one-time defaults for existing installs: nightly yt-dlp, auto update on
+        // YTindir: one-time defaults for existing installs: nightly yt-dlp, auto update on
         if (!preferences.getBoolean("ytindr_defaults_v1", false)) {
             preferences.edit {
                 putString("ytdlp_source", "nightly")

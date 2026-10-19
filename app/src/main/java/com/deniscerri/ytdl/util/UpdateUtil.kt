@@ -34,7 +34,7 @@ class UpdateUtil(var context: Context) {
         Pair<String, RuntimeManager.UpdateChannel>("master", RuntimeManager.UpdateChannel.MASTER)
     )
 
-    // YTindr: tags look like v1.3.0-build9. Versions are compared as
+    // YTindir: tags look like v1.3.0-build9. Versions are compared as
     // (major, minor, patch, build) so a rebuild of the same version still counts as newer.
     private fun String.tagNameToVersionNumber() : Long {
         val m = Regex("""(\d+)\.(\d+)\.(\d+)(?:.*?build(\d+))?""").find(this) ?: return 0L
@@ -170,7 +170,7 @@ class UpdateUtil(var context: Context) {
     suspend fun downloadReleaseApk(release: GithubRelease, onProgress: (Long) -> Unit) : Result<File> {
         return withContext(Dispatchers.IO) {
             try {
-                // YTindr releases carry a single arm64 APK
+                // YTindir releases carry a single arm64 APK
                 val releaseVersion = release.assets.firstOrNull {
                     it.name.endsWith(".apk") && it.name.contains("arm64")
                 } ?: release.assets.first { it.name.endsWith(".apk") }
@@ -218,7 +218,7 @@ class UpdateUtil(var context: Context) {
 
     companion object {
         const val APP_REPO = "RAMiK4/ytindr"
-        // YTindr: every build (foss included) can update itself from APP_REPO releases
+        // YTindir: every build (foss included) can update itself from APP_REPO releases
         const val APP_UPDATES_ENABLED = true
         var updatingYTDL = false
         var updatingApp = false

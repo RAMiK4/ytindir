@@ -16,7 +16,7 @@
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
-    app:shapeAppearance="@style/YTindr.Shape.Card"
+    app:shapeAppearance="@style/YTindir.Shape.Card"
     app:strokeWidth="0dp"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -52,7 +52,7 @@
             app:layout_constraintHorizontal_weight="0.3"
             app:layout_constraintStart_toEndOf="@id/checkBox"
             app:layout_constraintTop_toTopOf="parent"
-            app:shapeAppearance="@style/YTindr.Shape.Thumb" />
+            app:shapeAppearance="@style/YTindir.Shape.Thumb" />
 
         <TextView
             android:id="@+id/index"

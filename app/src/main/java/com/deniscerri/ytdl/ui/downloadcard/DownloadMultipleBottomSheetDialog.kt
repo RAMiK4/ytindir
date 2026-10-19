@@ -188,7 +188,7 @@ class DownloadMultipleBottomSheetDialog : BottomSheetDialogFragment(), Configure
         }
 
         scheduleBtn = view.findViewById(R.id.bottomsheet_schedule_button)
-        scheduleBtn.visibility = View.GONE // YTindr: scheduling is hidden
+        scheduleBtn.visibility = View.GONE // YTindir: scheduling is hidden
         downloadBtn = view.findViewById(R.id.bottomsheet_download_button)
         bottomAppBar = view.findViewById(R.id.bottomAppBar)
 

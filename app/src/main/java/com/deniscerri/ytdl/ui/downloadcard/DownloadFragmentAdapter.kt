@@ -14,7 +14,7 @@ class DownloadFragmentAdapter (
     private var downloadItem: DownloadItem?,
     nonSpecific: Boolean = false,
     var isIncognito: Boolean = false,
-    // YTindr: the command page is only offered for text files, never for normal links
+    // YTindir: the command page is only offered for text files, never for normal links
     private val showCommand: Boolean = true
 ) : FragmentStateAdapter(fragmentManager, lifecycle) {
 

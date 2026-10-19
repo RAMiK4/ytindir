@@ -8,7 +8,7 @@ import urllib.request
 from yt_dlp.postprocessor.common import PostProcessor
 
 API = 'https://lrclib.net/api'
-USER_AGENT = 'YTindr (https://github.com/RAMiK4/ytindr)'
+USER_AGENT = 'YTindir (https://github.com/RAMiK4/ytindr)'
 DURATION_TOLERANCE = 5
 
 _LRC_STAMP = re.compile(r'\[(\d+):(\d+(?:\.\d+)?)\]')
@@ -17,7 +17,7 @@ _JUNK_BRACKETS = re.compile(
     re.IGNORECASE)
 
 
-# YTindr: the yt-dlp instance running this postprocessor. Its own networking already
+# YTindir: the yt-dlp instance running this postprocessor. Its own networking already
 # knows where the certificates are (the same one that downloads the video), so the
 # lyrics requests go through it instead of plain urllib.
 _YDL = None
@@ -183,7 +183,7 @@ def _unsyncsafe(b):
 
 
 def _id3_add_uslt(path, text):
-    """YTindr: writes an ID3 USLT (lyrics) frame without mutagen."""
+    """YTindir: writes an ID3 USLT (lyrics) frame without mutagen."""
     with open(path, 'rb') as f:
         data = f.read()
     if data[:3] == b'ID3':
@@ -210,7 +210,7 @@ def _id3_add_uslt(path, text):
 
 
 def _ffmpeg_lyrics(path, text, key):
-    """YTindr: fallback for m4a/opus/flac when mutagen is not available."""
+    """YTindir: fallback for m4a/opus/flac when mutagen is not available."""
     import subprocess
     ext = os.path.splitext(path)[1]
     tmp = path + '.lyrics' + ext

@@ -103,14 +103,14 @@ object ThemeUtil {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
 
         //update accent
-        // YTindr: only our own tone and Material You. Old accent values fall back to our tone.
+        // YTindir: only our own tone and Material You. Old accent values fall back to our tone.
         if (sharedPreferences.getString("theme_accent", "ytindr") == "Default" && DynamicColors.isDynamicColorAvailable()) {
             DynamicColors.applyToActivityIfAvailable(activity)
             activity.setTheme(R.style.BaseTheme)
-            // YTindr: keep the cards and dialogs only a shade off the background
-            activity.theme.applyStyle(R.style.YTindr_DynamicSurfaces, true)
+            // YTindir: keep the cards and dialogs only a shade off the background
+            activity.theme.applyStyle(R.style.YTindir_DynamicSurfaces, true)
         } else {
-            activity.setTheme(R.style.Theme_YTindr)
+            activity.setTheme(R.style.Theme_YTindir)
         }
 
         //high contrast theme
@@ -149,9 +149,9 @@ object ThemeUtil {
      * Get the styled app name
      */
     fun getStyledAppName(context: Context): Spanned {
-        // YTindr logo: "YT" in the accent colour, set in the YTindr logo font
+        // YTindir logo: "YT" in the accent colour, set in the YTindir logo font
         val colorPrimary = getThemeColor(context, androidx.appcompat.R.attr.colorPrimary)
-        val text = SpannableStringBuilder("YTindr")
+        val text = SpannableStringBuilder("YTindir")
         text.setSpan(ForegroundColorSpan(colorPrimary), 0, 2, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         getDisplayTypeface(context)?.let {
             text.setSpan(DisplayTypefaceSpan(it), 0, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
@@ -159,7 +159,7 @@ object ThemeUtil {
         return text
     }
 
-    /** YTindr logo font: Archivo Expanded Black, with the "i" dot and "d" lined up to the capitals. Only holds the logo letters. */
+    /** YTindir logo font: Archivo Expanded Black, with the "i" dot and "d" lined up to the capitals. Only holds the logo letters. */
     fun getDisplayTypeface(context: Context): Typeface? =
         runCatching { ResourcesCompat.getFont(context, R.font.ytindr_logo) }.getOrNull()
 
@@ -169,7 +169,7 @@ object ThemeUtil {
     }
 
 
-    // YTindr: the green icon is the only launcher icon. Components are only touched
+    // YTindir: the green icon is the only launcher icon. Components are only touched
     // when their state is wrong, so the launcher shortcut doesn't flicker on every start.
     @Suppress("UNUSED_PARAMETER")
     fun updateAppIcon(activity: Activity, theme: String, appIconMode: String) {

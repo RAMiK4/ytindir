@@ -583,7 +583,7 @@
         <item quantity="one">Her dakika</item>
         <item quantity="other">Her %d dakikada bir</item>
     </plurals>
-    <string name="bgutils_info">yt-dlp için bir proof-of-origin token (POT) sağlayıcısı.\nBu özellik etkinleştirildiğinde YTindr, POT üreten HTTP sunucusuna ev sahipliği yapar ve yt-dlp\'nin kullandığı ilgili eklentiyi kurar.</string>
+    <string name="bgutils_info">yt-dlp için bir proof-of-origin token (POT) sağlayıcısı.\nBu özellik etkinleştirildiğinde YTindir, POT üreten HTTP sunucusuna ev sahipliği yapar ve yt-dlp\'nin kullandığı ilgili eklentiyi kurar.</string>
     <string name="bgutils_pot_generation_script">Oluşturma betiği</string>
     <string name="bgutils_pot_generation_server">HTTP Sunucusu</string>
     <string name="bgutils_pot_generation_script_summary">Her yt-dlp çağrısı, betiği çalıştırmak için yeni bir JavaScript çalışma zamanı işlemi başlatma yükü getirir. Bu yöntem, yüksek eşzamanlı kullanım için önerilmez.</string>
@@ -596,7 +596,7 @@
     <string name="notset">Belirtilmedi</string>
     <string name="external">Harici</string>
     <string name="exit">Çıkış</string>
-    <string name="packages_description">Paketler, YTindr\'in yt-dlp komutlarına yardımcı olmak için kullandığı yardımcı uygulamalardır. Bunların bazıları zaten uygulamaya dahildir, ancak uygulamayı güncellemeye gerek kalmadan yayınlanan daha yeni sürümleri yükleyebilirsiniz. Yüklenen APK\'lar, uygulamanın kullandığı dahili sürümün yerini alır.</string>
+    <string name="packages_description">Paketler, YTindir\'in yt-dlp komutlarına yardımcı olmak için kullandığı yardımcı uygulamalardır. Bunların bazıları zaten uygulamaya dahildir, ancak uygulamayı güncellemeye gerek kalmadan yayınlanan daha yeni sürümleri yükleyebilirsiniz. Yüklenen APK\'lar, uygulamanın kullandığı dahili sürümün yerini alır.</string>
     <string name="bgutils_pot_generation_script_info">BgUtils POT Sağlayıcısını kullanmak için uygulamanın GitHub\'dan Brainicism/bgutil-ytdlp-pot-provider deposunu indirmesi ve kurulumu başlatması gerekiyor. Bu işlem biraz zaman alabilir. Şimdi devam edilsin mi?</string>
     <string name="search_results">Arama Sonuçları</string>
     <string name="check_clipboard_home_summary">Ana ekranda panodaki URL\'leri otomatik algıla</string>
@@ -634,7 +634,7 @@
     <string name="retry_all">Hepsini tekrar dene</string>
     <string name="download_anyway">Yine de indir</string>
     <string name="clear">Temizle</string>
-    <string name="welcome_title">YTindr\'a hoş geldin</string>
+    <string name="welcome_title">YTindir\'e hoş geldin</string>
     <string name="welcome_subtitle">yt-dlp ile video ve ses indir. Önce birkaç şeyi ayarlayalım.</string>
     <string name="welcome_get_started">Başla</string>
     <string name="welcome_restore_backup">Yedekten geri yükle</string>
@@ -644,7 +644,7 @@
     <string name="welcome_guide_summary">Rehber; uygulamanın kullanımını, indirmeyi ve sık görülen sorunların çözümünü anlatır. İstediğin zaman açabilirsin.</string>
     <string name="welcome_open_guide">Rehberi aç</string>
     <string name="welcome_permissions_title">İzinler</string>
-    <string name="welcome_permissions_summary">YTindr bu izinlerle en iyi şekilde çalışır. Daha sonra ayarlardan değiştirebilirsin.</string>
+    <string name="welcome_permissions_summary">YTindir bu izinlerle en iyi şekilde çalışır. Daha sonra ayarlardan değiştirebilirsin.</string>
     <string name="welcome_perm_storage">Depolama erişimi</string>
     <string name="welcome_perm_storage_summary">İndirmeleri cihaza kaydetmek için gerekli.</string>
     <string name="welcome_perm_notifications">Bildirimler</string>
@@ -657,7 +657,7 @@
     <string name="welcome_allowed">İzin verildi</string>
     <string name="welcome_required">Gerekli</string>
     <string name="welcome_updates_title">Güncellemeler</string>
-    <string name="welcome_updates_summary">YTindr\'ın nasıl güncel kalacağını seç.</string>
+    <string name="welcome_updates_summary">YTindir\'in nasıl güncel kalacağını seç.</string>
     <string name="welcome_next">İleri</string>
     <string name="welcome_finish">Bitir</string>
     <string name="lyrics">Şarkı sözleri</string>

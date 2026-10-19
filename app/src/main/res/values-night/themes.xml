@@ -4,8 +4,8 @@
         <item name="android:windowLightStatusBar">@android:color/transparent</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:color">@android:color/transparent</item>
-        <item name="alertDialogTheme">@style/ThemeOverlay.YTindr.Dialog</item>
-        <item name="materialAlertDialogTheme">@style/ThemeOverlay.YTindr.Dialog</item>
+        <item name="alertDialogTheme">@style/ThemeOverlay.YTindir.Dialog</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.YTindir.Dialog</item>
         <item name="dialogCornerRadius">28dp</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="actionBarTheme">@style/ThemeOverlay.Material3.Dark.ActionBar</item>
@@ -247,8 +247,8 @@
     </style>
 
 
-    <!-- YTindr tone -->
-    <style name="Theme.YTindr" parent="BaseTheme">
+    <!-- YTindir tone -->
+    <style name="Theme.YTindir" parent="BaseTheme">
         <item name="colorPrimary">@color/ytindr_dark_primary</item>
         <item name="colorOnPrimary">@color/ytindr_dark_onPrimary</item>
         <item name="colorPrimaryContainer">@color/ytindr_dark_primaryContainer</item>
