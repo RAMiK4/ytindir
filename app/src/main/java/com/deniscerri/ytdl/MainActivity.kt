@@ -582,6 +582,29 @@ class MainActivity : BaseActivity() {
                 putBoolean("ytindr_defaults_v1", true)
             }
         }
+        // YTindir: the app folder was renamed from YTindr; move saved folder paths along once.
+        // A folder picked through the system picker (content://) becomes a plain path, but only with
+        // all files access; without it, the picked folder keeps its granted access as it is.
+        if (!preferences.getBoolean("ytindir_folder_v1", false)) {
+            val allFilesAccess = Build.VERSION.SDK_INT < 30 || android.os.Environment.isExternalStorageManager()
+            val oldFolder = Regex("/Download/YTindr(?=/|$)")
+            val oldPickedFolder = Regex("^content://com\\.android\\.externalstorage\\.documents/tree/primary%3ADownload%2FYTindr(?=%2F|/|$)(.*)$", RegexOption.IGNORE_CASE)
+            preferences.edit {
+                listOf("music_path", "video_path", "command_path").forEach { key ->
+                    val path = preferences.getString(key, "") ?: ""
+                    if (path.startsWith("/") && oldFolder.containsMatchIn(path)) {
+                        putString(key, oldFolder.replace(path, "/Download/YTindir"))
+                    } else if (allFilesAccess) {
+                        oldPickedFolder.find(path)?.let { match ->
+                            val rest = java.net.URLDecoder.decode(match.groupValues[1], "UTF-8").substringBefore("/document/")
+                            val base = android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS).absolutePath
+                            putString(key, "$base/YTindir$rest")
+                        }
+                    }
+                }
+                putBoolean("ytindir_folder_v1", true)
+            }
+        }
         // YTindir: one-time move to the new media defaults: Opus audio converted to 192 kbps mp3,
         // 1080p H.264 mp4 video at its highest frame rate (can be changed in the settings afterwards)
         if (!preferences.getBoolean("ytindir_media_defaults_v1", false)) {

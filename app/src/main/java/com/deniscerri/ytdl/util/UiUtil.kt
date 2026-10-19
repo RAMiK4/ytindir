@@ -151,6 +151,10 @@ object UiUtil {
         }
 
         formatCard.findViewById<TextView>(R.id.format_id).apply {
+            // YTindir: placeholder formats (shown before the real formats load) have no real id
+            val placeholder = chosenFormat.format_id.contains("ytdlnisgeneric") ||
+                chosenFormat.format_id in listOf("best", "worst", "ba", "wa", "bv", "")
+            visibility = if (placeholder) View.GONE else View.VISIBLE
             text = "id: ${chosenFormat.format_id}"
             setOnClickListener {
                 formatCard.callOnClick()

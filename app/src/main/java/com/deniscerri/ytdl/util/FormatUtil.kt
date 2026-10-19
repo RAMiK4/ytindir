@@ -316,7 +316,10 @@ class FormatUtil(private var context: Context) {
         val videoFormats = resources.getStringArray(R.array.video_formats)
         val formats = mutableListOf<Format>()
         val containerPreference = sharedPreferences.getString("video_format", "")
-        val audioCodecPreference = sharedPreferences.getString("audio_codec", "")!!.run {
+        // YTindir: mp4 videos get AAC audio, whatever the audio codec setting says
+        val videoAudioCodec = if (containerPreference.equals("mp4", ignoreCase = true)) "m4a|mp4a|aac"
+            else sharedPreferences.getString("audio_codec", "")!!
+        val audioCodecPreference = videoAudioCodec.run {
             if (this.isNotEmpty()){
                 val audioCodecs = resources.getStringArray(R.array.audio_codec)
                 val audioCodecsValues = resources.getStringArray(R.array.audio_codec_values)
