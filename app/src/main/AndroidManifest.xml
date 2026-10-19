@@ -77,7 +77,7 @@
             android:excludeFromRecents="true"
             android:exported="true"
             android:taskAffinity=""
-            android:launchMode="singleInstance"
+            android:launchMode="standard"
             android:theme="@style/Theme.BottomSheet">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />

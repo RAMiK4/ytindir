@@ -161,8 +161,10 @@ class ShareActivity : BaseActivity() {
         if (Intent.ACTION_SEND == action || Intent.ACTION_VIEW == action) {
             if (intent.getStringExtra(Intent.EXTRA_TEXT) == null && Intent.ACTION_SEND == action){
                 intent.setClass(this, MainActivity::class.java)
+                // the card can live in the sharing app's task, so the main screen opens in its own
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
-                finishAffinity()
+                finish()
                 return
             }
 
@@ -217,7 +219,8 @@ class ShareActivity : BaseActivity() {
         }
     }
     override fun onConfigurationChanged(newConfig: Configuration) {
-        startActivity(Intent(this, MainActivity::class.java))
+        // the card just lays itself out again; it opens over the sharing app,
+        // so rotating or resizing must not throw the user into the main screen
         super.onConfigurationChanged(newConfig)
     }
 
