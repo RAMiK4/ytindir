@@ -64,7 +64,7 @@ class DownloadFragmentAdapter (
                 kotlin.runCatching {
                     (fragments[0] as DownloadAudioFragment).apply {
                         updateTitleAuthor(prevDownloadItem.title, prevDownloadItem.author)
-                        updateSelectedAudioFormat(getDownloadItem(1).videoPreferences.audioFormatIDs.first())
+                        // YTindir: each tab keeps its own audio choice (e.g. Opus for audio, AAC for an mp4 video)
                     }
                 }
             }
@@ -72,7 +72,6 @@ class DownloadFragmentAdapter (
                 kotlin.runCatching {
                     (fragments[1] as DownloadVideoFragment).apply {
                         updateTitleAuthor(prevDownloadItem.title, prevDownloadItem.author)
-                        updateSelectedAudioFormat(getDownloadItem(0).format)
                     }
                 }
             }

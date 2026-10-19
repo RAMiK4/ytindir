@@ -1489,7 +1489,11 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
 
                 // YTindir: an mp4 video gets AAC audio, the codec mp4 plays with everywhere;
                 // the audio codec setting (e.g. Opus) is for audio downloads and other containers
-                if (cont.equals("mp4", ignoreCase = true)) aCodecPref = "aac"
+                if (cont.equals("mp4", ignoreCase = true)) {
+                    aCodecPref = "aac"
+                    // the audio format setting (e.g. mp3) is the output of audio downloads, not a stream to look for
+                    acont = "m4a"
+                }
 
                 val defaultFormats = context.resources.getStringArray(R.array.video_formats_values)
                 val usingGenericFormat = defaultFormats.contains(videoF) || downloadItem.allFormats.isEmpty() || downloadItem.allFormats == formatUtil.getGenericVideoFormats(context.resources)
@@ -1622,8 +1626,6 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
                         "resolution" -> {
                             if (hasGenericResulutionFormat.isNotBlank()) {
                                 formatSorting.add("res:${hasGenericResulutionFormat}")
-                                // YTindir: at a capped resolution, take the highest frame rate available
-                                formatSorting.add("fps")
                             }
                         }
                         "container" -> {
@@ -1634,6 +1636,8 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
                         }
                     }
                 }
+                // YTindir: after resolution, codec and container, take the highest frame rate the video has
+                if (hasGenericResulutionFormat.isNotBlank()) formatSorting.add("fps")
 
                 if (downloadItem.format.format_id == context.resources.getString(R.string.worst_quality) || downloadItem.format.format_id == "worst") {
                     formatSorting.remove("+size")

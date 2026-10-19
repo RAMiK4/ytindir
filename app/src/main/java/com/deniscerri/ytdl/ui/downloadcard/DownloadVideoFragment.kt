@@ -220,8 +220,9 @@ class DownloadVideoFragment(private var resultItem: ResultItem? = null, private 
                         runCatching {
                             downloadItem.format = downloadViewModel.getFormat(downloadItem.allFormats, DownloadType.video)
                             if (downloadItem.videoPreferences.audioFormatIDs.isEmpty()){
-                                downloadItem.videoPreferences.audioFormatIDs.add(
-                                    downloadViewModel.getFormat(downloadItem.allFormats, DownloadType.audio).format_id
+                                // YTindir: the audio picked for a video download, not the audio tab's choice
+                                downloadItem.videoPreferences.audioFormatIDs.addAll(
+                                    downloadViewModel.getPreferredAudioFormats(downloadItem.allFormats)
                                 )
                             }
                         }.onFailure {
