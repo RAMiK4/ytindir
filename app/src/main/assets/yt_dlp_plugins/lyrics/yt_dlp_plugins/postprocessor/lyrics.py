@@ -8,7 +8,7 @@ import urllib.request
 from yt_dlp.postprocessor.common import PostProcessor
 
 API = 'https://lrclib.net/api'
-USER_AGENT = 'YTindir (https://github.com/RAMiK4/ytindr)'
+USER_AGENT = 'YTindir (https://github.com/RAMiK4/ytindir)'
 DURATION_TOLERANCE = 5
 
 _LRC_STAMP = re.compile(r'\[(\d+):(\d+(?:\.\d+)?)\]')

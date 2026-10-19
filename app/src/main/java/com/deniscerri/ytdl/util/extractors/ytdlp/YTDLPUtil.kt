@@ -1487,6 +1487,10 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
                     aCodecPref = "aac"
                 }
 
+                // YTindir: an mp4 video gets AAC audio, the codec mp4 plays with everywhere;
+                // the audio codec setting (e.g. Opus) is for audio downloads and other containers
+                if (cont.equals("mp4", ignoreCase = true)) aCodecPref = "aac"
+
                 val defaultFormats = context.resources.getStringArray(R.array.video_formats_values)
                 val usingGenericFormat = defaultFormats.contains(videoF) || downloadItem.allFormats.isEmpty() || downloadItem.allFormats == formatUtil.getGenericVideoFormats(context.resources)
                 var hasGenericResulutionFormat = ""

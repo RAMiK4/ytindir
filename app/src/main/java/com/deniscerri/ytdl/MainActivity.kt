@@ -582,6 +582,19 @@ class MainActivity : BaseActivity() {
                 putBoolean("ytindr_defaults_v1", true)
             }
         }
+        // YTindir: one-time move to the new media defaults: Opus audio converted to 192 kbps mp3,
+        // 1080p H.264 mp4 video at its highest frame rate (can be changed in the settings afterwards)
+        if (!preferences.getBoolean("ytindir_media_defaults_v1", false)) {
+            preferences.edit {
+                putString("audio_codec", "opus")
+                putString("audio_format", "mp3")
+                putString("audio_bitrate", "192k")
+                putString("video_codec", "avc|h264")
+                putString("video_format", "mp4")
+                putString("video_quality", "1080p_ytdlnisgeneric")
+                putBoolean("ytindir_media_defaults_v1", true)
+            }
+        }
 
         if (preferences.getBoolean("auto_update_ytdlp", true)){
             CoroutineScope(SupervisorJob()).launch {

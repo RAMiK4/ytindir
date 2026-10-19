@@ -115,6 +115,10 @@ class FormatUtil(private var context: Context) {
     @SuppressLint("RestrictedApi")
     fun sortAudioFormats(formats: List<Format>, forVideoDownload: Boolean = false) : List<Format> {
         val orderPreferences = getAudioFormatImportance(forVideoDownload)
+        // YTindir: the audio of an mp4 video is AAC, the codec mp4 plays with everywhere
+        val codecPreference = if (forVideoDownload && videoContainerPreference.equals("mp4", ignoreCase = true)) {
+            "m4a|mp4a|aac"
+        } else audioCodecPreference
         // YTindir: "default/original" only means something when the video has several audio languages
         val multipleLanguages = formats.mapNotNull { it.lang?.takeIf { l -> l.isNotBlank() } }.distinct().size > 1
 
@@ -171,11 +175,11 @@ class FormatUtil(private var context: Context) {
                         }
                     }
                     "codec" -> {
-                        if (audioCodecPreference.isNotBlank()) {
-                            ("^(${audioCodecPreference}).*$".toRegex(RegexOption.IGNORE_CASE)
+                        if (codecPreference.isNotBlank()) {
+                            ("^(${codecPreference}).*$".toRegex(RegexOption.IGNORE_CASE)
                                 .matches(b.acodec))
                                 .compareTo(
-                                    "^(${audioCodecPreference}).*$".toRegex(RegexOption.IGNORE_CASE)
+                                    "^(${codecPreference}).*$".toRegex(RegexOption.IGNORE_CASE)
                                         .matches(a.acodec)
                                 )
                         } else 0
@@ -244,18 +248,20 @@ class FormatUtil(private var context: Context) {
                                         .compareTo(a.format_note.contains("best", ignoreCase = true))
                                 }
                                 else -> {
-                                    val preferenceIndex = videoResolutionOrder.indexOfFirst { videoQualityPreference.contains(it, true) }
-
-                                    val aIndex = videoResolutionOrder.indexOfFirst { a.format_note.contains(it, ignoreCase = true) }
-                                    val bIndex = videoResolutionOrder.indexOfFirst { b.format_note.contains(it, ignoreCase = true) }
-                                    if (aIndex > preferenceIndex || bIndex > preferenceIndex) {
-                                        -1
-                                    }else if(aIndex == -1 && bIndex == -1){
-                                        0
-                                    }else{
-                                        bIndex.compareTo(aIndex)
+                                    // YTindir: a resolution setting (e.g. 1080p) is a cap: the highest
+                                    // resolution at or under it wins, otherwise the closest one above it
+                                    val target = Regex("(\\d{3,4})p").find(videoQualityPreference)?.groupValues?.get(1)?.toIntOrNull()
+                                    if (target == null) 0 else {
+                                        val ah = a.heightValue()
+                                        val bh = b.heightValue()
+                                        val aFits = ah in 1..target
+                                        val bFits = bh in 1..target
+                                        when {
+                                            aFits != bFits -> bFits.compareTo(aFits)
+                                            aFits -> bh.compareTo(ah)
+                                            else -> ah.compareTo(bh)
+                                        }
                                     }
-
                                 }
                             }
                         }
@@ -274,7 +280,11 @@ class FormatUtil(private var context: Context) {
                     }
                     if (comparison != 0) return comparison
                 }
-                return 0
+                // YTindir: between otherwise equal formats take the larger picture, then the
+                // highest frame rate the video has (60, else 50, else 30...)
+                val height = b.heightValue().compareTo(a.heightValue())
+                if (height != 0) return height
+                return b.fpsValue().compareTo(a.fpsValue())
             }
         }
         return formats.sortedWith(fieldSorter)
@@ -424,4 +434,10 @@ class FormatUtil(private var context: Context) {
     }
     * */
 
+
+    private fun Format.heightValue(): Int =
+        height ?: Regex("(\\d{3,4})p").find(format_note)?.groupValues?.get(1)?.toIntOrNull() ?: 0
+
+    private fun Format.fpsValue(): Float =
+        fps?.toFloatOrNull() ?: Regex("\\d{3,4}p(\\d{2,3})").find(format_note)?.groupValues?.get(1)?.toFloatOrNull() ?: 0f
 }

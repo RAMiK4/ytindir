@@ -4,7 +4,7 @@
 
 <div align="center">
 
-[![Download](https://img.shields.io/github/v/release/RAMiK4/ytindr?style=for-the-badge&label=Download&color=00C46A)](https://github.com/RAMiK4/ytindr/releases/latest)
+[![Download](https://img.shields.io/github/v/release/RAMiK4/ytindir?style=for-the-badge&label=Download&color=00C46A)](https://github.com/RAMiK4/ytindir/releases/latest)
 ![Android](https://img.shields.io/badge/Android-7.0%2B-00C46A?style=for-the-badge&logo=android&logoColor=white)
 ![License](https://img.shields.io/badge/License-GPL--3.0-2C2C2C?style=for-the-badge)
 
@@ -35,7 +35,7 @@ To keep the app simple, these are hidden: terminal, command templates, source wa
 
 ## 📥 Installation
 
-Download the latest APK from the **[Releases](https://github.com/RAMiK4/ytindr/releases/latest)** page. The package name is `com.rl.ytindr`, so it can be installed next to the original YTDLnis. Every release is signed with the same key, so new versions install over the old one without losing data.
+Download the latest APK from the **[Releases](https://github.com/RAMiK4/ytindir/releases/latest)** page. The package name is `com.rl.ytindr`, so it can be installed next to the original YTDLnis. Every release is signed with the same key, so new versions install over the old one without losing data.
 
 Every update to `main` is built by GitHub Actions and published automatically as an arm64 APK.
 

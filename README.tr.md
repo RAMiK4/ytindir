@@ -8,7 +8,7 @@
 
 <div align="center">
 
-[![İndir](https://img.shields.io/github/v/release/RAMiK4/ytindr?style=for-the-badge&label=%C4%B0ndir&color=00C46A)](https://github.com/RAMiK4/ytindr/releases/latest)
+[![İndir](https://img.shields.io/github/v/release/RAMiK4/ytindir?style=for-the-badge&label=%C4%B0ndir&color=00C46A)](https://github.com/RAMiK4/ytindir/releases/latest)
 ![Android](https://img.shields.io/badge/Android-7.0%2B-00C46A?style=for-the-badge&logo=android&logoColor=white)
 ![Lisans](https://img.shields.io/badge/Lisans-GPL--3.0-2C2C2C?style=for-the-badge)
 
@@ -39,7 +39,7 @@ Arayüzü sade tutmak için şunlar gizlendi: terminal, komut şablonları, kayn
 
 ## 📥 Kurulum
 
-En son APK'yı **[Releases](https://github.com/RAMiK4/ytindr/releases/latest)** sayfasından indirin. Paket adı `com.rl.ytindr` olduğu için orijinal YTDLnis ile yan yana kurulabilir. Tüm sürümler aynı anahtarla imzalanır; yeni sürümler eskisinin üzerine kurulur.
+En son APK'yı **[Releases](https://github.com/RAMiK4/ytindir/releases/latest)** sayfasından indirin. Paket adı `com.rl.ytindr` olduğu için orijinal YTDLnis ile yan yana kurulabilir. Tüm sürümler aynı anahtarla imzalanır; yeni sürümler eskisinin üzerine kurulur.
 
 Her `main` güncellemesinde GitHub Actions yeni bir arm64 APK derleyip otomatik olarak yayınlar.
 

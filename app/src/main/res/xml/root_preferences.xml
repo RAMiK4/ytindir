@@ -132,17 +132,17 @@
             app:title="@string/license">
             <intent
                 android:action="android.intent.action.VIEW"
-                android:data="https://github.com/RAMiK4/ytindr/blob/main/LICENSE" />
+                android:data="https://github.com/RAMiK4/ytindir/blob/main/LICENSE" />
         </Preference>
 
         <Preference
             app:icon="@drawable/ic_code"
             app:key="rreth"
-            app:summary="github.com/RAMiK4/ytindr"
+            app:summary="github.com/RAMiK4/ytindir"
             app:title="@string/source_code">
             <intent
                 android:action="android.intent.action.VIEW"
-                android:data="https://github.com/RAMiK4/ytindr" />
+                android:data="https://github.com/RAMiK4/ytindir" />
         </Preference>
 
         <Preference

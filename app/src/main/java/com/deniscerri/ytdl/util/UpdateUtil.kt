@@ -217,7 +217,7 @@ class UpdateUtil(var context: Context) {
     }
 
     companion object {
-        const val APP_REPO = "RAMiK4/ytindr"
+        const val APP_REPO = "RAMiK4/ytindir"
         // YTindir: every build (foss included) can update itself from APP_REPO releases
         const val APP_UPDATES_ENABLED = true
         var updatingYTDL = false

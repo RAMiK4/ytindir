@@ -39,7 +39,7 @@ object LrcLibUtil {
         return runCatching {
             val conn = URL("$API/$path" + if (query.isNotEmpty()) "?$query" else "").openConnection() as HttpURLConnection
             try {
-                conn.setRequestProperty("User-Agent", "YTindir (https://github.com/RAMiK4/ytindr)")
+                conn.setRequestProperty("User-Agent", "YTindir (https://github.com/RAMiK4/ytindir)")
                 conn.connectTimeout = 8000
                 conn.readTimeout = 10000
                 if (conn.responseCode !in 200..299) null
