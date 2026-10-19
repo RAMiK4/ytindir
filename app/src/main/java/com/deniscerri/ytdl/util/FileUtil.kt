@@ -399,12 +399,12 @@ object FileUtil {
             return formatPath(preference)
         }
 
-        val externalPath = context.getExternalFilesDir(null)
-        return if (externalPath == null){
-            context.cacheDir.absolutePath + "/ytdlnis_cache/"
-        }else{
-            externalPath.absolutePath + "/ytdlnis_cache/"
-        }
+        val base = context.getExternalFilesDir(null) ?: context.cacheDir
+        val cache = File(base, "ytindir_cache")
+        // YTindir: the folder used to be "ytdlnis_cache"; move it (with paused downloads) once
+        val old = File(base, "ytdlnis_cache")
+        if (old.exists() && !cache.exists()) runCatching { old.renameTo(cache) }
+        return cache.absolutePath + "/"
     }
 
     fun getCacheDownloadsPath(context: Context): String {
