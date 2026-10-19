@@ -149,20 +149,18 @@ class TerminalFragment : Fragment() {
                     }else{
                         lifecycleScope.launch {
                             UiUtil.showCommandTemplates(requireActivity(), commandTemplateViewModel){ templates ->
-                                templates.forEach {c ->
-                                    session.write(" ${c.content} ")
+                                writeSpaced(templates.joinToString("") { c -> "${c.content} " })
                                     terminalView.requestFocus()
                                 }
                             }
                         }
                     }
-                }
                 R.id.shortcuts -> {
                     lifecycleScope.launch {
                         if (shortcutCount > 0){
                             UiUtil.showShortcuts(requireActivity(), commandTemplateViewModel,
                                 itemSelected = {sh ->
-                                    session.write(" $sh")
+                                    writeSpaced(sh)
                                 },
                                 itemRemoved = {}
                             )
@@ -171,7 +169,7 @@ class TerminalFragment : Fragment() {
                 }
                 R.id.filename_template -> {
                     UiUtil.showFilenameTemplateDialog(requireActivity(), "") { filenameSelected ->
-                        session.write(""" "$filenameSelected" """)
+                        writeSpaced("\"$filenameSelected\" ")
                     }
                 }
                 R.id.folder -> {
@@ -280,7 +278,7 @@ class TerminalFragment : Fragment() {
         val activity = requireActivity() as TerminalActivity
         val client = TerminalBackEnd(terminalView, activity) {
             if (isAdded) {
-                terminalViewModel.sessionBinder?.terminateSession(sessionId!!)
+                sessionId?.let { terminalViewModel.sessionBinder?.terminateSession(it) }
                 requireActivity().onBackPressedDispatcher.onBackPressed()
             }
         }
@@ -304,6 +302,7 @@ class TerminalFragment : Fragment() {
                 client
             )
         } else {
+            if (sessionId.isNullOrBlank()) sessionId = service.currentSession.value
             currentSession
         }
 
@@ -353,6 +352,19 @@ class TerminalFragment : Fragment() {
         }
     }
 
+    private fun writeSpaced(text: String) {
+        val needsSpace = runCatching {
+            val emulator = session.emulator
+            val col = emulator.cursorCol
+            if (col <= 0) false
+            else {
+                val before = emulator.screen.getSelectedText(col - 1, emulator.cursorRow, col - 1, emulator.cursorRow)
+                before.isNotEmpty() && !before.last().isWhitespace()
+            }
+        }.getOrDefault(true)
+        session.write(if (needsSpace) " $text" else text)
+    }
+
     val virtualKeys = "[" +
             "\n  [\"ESC\", {\"key\": \"/\", \"popup\": \"\\\\\"}, {\"key\": \"-\", \"popup\": \"|\"}, \"HOME\", \"UP\", \"END\", \"PGUP\"]," +
             "\n  [\"TAB\", \"CTRL\", \"ALT\", \"LEFT\", \"DOWN\", \"RIGHT\", \"PGDN\"]" +
@@ -370,7 +382,7 @@ class TerminalFragment : Fragment() {
                             Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                 )
             }
-            session.write(""" "${FileUtil.formatPath(result.data?.data.toString())}" """)
+            writeSpaced("\"${FileUtil.formatPath(result.data?.data.toString())}\" ")
         }
     }
 }

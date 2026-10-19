@@ -180,11 +180,18 @@ object UiUtil {
 
         var filesize = chosenFormat.filesize
         if (!audioFormats.isNullOrEmpty() && filesize > 10L) filesize += audioFormats.sumOf { it.filesize }
+        val isApprox = chosenFormat.isFilesizeApprox || audioFormats?.any { it.isFilesizeApprox } == true
         formatCard.findViewById<TextView>(R.id.file_size).apply {
             if (showSize) {
-                text = FileUtil.convertFileSize(filesize)
+                val readable = FileUtil.convertFileSize(filesize)
+                text = if (isApprox && readable != "?") "~ $readable" else readable
             }else{
                 text = "?"
+            }
+            if (showSize && isApprox) {
+                backgroundTintList = android.content.res.ColorStateList.valueOf(
+                    com.google.android.material.color.MaterialColors.getColor(this, com.google.android.material.R.attr.colorOnTertiary)
+                )
             }
             setOnClickListener {
                 formatCard.callOnClick()
@@ -719,7 +726,7 @@ object UiUtil {
                     true
                 }
             }
-            DownloadRepository.Status.Queued -> {
+            DownloadRepository.Status.Queued, DownloadRepository.Status.QueuedPaused -> {
                 download!!.text = context.getString(R.string.configure_download)
                 download.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_retries, 0, 0, 0);
                 download.setOnClickListener {
@@ -756,7 +763,7 @@ object UiUtil {
             }
         }
 
-        if (status != DownloadRepository.Status.Queued && status != DownloadRepository.Status.Error){
+        if (status != DownloadRepository.Status.Queued && status != DownloadRepository.Status.QueuedPaused && status != DownloadRepository.Status.Error){
             download?.setOnClickListener {
                 bottomSheet.dismiss()
                 downloadItem(item)

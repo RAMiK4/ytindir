@@ -117,7 +117,8 @@ class WelcomeActivity : AppCompatActivity() {
             putBoolean("asked_auto_update_preferences", true)
             putBoolean(PREF_COMPLETED, true)
         }
-        if (viewModel.updateApp) UpdateCheckWorker.schedule(applicationContext)
+
+        scheduleUpdateCheckWorker()
         launchMain()
     }
 
@@ -135,8 +136,17 @@ class WelcomeActivity : AppCompatActivity() {
                 else LocaleListCompat.forLanguageTags(language.toString())
             )
         }
-        if (preferences.getBoolean("update_app", false)) UpdateCheckWorker.schedule(applicationContext)
+        scheduleUpdateCheckWorker()
         launchMain()
+    }
+
+    fun scheduleUpdateCheckWorker() {
+        val checkUpdatesApp = preferences.getBoolean("update_app", true)
+        val checkUpdatesYTDL = preferences.getBoolean("auto_update_ytdlp", true)
+
+        if (checkUpdatesApp || checkUpdatesYTDL) {
+            UpdateCheckWorker.schedule(applicationContext)
+        }
     }
 
     private fun launchMain() {

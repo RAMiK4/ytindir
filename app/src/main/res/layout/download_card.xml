@@ -168,6 +168,7 @@
                     android:backgroundTint="?attr/colorSecondaryContainer"
                     android:textColor="?attr/colorOnSecondaryContainer"
                     android:clickable="false"
+                    android:drawablePadding="5dp"
                     android:gravity="center"
                     android:minWidth="30dp"
                     android:paddingHorizontal="8dp"

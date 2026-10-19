@@ -12,8 +12,12 @@ import androidx.work.WorkerParameters
 import com.deniscerri.ytdl.App
 import com.deniscerri.ytdl.BuildConfig
 import com.deniscerri.ytdl.core.RuntimeManager
+import com.deniscerri.ytdl.util.FileUtil
 import com.deniscerri.ytdl.util.NotificationUtil
 import com.deniscerri.ytdl.util.UpdateUtil
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.io.File
 import java.util.concurrent.TimeUnit
 
 class UpdateCheckWorker(
@@ -25,6 +29,10 @@ class UpdateCheckWorker(
         val notificationUtil = NotificationUtil(App.instance)
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
+        val checkUpdatesApp = sharedPreferences.getBoolean("update_app", true)
+        val checkUpdatesYTDL = sharedPreferences.getBoolean("auto_update_ytdlp", true)
+
+        if (checkUpdatesApp) {
         val newRelease = updateUtil.tryGetNewVersion()
         if (newRelease.isSuccess && UpdateUtil.APP_UPDATES_ENABLED) {
             notificationUtil.showNewAppUpdate(newRelease.getOrNull()!!.tag_name)
@@ -46,6 +54,20 @@ class UpdateCheckWorker(
 
                 skipRemindingPackageUpdate.add(latestRelease.tag_name)
                 sharedPreferences.edit().putStringSet("skip_reminding_package_update", skipRemindingPackageUpdate).apply()
+            }
+        }
+        }
+
+        if (checkUpdatesYTDL) {
+            val res = updateUtil.updateYTDL()
+            when (res.status) {
+                UpdateUtil.YTDLPUpdateStatus.DONE -> {
+                    withContext(Dispatchers.IO) {
+                        File(FileUtil.getInfoJsonPath(context)).deleteRecursively()
+                    }
+                }
+
+                else -> {}
             }
         }
 
