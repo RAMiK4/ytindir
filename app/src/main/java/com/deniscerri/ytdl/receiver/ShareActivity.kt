@@ -65,6 +65,7 @@ class ShareActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (savedInstanceState == null && queueInBackground(intent)) return
         ThemeUtil.updateTheme(this)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
@@ -218,6 +219,50 @@ class ShareActivity : BaseActivity() {
             }
         }
     }
+    /**
+     * Quick download: another app (e.g. a YouTube download menu) sends the link with
+     * BACKGROUND=true and optionally TYPE=audio|video. The download is queued with the
+     * user's default settings and no window is shown, so the calling app stays in front.
+     */
+    private fun queueInBackground(intent: Intent?): Boolean {
+        if (intent?.action != Intent.ACTION_SEND || !intent.getBooleanExtra("BACKGROUND", false)) return false
+        val text = intent.getStringExtra(Intent.EXTRA_TEXT) ?: return false
+        val url = text.extractURL()
+        val requestedType = intent.getStringExtra("TYPE")?.let { type ->
+            runCatching { DownloadType.valueOf(type) }.getOrNull()
+        }
+
+        val app = application
+        val viewModel = ViewModelProvider(this)[DownloadViewModel::class.java]
+        val downloadType = viewModel.getDownloadType(requestedType, url)
+        val typeLabel = getString(if (downloadType == DownloadType.audio) R.string.audio else R.string.video)
+        Toast.makeText(app, "${getString(R.string.downloading)} · $typeLabel", Toast.LENGTH_SHORT).show()
+
+        // runs in its own scope: this invisible activity finishes right away
+        CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
+            runCatching {
+                val item = viewModel.createDownloadItemFromResult(
+                    result = viewModel.createEmptyResultItem(url),
+                    givenType = downloadType
+                )
+                viewModel.queueDownloads(listOf(item))
+            }.onSuccess { result ->
+                if (result.duplicateDownloadIDs.isNotEmpty()) withContext(Dispatchers.Main) {
+                    Toast.makeText(app, app.getString(R.string.download_already_exists), Toast.LENGTH_SHORT).show()
+                }
+            }.onFailure { e ->
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(app, e.message ?: app.getString(R.string.errored), Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+
+        finish()
+        @Suppress("DEPRECATION")
+        overridePendingTransition(0, 0)
+        return true
+    }
+
     override fun onConfigurationChanged(newConfig: Configuration) {
         // the card just lays itself out again; it opens over the sharing app,
         // so rotating or resizing must not throw the user into the main screen
