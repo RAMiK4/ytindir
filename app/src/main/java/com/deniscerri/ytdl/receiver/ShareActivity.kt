@@ -37,6 +37,7 @@ import com.deniscerri.ytdl.database.viewmodel.HistoryViewModel
 import com.deniscerri.ytdl.database.viewmodel.ResultViewModel
 import com.deniscerri.ytdl.ui.BaseActivity
 import com.deniscerri.ytdl.util.Extensions.extractURL
+import com.deniscerri.ytdl.util.FormatUtil
 import com.deniscerri.ytdl.util.ThemeUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -231,6 +232,9 @@ class ShareActivity : BaseActivity() {
         val requestedType = intent.getStringExtra("TYPE")?.let { type ->
             runCatching { DownloadType.valueOf(type) }.getOrNull()
         }
+        // optional caps from the caller, e.g. 1080 (p) and 192 (kbps); codec and container stay the user's defaults
+        val videoHeight = intent.getIntExtra("VIDEO_QUALITY", 0)
+        val audioKbps = intent.getIntExtra("AUDIO_BITRATE", 0)
 
         val app = application
         val viewModel = ViewModelProvider(this)[DownloadViewModel::class.java]
@@ -245,6 +249,18 @@ class ShareActivity : BaseActivity() {
                     result = viewModel.createEmptyResultItem(url),
                     givenType = downloadType
                 )
+                val formatUtil = FormatUtil(app)
+                if (downloadType == DownloadType.video && videoHeight > 0) {
+                    formatUtil.getGenericVideoFormats(app.resources)
+                        .firstOrNull { it.format_id == "${videoHeight}p_ytdlnisgeneric" }
+                        ?.let { item.format = it }
+                }
+                if (downloadType == DownloadType.audio && audioKbps > 0) {
+                    item.audioPreferences.bitrate = "${audioKbps}k"
+                    formatUtil.getGenericAudioFormats(app.resources)
+                        .firstOrNull { it.format_id == "${audioKbps}kbps_ytdlnisgeneric" }
+                        ?.let { item.format = it }
+                }
                 viewModel.queueDownloads(listOf(item))
             }.onSuccess { result ->
                 if (result.duplicateDownloadIDs.isNotEmpty()) withContext(Dispatchers.Main) {
