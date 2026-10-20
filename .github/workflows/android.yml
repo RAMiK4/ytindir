@@ -51,15 +51,26 @@ jobs:
         run: |
           DIR=app/build/outputs/apk/foss/release
           VERSION=$(ls $DIR/*arm64-v8a*.apk | sed -E 's/.*YTindir-(.*)-arm64-v8a\.apk/\1/')
-          TAG="v${VERSION}-build${{ github.run_number }}"
           mkdir -p out
-          cp $DIR/*arm64-v8a*.apk "out/YTindir-v${VERSION}_arm64.apk"
           # Release notes: the commit message without its trailer lines
           git log -1 --format=%B | grep -v -E '^(Co-Authored-By|Claude-Session):' | sed -e :a -e '/^\n*$/{$d;N;ba' -e '}' > notes.md
-          gh release create "$TAG" out/*.apk \
-            --title "YTindir $VERSION (build ${{ github.run_number }})" \
-            --notes-file notes.md \
-            --target "${{ github.sha }}" --latest
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            TAG="v${VERSION}-build${{ github.run_number }}"
+            cp $DIR/*arm64-v8a*.apk "out/YTindir-v${VERSION}_arm64.apk"
+            gh release create "$TAG" out/*.apk \
+              --title "YTindir $VERSION (build ${{ github.run_number }})" \
+              --notes-file notes.md \
+              --target "${{ github.sha }}" --latest
+          else
+            # Test builds of other branches: a pre-release with "beta" in its tag, which the
+            # app's updater skips unless beta updates are turned on, so nobody gets it by accident
+            TAG="v${VERSION}-beta-build${{ github.run_number }}"
+            cp $DIR/*arm64-v8a*.apk "out/YTindir-v${VERSION}-test_arm64.apk"
+            gh release create "$TAG" out/*.apk \
+              --title "YTindir $VERSION test (${{ github.ref_name }}, build ${{ github.run_number }})" \
+              --notes-file notes.md \
+              --target "${{ github.sha }}" --prerelease --latest=false
+          fi
 
       - name: Save failure log to ci-logs branch
         if: failure()
