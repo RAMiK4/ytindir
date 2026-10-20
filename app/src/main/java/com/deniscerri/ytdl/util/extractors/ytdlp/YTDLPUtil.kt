@@ -33,6 +33,7 @@ import com.deniscerri.ytdl.util.Extensions.isYoutubeURL
 import com.deniscerri.ytdl.util.Extensions.isYoutubeWatchVideosURL
 import com.deniscerri.ytdl.util.Extensions.readJsonValue
 import com.deniscerri.ytdl.util.Extensions.toStringDuration
+import com.deniscerri.ytdl.util.FileNameCleaner
 import com.deniscerri.ytdl.util.FileUtil
 import com.deniscerri.ytdl.util.FormatUtil
 import com.deniscerri.ytdl.util.SocialMediaUtil
@@ -1102,6 +1103,10 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
         val embedMetadata = sharedPreferences.getBoolean("embed_metadata", true)
         val thumbnailFormat = sharedPreferences.getString("thumbnail_format", "jpg")
         var filenameTemplate = downloadItem.customFileNameTemplate
+        // YTindir: the cleaned title and author go straight into the file name (no | / , or emojis)
+        if (downloadItem.type != DownloadType.command && sharedPreferences.getBoolean("clean_filenames", true)) {
+            filenameTemplate = FileNameCleaner.fillTemplate(filenameTemplate, downloadItem.title, downloadItem.author)
+        }
 
         if(downloadItem.type != DownloadType.command){
             if (sharedPreferences.getBoolean("no_part", false)){
@@ -1670,9 +1675,12 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
                 if (hasGenericResulutionFormat.isNotBlank()) formatSorting.add("fps")
 
                 // YTindir: Instagram, X and TikTok get their best quality (yt-dlp's own order already
-                // puts Instagram's dash and X's source files first), not the resolution cap or codec
-                if (SocialMediaUtil.siteOf(downloadItem.url) != null && usingGenericFormat) {
+                // puts Instagram's dash first), not the resolution cap or codec
+                val socialSite = SocialMediaUtil.siteOf(downloadItem.url)
+                if (socialSite != null && usingGenericFormat) {
                     formatSorting.removeAll { it.startsWith("res:") || it.startsWith("vcodec:") || it.startsWith("vext:") || it == "fps" }
+                    // X's http files fail to download: its hls stream of the same resolution instead
+                    if (socialSite == SocialMediaUtil.Site.X) formatSorting.addAll(0, listOf("res", "proto:m3u8"))
                 }
 
                 if (downloadItem.format.format_id == context.resources.getString(R.string.worst_quality) || downloadItem.format.format_id == "worst") {
@@ -1731,7 +1739,17 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
                                 else -> "-c:v libx264 -preset veryfast"
                             }
 
-                            copyStream = "$setting -vf crop=($w/$refW)*iw:($h/$refH)*ih:($x/$refW)*iw:($y/$refH)*ih"
+                            // YTindir: cropping re-encodes the video; keep its bitrate at most the source's,
+                            // scaled to the part that's kept (a 1:1 crop of 16:9 keeps 56% of the picture)
+                            var rateLimit = ""
+                            val sourceKbps = downloadItem.format.tbr?.lowercase()?.removeSuffix("k")?.trim()?.toDoubleOrNull()
+                            if (sourceKbps != null && sourceKbps > 0 && refW > 0 && refH > 0 && setting.contains("libx26")) {
+                                val keptArea = ((w.toDouble() * h) / (refW.toDouble() * refH)).coerceIn(0.5, 1.0)
+                                val maxKbps = (sourceKbps * keptArea).toInt()
+                                rateLimit = " -maxrate ${maxKbps}k -bufsize ${maxKbps * 2}k"
+                            }
+
+                            copyStream = "$setting$rateLimit -vf crop=($w/$refW)*iw:($h/$refH)*ih:($x/$refW)*iw:($y/$refH)*ih"
                         }
                     }
                 }

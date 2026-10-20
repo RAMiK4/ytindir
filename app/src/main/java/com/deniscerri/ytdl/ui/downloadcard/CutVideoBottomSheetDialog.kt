@@ -85,6 +85,9 @@ class CutVideoBottomSheetDialog(private val _item: DownloadItem? = null, private
     private lateinit var startTextInputLayout : TextInputLayout
     private lateinit var endTextInputLayout : TextInputLayout
     private var settingText = false
+    // the times last applied to the fields; the keyboard key moves on only when they are unchanged
+    private var shownStartText = ""
+    private var shownEndText = ""
     private lateinit var cancelBtn : Button
     private lateinit var okBtn : Button
     private lateinit var forceKeyframes: MaterialSwitch
@@ -390,12 +393,12 @@ class CutVideoBottomSheetDialog(private val _item: DownloadItem? = null, private
 //        }
 
         startTextInput.setOnFocusChangeListener { _, hasFocus ->
-            if (!hasFocus) {
+            if (!hasFocus && startTextInput.text.toString() != shownStartText) {
                 updateFromStartTextInput(startTextInput.text.toString())
             }
         }
         endTextInput.setOnFocusChangeListener { _, hasFocus ->
-            if (!hasFocus) {
+            if (!hasFocus && endTextInput.text.toString() != shownEndText) {
                 updateFromEndTextInput(endTextInput.text.toString())
             }
         }
@@ -423,12 +426,18 @@ class CutVideoBottomSheetDialog(private val _item: DownloadItem? = null, private
             }
         }
 
-        // next goes from start to end, done closes the keyboard
+        // the keyboard's arrow/check key first applies a changed time and plays the video from there,
+        // pressed again on the same time it goes from start to end, and from end closes the keyboard
         startTextInput.setOnEditorActionListener { _, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_NEXT || actionId == EditorInfo.IME_ACTION_DONE ||
                 event != null && event.action == KeyEvent.ACTION_DOWN && event.keyCode == KeyEvent.KEYCODE_ENTER
             ) {
-                endTextInput.requestFocus()
+                if (startTextInput.text.toString() != shownStartText) {
+                    updateFromStartTextInput(startTextInput.text.toString())
+                    startTextInput.selectAll()
+                } else {
+                    endTextInput.requestFocus()
+                }
                 true
             } else false
         }
@@ -436,7 +445,12 @@ class CutVideoBottomSheetDialog(private val _item: DownloadItem? = null, private
             if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_SEARCH ||
                 event != null && event.action == KeyEvent.ACTION_DOWN && event.keyCode == KeyEvent.KEYCODE_ENTER
             ) {
-                finishEditing()
+                if (endTextInput.text.toString() != shownEndText) {
+                    updateFromEndTextInput(endTextInput.text.toString())
+                    endTextInput.selectAll()
+                } else {
+                    finishEditing()
+                }
                 true
             } else false
         }
@@ -539,7 +553,9 @@ class CutVideoBottomSheetDialog(private val _item: DownloadItem? = null, private
 
     private fun EditText.setTime(millis: Long) {
         settingText = true
-        setText(millis.toStringTimeStamp(showMillisIfNonZero = true))
+        val text = millis.toStringTimeStamp(showMillisIfNonZero = true)
+        setText(text)
+        if (this === startTextInput) shownStartText = text else shownEndText = text
         if (hasFocus()) selectAll()
         settingText = false
     }

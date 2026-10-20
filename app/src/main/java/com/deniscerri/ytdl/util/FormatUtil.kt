@@ -208,20 +208,26 @@ class FormatUtil(private var context: Context) {
     /**
      * YTindir: Instagram, X and TikTok posts default to their best quality, whatever the
      * resolution cap or codec settings: TikTok's original upload, Instagram's best dash stream,
-     * X's best source (http) file. A format id set in the settings still comes first.
+     * X's best hls stream. A format id set in the settings still comes first.
      */
     private fun sortSocialVideoFormats(formats: List<Format>, site: SocialMediaUtil.Site): List<Format> {
         val preferredProtocol: (Format) -> Boolean = when (site) {
             SocialMediaUtil.Site.INSTAGRAM -> { f -> f.format_id.startsWith("dash-") }
-            SocialMediaUtil.Site.X -> { f -> f.format_id.startsWith("http-") }
+            // X: the hls stream of the same resolution; its http files fail to download and
+            // report much larger sizes than they are
+            SocialMediaUtil.Site.X -> { f -> f.format_id.startsWith("hls-") }
             // "download" is TikTok's watermarked file
             SocialMediaUtil.Site.TIKTOK -> { f -> !f.format_id.startsWith("download") }
         }
+        // Instagram's dash and TikTok's non watermarked files win over any resolution,
+        // X's hls only over the http file of the same resolution
+        val protocolFirst = site != SocialMediaUtil.Site.X
         return formats.sortedWith(
             compareByDescending<Format> { videoFormatIDPreference.contains(it.format_id) }
                 .thenByDescending { it.format_id == SocialMediaUtil.TIKTOK_ORIGINAL_FORMAT_ID }
-                .thenByDescending { preferredProtocol(it) }
+                .thenByDescending { protocolFirst && preferredProtocol(it) }
                 .thenByDescending { it.shortSide() }
+                .thenByDescending { preferredProtocol(it) }
                 .thenByDescending { it.bitrateValue() }
                 .thenByDescending { it.filesize }
                 .thenByDescending { it.fpsValue() }

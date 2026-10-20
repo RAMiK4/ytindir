@@ -52,6 +52,42 @@ object FileNameCleaner {
         return result.ifBlank { "download" }
     }
 
+    private val templateField = Regex("""%\((title|uploader)\)(?:\.(\d+)B|s)""")
+
+    /**
+     * Puts the cleaned title and author straight into a yt-dlp output template, so the file
+     * gets a clean name from the start: "%(uploader).30B - %(title).170B" becomes
+     * "Zeynep Bastık - Zeynep Bastık - Lan Lyric Video". Blank values keep their field.
+     */
+    fun fillTemplate(template: String, title: String, author: String): String {
+        return template.replace(templateField) { m ->
+            val value = when (m.groupValues[1]) {
+                "title" -> title
+                else -> author
+            }
+            if (value.isBlank()) return@replace m.value
+            var cleaned = clean(value)
+            m.groupValues[2].toIntOrNull()?.let { maxBytes -> cleaned = cleaned.takeBytes(maxBytes).trim() }
+            cleaned.replace("%", "%%")
+        }
+    }
+
+    private fun String.takeBytes(maxBytes: Int): String {
+        if (toByteArray(Charsets.UTF_8).size <= maxBytes) return this
+        val sb = StringBuilder()
+        var size = 0
+        var i = 0
+        while (i < length) {
+            val cp = codePointAt(i)
+            val chars = String(Character.toChars(cp))
+            size += chars.toByteArray(Charsets.UTF_8).size
+            if (size > maxBytes) break
+            sb.append(chars)
+            i += Character.charCount(cp)
+        }
+        return sb.toString()
+    }
+
     /** Cleans a full file name, keeping its extension(s) like ".mp4" or ".en.vtt" as they are. */
     fun cleanFileName(fileName: String, stem: String = fileName.substringBeforeLast('.', fileName)): String {
         val rest = fileName.removePrefix(stem)
