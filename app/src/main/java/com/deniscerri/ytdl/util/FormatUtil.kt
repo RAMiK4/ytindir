@@ -113,7 +113,7 @@ class FormatUtil(private var context: Context) {
     }
 
     @SuppressLint("RestrictedApi")
-    fun sortAudioFormats(formats: List<Format>, forVideoDownload: Boolean = false) : List<Format> {
+    fun sortAudioFormats(formats: List<Format>, forVideoDownload: Boolean = false, url: String? = null) : List<Format> {
         val orderPreferences = getAudioFormatImportance(forVideoDownload)
         // YTindir: the audio of an mp4 video is AAC, the codec mp4 plays with everywhere
         val codecPreference = if (forVideoDownload && videoContainerPreference.equals("mp4", ignoreCase = true)) {
@@ -198,11 +198,41 @@ class FormatUtil(private var context: Context) {
             }
             return@Comparator 0
         }
+        // YTindir: Instagram, X and TikTok: among otherwise equal audio, the best one
+        if (SocialMediaUtil.siteOf(url) != null) {
+            return formats.sortedWith(comparator.thenByDescending { it.bitrateValue() }.thenByDescending { it.filesize })
+        }
         return formats.sortedWith(comparator)
     }
 
+    /**
+     * YTindir: Instagram, X and TikTok posts default to their best quality, whatever the
+     * resolution cap or codec settings: TikTok's original upload, Instagram's best dash stream,
+     * X's best source (http) file. A format id set in the settings still comes first.
+     */
+    private fun sortSocialVideoFormats(formats: List<Format>, site: SocialMediaUtil.Site): List<Format> {
+        val preferredProtocol: (Format) -> Boolean = when (site) {
+            SocialMediaUtil.Site.INSTAGRAM -> { f -> f.format_id.startsWith("dash-") }
+            SocialMediaUtil.Site.X -> { f -> f.format_id.startsWith("http-") }
+            // "download" is TikTok's watermarked file
+            SocialMediaUtil.Site.TIKTOK -> { f -> !f.format_id.startsWith("download") }
+        }
+        return formats.sortedWith(
+            compareByDescending<Format> { videoFormatIDPreference.contains(it.format_id) }
+                .thenByDescending { it.format_id == SocialMediaUtil.TIKTOK_ORIGINAL_FORMAT_ID }
+                .thenByDescending { preferredProtocol(it) }
+                .thenByDescending { it.shortSide() }
+                .thenByDescending { it.bitrateValue() }
+                .thenByDescending { it.filesize }
+                .thenByDescending { it.fpsValue() }
+        )
+    }
+
     @SuppressLint("RestrictedApi")
-    fun sortVideoFormats(formats: List<Format>, downloadItemContext: DownloadItem? = null): List<Format> {
+    fun sortVideoFormats(formats: List<Format>, downloadItemContext: DownloadItem? = null, url: String? = null): List<Format> {
+        SocialMediaUtil.siteOf(url ?: downloadItemContext?.url)?.let { site ->
+            if (videoQualityPreference != "worst") return sortSocialVideoFormats(formats, site)
+        }
         val orderPreferences = getVideoFormatImportance(downloadItemContext)
 
         val fieldSorter = object : Comparator<Format> {
@@ -252,8 +282,8 @@ class FormatUtil(private var context: Context) {
                                     // resolution at or under it wins, otherwise the closest one above it
                                     val target = Regex("(\\d{3,4})p").find(videoQualityPreference)?.groupValues?.get(1)?.toIntOrNull()
                                     if (target == null) 0 else {
-                                        val ah = a.heightValue()
-                                        val bh = b.heightValue()
+                                        val ah = a.shortSide()
+                                        val bh = b.shortSide()
                                         val aFits = ah in 1..target
                                         val bFits = bh in 1..target
                                         when {
@@ -440,6 +470,16 @@ class FormatUtil(private var context: Context) {
 
     private fun Format.heightValue(): Int =
         height ?: Regex("(\\d{3,4})p").find(format_note)?.groupValues?.get(1)?.toIntOrNull() ?: 0
+
+    // the "p" of a resolution is its short side: a 1080x1920 vertical video is 1080p
+    private fun Format.shortSide(): Int {
+        val w = width ?: 0
+        val h = height ?: 0
+        return if (w > 0 && h > 0) minOf(w, h) else heightValue()
+    }
+
+    private fun Format.bitrateValue(): Double =
+        tbr?.lowercase()?.removeSuffix("k")?.trim()?.toDoubleOrNull() ?: 0.0
 
     private fun Format.fpsValue(): Float =
         fps?.toFloatOrNull() ?: Regex("\\d{3,4}p(\\d{2,3})").find(format_note)?.groupValues?.get(1)?.toFloatOrNull() ?: 0f

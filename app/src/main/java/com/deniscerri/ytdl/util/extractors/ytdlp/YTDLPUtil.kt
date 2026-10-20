@@ -35,6 +35,7 @@ import com.deniscerri.ytdl.util.Extensions.readJsonValue
 import com.deniscerri.ytdl.util.Extensions.toStringDuration
 import com.deniscerri.ytdl.util.FileUtil
 import com.deniscerri.ytdl.util.FormatUtil
+import com.deniscerri.ytdl.util.SocialMediaUtil
 import com.google.gson.Gson
 import com.google.gson.Strictness
 import com.google.gson.reflect.TypeToken
@@ -280,6 +281,15 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
 
             val formatsInJSON = if (jsonObject.has("formats") && jsonObject.get("formats") is JSONArray) jsonObject.getJSONArray("formats") else null
             val formats : ArrayList<Format> = parseYTDLFormats(formatsInJSON)
+
+            // YTindir: Instagram, X and TikTok posts get "username_postid" titles instead of
+            // "Video by …" or a whole caption, and TikTok its original (source) quality
+            SocialMediaUtil.siteOf(url, website)?.let { site ->
+                if (jsonObject.getStringByAny("_type") != "playlist") {
+                    SocialMediaUtil.fileTitle(site, jsonObject, url, author)?.let { title = it }
+                }
+                addSourceFormats(site, formats)
+            }
 
             val chaptersInJSON = if (jsonObject.has("chapters") && jsonObject.get("chapters") is JSONArray) jsonObject.getJSONArray("chapters") else null
             val listType: Type = object : TypeToken<List<ChapterItem>>() {}.type
@@ -563,7 +573,24 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
             }
         }
 
+        SocialMediaUtil.siteOf(url)?.let { addSourceFormats(it, formats) }
+
         return formats
+    }
+
+    // YTindir: TikTok's own formats are recompressed; the original upload comes from tikwm.com
+    // when the download starts (see DownloadWorker), with TikTok's best format as the fallback
+    private fun addSourceFormats(site: SocialMediaUtil.Site, formats: MutableList<Format>) {
+        if (site != SocialMediaUtil.Site.TIKTOK) return
+        if (formats.none { it.vcodec.isNotBlank() && it.vcodec != "none" }) return
+        if (formats.any { it.format_id == SocialMediaUtil.TIKTOK_ORIGINAL_FORMAT_ID }) return
+        formats.add(0, Format(
+            format_id = SocialMediaUtil.TIKTOK_ORIGINAL_FORMAT_ID,
+            container = "mp4",
+            vcodec = "source",
+            acodec = "aac",
+            format_note = context.getString(R.string.original_source_quality)
+        ))
     }
 
     fun readFormatsList(reader: JsonReader): ArrayList<Format> {
@@ -941,8 +968,9 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
         }
     }
 
+    /** [sourceUrl]: a direct link to download instead of the item's url, like a TikTok original. */
     @SuppressLint("RestrictedApi")
-    fun buildYTDLRequest(downloadItem: DownloadItem) : YTDLRequest {
+    fun buildYTDLRequest(downloadItem: DownloadItem, sourceUrl: String? = null) : YTDLRequest {
         var useItemURL = sharedPreferences.getBoolean("use_itemurl_instead_playlisturl", false)
         // for /releases youtube channel playlists that have playlists inside of them, cant use indexing or match filter id, so download on its own
         if (downloadItem.url.isYoutubeURL() && downloadItem.url.getIDFromYoutubeURL() == null) {
@@ -953,7 +981,9 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
 
         val request = StringJoiner(" ")
 
-        val ytDlRequest = if (downloadItem.url.endsWith(".txt")) {
+        val ytDlRequest = if (!sourceUrl.isNullOrBlank()) {
+            YTDLRequest(sourceUrl)
+        }else if (downloadItem.url.endsWith(".txt")) {
             YTDLRequest(listOf()).apply {
                 request.addOption("-a", downloadItem.url)
             }
@@ -1638,6 +1668,12 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
                 }
                 // YTindir: after resolution, codec and container, take the highest frame rate the video has
                 if (hasGenericResulutionFormat.isNotBlank()) formatSorting.add("fps")
+
+                // YTindir: Instagram, X and TikTok get their best quality (yt-dlp's own order already
+                // puts Instagram's dash and X's source files first), not the resolution cap or codec
+                if (SocialMediaUtil.siteOf(downloadItem.url) != null && usingGenericFormat) {
+                    formatSorting.removeAll { it.startsWith("res:") || it.startsWith("vcodec:") || it.startsWith("vext:") || it == "fps" }
+                }
 
                 if (downloadItem.format.format_id == context.resources.getString(R.string.worst_quality) || downloadItem.format.format_id == "worst") {
                     formatSorting.remove("+size")

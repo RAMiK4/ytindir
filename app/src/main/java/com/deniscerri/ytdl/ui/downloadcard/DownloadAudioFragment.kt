@@ -98,7 +98,7 @@ class DownloadAudioFragment(private var resultItem: ResultItem? = null, private 
                         title = resultItem!!.title
                         author = resultItem!!.author
                         allFormats = resultItem!!.formats.toMutableList()
-                        format = downloadViewModel.getFormat(allFormats, DownloadType.audio)
+                        format = downloadViewModel.getFormat(allFormats, DownloadType.audio, url)
                         duration = resultItem!!.duration
                         playlistIndex = resultItem!!.playlistIndex
                         playlistURL = resultItem!!.playlistURL
@@ -205,7 +205,7 @@ class DownloadAudioFragment(private var resultItem: ResultItem? = null, private 
                     if (currentDownloadItem!!.type != DownloadType.audio){
                         downloadItem.type = DownloadType.audio
                         runCatching {
-                            downloadItem.format = downloadViewModel.getFormat(downloadItem.allFormats, DownloadType.audio)
+                            downloadItem.format = downloadViewModel.getFormat(downloadItem.allFormats, DownloadType.audio, downloadItem.url)
                         }.onFailure {
                             downloadItem.format = genericAudioFormats.last()
                         }
@@ -258,7 +258,7 @@ class DownloadAudioFragment(private var resultItem: ResultItem? = null, private 
                         }
                         formats = allFormats.filter { !genericAudioFormats.contains(it) }.toMutableList()
                         formats.removeAll(genericAudioFormats)
-                        val preferredFormat = downloadViewModel.getFormat(formats, DownloadType.audio)
+                        val preferredFormat = downloadViewModel.getFormat(formats, DownloadType.audio, downloadItem.url)
                         downloadItem.format = preferredFormat
                         downloadItem.allFormats = formats
                         val filesize = UiUtil.populateFormatCard(requireContext(), formatCard, preferredFormat, null, showSize = downloadItem.downloadSections.isEmpty())

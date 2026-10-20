@@ -109,7 +109,7 @@ class DownloadVideoFragment(private var resultItem: ResultItem? = null, private 
                         title = resultItem!!.title
                         author = resultItem!!.author
                         allFormats = resultItem!!.formats.toMutableList()
-                        format = downloadViewModel.getFormat(allFormats, DownloadType.video)
+                        format = downloadViewModel.getFormat(allFormats, DownloadType.video, url)
                         duration = resultItem!!.duration
                         playlistIndex = resultItem!!.playlistIndex
                         playlistURL = resultItem!!.playlistURL
@@ -218,7 +218,7 @@ class DownloadVideoFragment(private var resultItem: ResultItem? = null, private 
                     if (currentDownloadItem!!.type != DownloadType.video){
                         downloadItem.type = DownloadType.video
                         runCatching {
-                            downloadItem.format = downloadViewModel.getFormat(downloadItem.allFormats, DownloadType.video)
+                            downloadItem.format = downloadViewModel.getFormat(downloadItem.allFormats, DownloadType.video, downloadItem.url)
                             if (downloadItem.videoPreferences.audioFormatIDs.isEmpty()){
                                 // YTindir: the audio picked for a video download, not the audio tab's choice
                                 downloadItem.videoPreferences.audioFormatIDs.addAll(
@@ -294,7 +294,7 @@ class DownloadVideoFragment(private var resultItem: ResultItem? = null, private 
                             }
                         }
                         formats = allFormats.filter { !genericVideoFormats.contains(it) }.toMutableList()
-                        val preferredFormat = downloadViewModel.getFormat(formats, DownloadType.video)
+                        val preferredFormat = downloadViewModel.getFormat(formats, DownloadType.video, downloadItem.url)
                         val preferredAudioFormats = downloadViewModel.getPreferredAudioFormats(formats)
                         downloadItem.format = preferredFormat
                         downloadItem.allFormats = formats
@@ -511,7 +511,7 @@ class DownloadVideoFragment(private var resultItem: ResultItem? = null, private 
                                 if (it) {
                                     containerAutoCompleteTextView.setText("mp4",false)
                                     downloadItem.container = "mp4"
-                                    downloadItem.format = downloadViewModel.getFormat(downloadItem.allFormats, DownloadType.video, downloadItemContext = downloadItem)
+                                    downloadItem.format = downloadViewModel.getFormat(downloadItem.allFormats, DownloadType.video, downloadItem.url, downloadItemContext = downloadItem)
 
                                     UiUtil.populateFormatCard(
                                         requireContext(),

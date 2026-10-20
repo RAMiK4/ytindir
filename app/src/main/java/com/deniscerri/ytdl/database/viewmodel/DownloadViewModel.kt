@@ -576,7 +576,7 @@ class DownloadViewModel(private val application: Application) : AndroidViewModel
                         val theFormats = formats.filter { it.vcodec.isBlank() || it.vcodec == "none" }.ifEmpty {
                             formatUtil.getGenericAudioFormats(resources).sortedByDescending { it.filesize }
                         }
-                        FormatUtil(application).sortAudioFormats(theFormats, forVideoDownload).first()
+                        FormatUtil(application).sortAudioFormats(theFormats, forVideoDownload, url).first()
                     }catch (e: Exception){
                         formatUtil.getGenericAudioFormats(resources).first()
                     }
@@ -590,7 +590,7 @@ class DownloadViewModel(private val application: Application) : AndroidViewModel
                             formatUtil.getGenericVideoFormats(resources).sortedByDescending { it.filesize }
                         }
 
-                        FormatUtil(application).sortVideoFormats(theFormats, downloadItemContext).first()
+                        FormatUtil(application).sortVideoFormats(theFormats, downloadItemContext, url ?: downloadItemContext?.url).first()
                     }catch (e: Exception){
                         formatUtil.getGenericVideoFormats(resources).first()
                     }

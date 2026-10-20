@@ -175,6 +175,11 @@
     <string name="best_quality">En iyi kalite</string>
     <string name="restrict_filenames">Dosya adlarını kısıtla</string>
     <string name="restrict_filenames_summary">Dosya adlarını yalnızca ASCII karakterleriyle kısıtla ve dosya adlarında \"&amp;\" ve boşluklardan kaçın</string>
+    <string name="clean_filenames">Dosya adlarını temizle</string>
+    <string name="clean_filenames_summary">Bazı dosya yöneticilerinin ve Windows\'un kabul etmediği karakterleri (| / : , …) ve emojileri dosya adlarından kaldır, çift boşluk bırakmadan</string>
+    <string name="original_source_quality">Orijinal (kaynak)</string>
+    <string name="use_current_position">Şu anki konumu kullan</string>
+    <string name="invalid_time">Geçersiz süre</string>
     <string name="kill_app">Uygulamayı sonlandır</string>
     <string name="confirm_terminate">Tüm indirmeleri durdurur ve uygulamayı kapatmaya zorlar</string>
     <string name="dont_ask_again">Tekrar sorma</string>

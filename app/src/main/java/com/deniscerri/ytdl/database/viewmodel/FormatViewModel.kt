@@ -125,12 +125,12 @@ class FormatViewModel(private val application: Application) : AndroidViewModel(a
                     FormatCategory.ALL -> {}
                     FormatCategory.SUGGESTED -> {
                         finalFormats = if (items.first().type == DownloadType.audio){
-                            formatUtil.sortAudioFormats(finalFormats)
+                            formatUtil.sortAudioFormats(finalFormats, url = items.first().url)
                         }else{
                             val audioFormats = finalFormats.filter {  it.vcodec.isBlank() || it.vcodec == "none" }
                             val videoFormats = finalFormats.filter {  it.vcodec.isNotBlank() && it.vcodec != "none" }
 
-                            formatUtil.sortVideoFormats(videoFormats) + formatUtil.sortAudioFormats(audioFormats)
+                            formatUtil.sortVideoFormats(videoFormats, url = items.first().url) + formatUtil.sortAudioFormats(audioFormats, url = items.first().url)
                         }
                     }
                     FormatCategory.SMALLEST -> {

@@ -7,12 +7,15 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.text.InputType
 import android.text.method.DigitsKeyListener
 import android.util.DisplayMetrics
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
+import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
@@ -22,6 +25,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
 import androidx.core.view.isVisible
+import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.MediaItem.fromUri
@@ -37,13 +41,13 @@ import com.deniscerri.ytdl.database.models.ChapterItem
 import com.deniscerri.ytdl.database.models.DownloadItem
 import com.deniscerri.ytdl.database.viewmodel.ResultViewModel
 import com.deniscerri.ytdl.util.Extensions.convertToTimestamp
-import com.deniscerri.ytdl.util.Extensions.setTextAndRecalculateWidth
 import com.deniscerri.ytdl.util.Extensions.toStringDuration
 import com.deniscerri.ytdl.util.Extensions.toStringTimeStamp
 import com.deniscerri.ytdl.util.Extensions.tryConvertToTimestamp
 import com.deniscerri.ytdl.util.UiUtil
 import com.deniscerri.ytdl.util.VideoPlayerUtil
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.textfield.TextInputLayout
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
@@ -78,6 +82,9 @@ class CutVideoBottomSheetDialog(private val _item: DownloadItem? = null, private
     private lateinit var rangeSlider : RangeSlider
     private lateinit var startTextInput : EditText
     private lateinit var endTextInput : EditText
+    private lateinit var startTextInputLayout : TextInputLayout
+    private lateinit var endTextInputLayout : TextInputLayout
+    private var settingText = false
     private lateinit var cancelBtn : Button
     private lateinit var okBtn : Button
     private lateinit var forceKeyframes: MaterialSwitch
@@ -114,6 +121,9 @@ class CutVideoBottomSheetDialog(private val _item: DownloadItem? = null, private
         super.setupDialog(dialog, style)
         val view = LayoutInflater.from(context).inflate(R.layout.cut_video_sheet, null)
         dialog.setContentView(view)
+        // YTindir: the keyboard pushes the sheet up instead of covering the time fields and buttons
+        @Suppress("DEPRECATION")
+        dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         dialog.window?.navigationBarColor = SurfaceColors.SURFACE_1.getColor(requireActivity())
 
         if (_item == null){
@@ -128,6 +138,8 @@ class CutVideoBottomSheetDialog(private val _item: DownloadItem? = null, private
             val displayMetrics = DisplayMetrics()
             requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
             behavior.peekHeight = displayMetrics.heightPixels
+            behavior.skipCollapsed = true
+            behavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
 
         player = VideoPlayerUtil.buildPlayer(requireContext())
@@ -149,12 +161,20 @@ class CutVideoBottomSheetDialog(private val _item: DownloadItem? = null, private
         muteBtn = view.findViewById(R.id.mute)
         rangeSlider = view.findViewById(R.id.rangeSlider)
 
+        startTextInputLayout = view.findViewById(R.id.from_textinput)
+        endTextInputLayout = view.findViewById(R.id.to_textinput)
         startTextInput = view.findViewById(R.id.from_textinput_edittext)
-        startTextInput.imeOptions = EditorInfo.IME_ACTION_DONE
-        startTextInput.maxLines = 1
         endTextInput = view.findViewById(R.id.to_textinput_edittext)
+        listOf(startTextInput, endTextInput).forEach {
+            // digits plus any separator a number pad has ("1 30", "1-30" and "1/30" all mean 1:30),
+            // while the keyboard is the time pad with its ":" key
+            it.keyListener = DigitsKeyListener.getInstance("0123456789:.,-/ ")
+            it.setRawInputType(InputType.TYPE_CLASS_DATETIME or InputType.TYPE_DATETIME_VARIATION_TIME)
+            it.setSelectAllOnFocus(true)
+            it.maxLines = 1
+        }
+        startTextInput.imeOptions = EditorInfo.IME_ACTION_NEXT
         endTextInput.imeOptions = EditorInfo.IME_ACTION_DONE
-        endTextInput.maxLines = 1
 
         cancelBtn = view.findViewById(R.id.cancelButton)
         okBtn = view.findViewById(R.id.okButton)
@@ -369,42 +389,75 @@ class CutVideoBottomSheetDialog(private val _item: DownloadItem? = null, private
 //            }
 //        }
 
-        startTextInput.setOnFocusChangeListener { view, hasFocus ->
+        startTextInput.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
                 updateFromStartTextInput(startTextInput.text.toString())
             }
         }
-        startTextInput.setOnEditorActionListener { view, actionId, event ->
-            if (actionId == EditorInfo.IME_ACTION_SEARCH ||
-                actionId == EditorInfo.IME_ACTION_DONE ||
-                event != null &&
-                event.action == KeyEvent.ACTION_DOWN &&
-                event.keyCode == KeyEvent.KEYCODE_ENTER
-            ) {
-                updateFromStartTextInput(startTextInput.text.toString())
-                startTextInput.clearFocus()
-                false // close keyboard
-            } else {
-                false
-            }
-        }
-        endTextInput.setOnFocusChangeListener { view, hasFocus ->
+        endTextInput.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
                 updateFromEndTextInput(endTextInput.text.toString())
             }
         }
-        endTextInput.setOnEditorActionListener { view, actionId, event ->
-            if (actionId == EditorInfo.IME_ACTION_SEARCH ||
-                actionId == EditorInfo.IME_ACTION_DONE ||
-                event != null &&
-                event.action == KeyEvent.ACTION_DOWN &&
-                event.keyCode == KeyEvent.KEYCODE_ENTER
-            ) {
-                updateFromEndTextInput(endTextInput.text.toString())
-                endTextInput.clearFocus()
-                false // close keyboard
+
+        // YTindir: the slider and the Cut button follow the times while they are typed,
+        // a wrong time is shown as such instead of being silently replaced
+        startTextInput.doAfterTextChanged { text ->
+            if (settingText) return@doAfterTextChanged
+            val timestamp = parseTime(text.toString())
+            if (timestamp != null && isValidStartTimeStamp(timestamp)) {
+                startTextInputLayout.error = null
+                setStartTimestamp(timestamp, updateTextInput = false)
             } else {
-                false
+                startTextInputLayout.error = if (text.isNullOrBlank()) null else getString(R.string.invalid_time)
+            }
+        }
+        endTextInput.doAfterTextChanged { text ->
+            if (settingText) return@doAfterTextChanged
+            val timestamp = parseTime(text.toString())
+            if (timestamp != null && isValidEndTimeStamp(timestamp)) {
+                endTextInputLayout.error = null
+                setEndTimestamp(timestamp, updateTextInput = false)
+            } else {
+                endTextInputLayout.error = if (text.isNullOrBlank()) null else getString(R.string.invalid_time)
+            }
+        }
+
+        // next goes from start to end, done closes the keyboard
+        startTextInput.setOnEditorActionListener { _, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_NEXT || actionId == EditorInfo.IME_ACTION_DONE ||
+                event != null && event.action == KeyEvent.ACTION_DOWN && event.keyCode == KeyEvent.KEYCODE_ENTER
+            ) {
+                endTextInput.requestFocus()
+                true
+            } else false
+        }
+        endTextInput.setOnEditorActionListener { _, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_SEARCH ||
+                event != null && event.action == KeyEvent.ACTION_DOWN && event.keyCode == KeyEvent.KEYCODE_ENTER
+            ) {
+                finishEditing()
+                true
+            } else false
+        }
+
+        // the clock icon puts the video's current position in the field
+        startTextInputLayout.setEndIconOnClickListener {
+            val position = player.currentPosition
+            if (isValidStartTimeStamp(position)) {
+                startTextInputLayout.error = null
+                setStartTimestamp(position)
+            } else {
+                startTextInputLayout.error = getString(R.string.invalid_time)
+            }
+        }
+        endTextInputLayout.setEndIconOnClickListener {
+            val position = player.currentPosition
+            if (isValidEndTimeStamp(position)) {
+                endTextInputLayout.error = null
+                setEndTimestamp(position)
+            } else {
+                endTextInputLayout.error = getString(R.string.invalid_time)
             }
         }
 
@@ -423,6 +476,7 @@ class CutVideoBottomSheetDialog(private val _item: DownloadItem? = null, private
             forceKeyframes.isVisible = true
             updateFromStartTextInput(startTextInput.text.toString())
             updateFromEndTextInput(endTextInput.text.toString())
+            finishEditing()
             val chip = createChip(
                 startTimestamp.toStringTimeStamp(showMillisIfNonZero = true) +
                     "-${endTimestamp.toStringTimeStamp(showMillisIfNonZero = true)}")
@@ -441,9 +495,7 @@ class CutVideoBottomSheetDialog(private val _item: DownloadItem? = null, private
     ) {
         startTimestamp = millis
         if (updateSlider) rangeSlider.setValues(millis.toFloat(), endTimestamp.toFloat())
-        if (updateTextInput) {
-            startTextInput.setTextAndRecalculateWidth(millis.toStringTimeStamp(forceMillis = true))
-        }
+        if (updateTextInput) startTextInput.setTime(millis)
         okBtn.isEnabled = startTimestamp != 0L || endTimestamp != itemDurationTimestamp
     }
 
@@ -454,9 +506,7 @@ class CutVideoBottomSheetDialog(private val _item: DownloadItem? = null, private
     ) {
         endTimestamp = millis
         if (updateSlider) rangeSlider.setValues(startTimestamp.toFloat(), millis.toFloat())
-        if (updateTextInput) {
-            endTextInput.setTextAndRecalculateWidth(millis.toStringTimeStamp(forceMillis = true))
-        }
+        if (updateTextInput) endTextInput.setTime(millis)
         okBtn.isEnabled = startTimestamp != 0L || endTimestamp != itemDurationTimestamp
     }
 
@@ -477,33 +527,64 @@ class CutVideoBottomSheetDialog(private val _item: DownloadItem? = null, private
     private fun isValidEndTimeStamp(millis: Long):Boolean =
         isValidTimestamp(millis) && millis > startTimestamp
 
+    /** "1:30", "90", "1:02:03.5", and "1 30", "1-30", "1/30" or "1,5" from number pads. */
+    private fun parseTime(text: String): Long? {
+        val normalized = text.trim()
+            .replace(',', '.')
+            .replace(Regex("""[\s/\-]+"""), ":")
+            .trim(':', '.')
+        if (normalized.isEmpty()) return null
+        return normalized.tryConvertToTimestamp()
+    }
+
+    private fun EditText.setTime(millis: Long) {
+        settingText = true
+        setText(millis.toStringTimeStamp(showMillisIfNonZero = true))
+        if (hasFocus()) selectAll()
+        settingText = false
+    }
+
+    private fun finishEditing() {
+        val focused = dialog?.currentFocus ?: view
+        focused?.let {
+            (requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as InputMethodManager)
+                .hideSoftInputFromWindow(it.windowToken, 0)
+        }
+        // move the focus away from the fields without it jumping back to the first one
+        cutSection.isFocusableInTouchMode = true
+        cutSection.requestFocus()
+    }
+
     private fun updateFromStartTextInput(text: String) {
-        val timestamp = text.tryConvertToTimestamp()
-        if (timestamp == null || timestamp == startTimestamp || !isValidStartTimeStamp(timestamp)) {
-            startTextInput.setTextAndRecalculateWidth(startTimestamp.toStringTimeStamp(forceMillis = true))
+        startTextInputLayout.error = null
+        val timestamp = parseTime(text)
+        if (timestamp == null || !isValidStartTimeStamp(timestamp)) {
+            startTextInput.setTime(startTimestamp)
             return
         }
 
-        setStartTimestamp(timestamp, updateTextInput = true) // also update text input to normalize
+        setStartTimestamp(timestamp) // also update text input to normalize
         player.seekTo(timestamp)
         player.play()
     }
 
     private fun updateFromEndTextInput(text: String) {
-        val timestamp = text.tryConvertToTimestamp()
-        if (timestamp == null || timestamp == endTimestamp || !isValidEndTimeStamp(timestamp)) {
-            endTextInput.setTextAndRecalculateWidth(endTimestamp.toStringTimeStamp(forceMillis = true))
+        endTextInputLayout.error = null
+        val timestamp = parseTime(text)
+        if (timestamp == null || !isValidEndTimeStamp(timestamp)) {
+            endTextInput.setTime(endTimestamp)
             return
         }
 
-        setEndTimestamp(timestamp, updateTextInput = true) // also update text input to normalize
-        player.seekTo(timestamp - 1500)
+        setEndTimestamp(timestamp) // also update text input to normalize
+        player.seekTo(max(timestamp - 1500, startTimestamp))
         player.play()
-
     }
 
     private fun updateFromSlider() {
         val draggedFromBeginning = rangeSlider.focusedThumbIndex != 1
+        startTextInputLayout.error = null
+        endTextInputLayout.error = null
 
         if (draggedFromBeginning) {
             setStartTimestamp(rangeSlider.values[0].toLong(), updateSlider = false)

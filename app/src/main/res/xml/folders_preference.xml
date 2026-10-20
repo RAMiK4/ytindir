@@ -107,6 +107,14 @@
         app:summary="@string/restrict_filenames_summary"
         app:title="@string/restrict_filenames" />
 
+    <SwitchPreferenceCompat
+        android:widgetLayout="@layout/preferece_material_switch"
+        app:defaultValue="true"
+        app:icon="@drawable/if_file_rename"
+        app:key="clean_filenames"
+        app:summary="@string/clean_filenames_summary"
+        app:title="@string/clean_filenames" />
+
     <Preference
         app:icon="@drawable/ic_folder_delete"
         app:key="temporary_files"

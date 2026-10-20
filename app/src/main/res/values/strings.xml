@@ -180,6 +180,11 @@
     <string name="link_you_copied">Link you copied</string>
     <string name="restrict_filenames">Restrict filenames</string>
     <string name="restrict_filenames_summary">Restrict filenames to only ASCII characters, and avoid \"&amp;\" and spaces in filenames</string>
+    <string name="clean_filenames">Clean filenames</string>
+    <string name="clean_filenames_summary">Remove characters some file managers and Windows don\'t accept (| / : , …) and emojis from file names, without leaving double spaces</string>
+    <string name="original_source_quality">Original (source)</string>
+    <string name="use_current_position">Use current position</string>
+    <string name="invalid_time">Invalid time</string>
     <string name="kill_app">Terminate app</string>
     <string name="confirm_terminate">Stops all downloads and force closes the app</string>
     <string name="dont_ask_again">Don\'t ask again</string>

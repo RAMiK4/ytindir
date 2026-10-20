@@ -171,6 +171,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="15dp"
+                android:baselineAligned="false"
                 android:orientation="horizontal"
                 app:layout_constraintBottom_toTopOf="@id/suggested_cuts"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -180,16 +181,23 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/from_textinput"
-                    style="@style/Widget.Material3.TextInputLayout.FilledBox"
-                    android:layout_width="wrap_content"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:minWidth="70dp"
-                    android:hint="@string/start">
+                    android:hint="@string/start"
+                    app:placeholderText="0:00"
+                    app:endIconMode="custom"
+                    app:endIconDrawable="@drawable/ic_clock"
+                    app:endIconContentDescription="@string/use_current_position">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/from_textinput_edittext"
-                        android:digits="0123456789:."
-                        android:inputType="datetime"
+                        android:digits="0123456789:.,-/ "
+                        android:inputType="time"
+                        android:imeOptions="actionNext"
+                        android:maxLines="1"
+                        android:selectAllOnFocus="true"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
 
@@ -200,7 +208,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:paddingHorizontal="10dp"
+                    android:paddingHorizontal="8dp"
                     android:text="-"
                     android:textSize="20sp"
                     android:textStyle="bold"
@@ -209,19 +217,24 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/to_textinput"
-                    style="@style/Widget.Material3.TextInputLayout.FilledBox"
-                    android:layout_width="wrap_content"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:hint="@string/end"
-                    android:minWidth="70dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/colon">
+                    app:placeholderText="0:00"
+                    app:endIconMode="custom"
+                    app:endIconDrawable="@drawable/ic_clock"
+                    app:endIconContentDescription="@string/use_current_position">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/to_textinput_edittext"
-                        android:digits="0123456789:."
-                        android:inputType="datetime"
-                        android:layout_width="wrap_content"
+                        android:digits="0123456789:.,-/ "
+                        android:inputType="time"
+                        android:imeOptions="actionDone"
+                        android:maxLines="1"
+                        android:selectAllOnFocus="true"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
 
                 </com.google.android.material.textfield.TextInputLayout>

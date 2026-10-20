@@ -34,8 +34,10 @@ import com.deniscerri.ytdl.util.AlarmScheduler
 import com.deniscerri.ytdl.util.Extensions.fixYtdlpPath
 import com.deniscerri.ytdl.util.Extensions.getMediaDuration
 import com.deniscerri.ytdl.util.Extensions.toStringDuration
+import com.deniscerri.ytdl.util.FileNameCleaner
 import com.deniscerri.ytdl.util.FileUtil
 import com.deniscerri.ytdl.util.NotificationUtil
+import com.deniscerri.ytdl.util.SocialMediaUtil
 import com.deniscerri.ytdl.util.WorkerEventBus
 import com.deniscerri.ytdl.util.extractors.ytdlp.YTDLPUtil
 import kotlinx.coroutines.CoroutineScope
@@ -215,7 +217,21 @@ class DownloadWorker(
                             }
                         }
 
-                        val request = ytdlpUtil.buildYTDLRequest(downloadItem)
+                        // YTindir: TikTok's original upload, through tikwm.com; TikTok's best format if it fails
+                        val formatId = downloadItem.format.format_id
+                        // (also for quick downloads without a format list, unless a quality under 1080p is set)
+                        val genericHeight = Regex("^(\\d+)p_ytdlnisgeneric$").find(formatId)?.groupValues?.get(1)?.toIntOrNull()
+                        val usesTikTokOriginal = formatId == SocialMediaUtil.TIKTOK_ORIGINAL_FORMAT_ID || (
+                            SocialMediaUtil.siteOf(downloadItem.url) == SocialMediaUtil.Site.TIKTOK &&
+                                (formatId == "best" || (genericHeight ?: 0) >= 1080))
+                        val sourceUrl = if (downloadItem.type == DownloadType.video && usesTikTokOriginal) {
+                            WorkerEventBus.post(
+                                WorkerProgress(0, "Getting the original video from tikwm.com", downloadItem.id, downloadItem.logID)
+                            )
+                            withContext(Dispatchers.IO) { SocialMediaUtil.getTikTokOriginalUrl(downloadItem.url) }
+                        } else null
+
+                        val request = ytdlpUtil.buildYTDLRequest(downloadItem, sourceUrl)
 
                         // DISABLED BECAUSE YT_DLP CONSIDERS DOWNLOAD FAILURE IF -U PART FAILS, ytdlnis #1043
     //                    val updateYTDLP = sharedPreferences.getBoolean("update_ytdlp_while_downloading", false)
@@ -251,6 +267,8 @@ class DownloadWorker(
                         val cacheDownloads = sharedPreferences.getBoolean("cache_downloads", true)
                         val writtenPath = downloadItem.type == DownloadType.command && downloadItem.format.format_note.contains("-P ")
                         val writeDirectly = writtenPath || (!cacheDownloads && targetDir.canWrite())
+                        val cleanFileNames = downloadItem.type != DownloadType.command &&
+                                sharedPreferences.getBoolean("clean_filenames", true)
 
 
                         val commandString = ytdlpUtil.parseYTDLRequestString(request)
@@ -342,6 +360,17 @@ class DownloadWorker(
                                         .filter { o -> o.isNotBlank() }
                                         .distinct()
                                         .toMutableList()
+                                }
+
+                                // YTindir: no | / , or emojis in file names, nothing Windows can't open
+                                if (cleanFileNames) {
+                                    runCatching {
+                                        if (writeDirectly) {
+                                            finalPaths = finalPaths.map { p -> FileNameCleaner.cleanDownloadedFile(p) }.toMutableList()
+                                        } else {
+                                            FileNameCleaner.cleanFolder(tempFileDir.absoluteFile)
+                                        }
+                                    }
                                 }
 
                                 //move files manually if external provider
