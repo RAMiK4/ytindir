@@ -29,6 +29,7 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -87,7 +88,13 @@ class DownloadQueueMainFragment : Fragment(){
             overScrollMode = View.OVER_SCROLL_NEVER
         }
 
-        val fragments = mutableListOf(ActiveDownloadsFragment(), QueuedDownloadsFragment(), ScheduledDownloadsFragment(), CancelledDownloadsFragment(), ErroredDownloadsFragment(), SavedDownloadsFragment())
+        val fragments = mutableListOf(
+            ActiveQueuedDownloadsFragment(),
+            ScheduledDownloadsFragment(),
+            CancelledDownloadsFragment(),
+            ErroredDownloadsFragment(),
+            SavedDownloadsFragment()
+        )
 
         fragmentAdapter = DownloadListFragmentAdapter(
             childFragmentManager,
@@ -101,11 +108,10 @@ class DownloadQueueMainFragment : Fragment(){
         TabLayoutMediator(tabLayout, viewPager2) { tab, position ->
             when (position) {
                 0 -> tab.text = getString(R.string.running)
-                1 -> tab.text = getString(R.string.in_queue)
-                2 -> tab.text = getString(R.string.scheduled)
-                3 -> tab.text = getString(R.string.cancelled)
-                4 -> tab.text = getString(R.string.errored)
-                5 -> tab.text = getString(R.string.saved)
+                1 -> tab.text = getString(R.string.scheduled)
+                2 -> tab.text = getString(R.string.cancelled)
+                3 -> tab.text = getString(R.string.errored)
+                4 -> tab.text = getString(R.string.saved)
             }
         }.attach()
 
@@ -121,14 +127,15 @@ class DownloadQueueMainFragment : Fragment(){
             }
         })
 
-        // YTindir: scheduling is hidden, so the Scheduled tab is skipped
-        (tabLayout.getChildAt(0) as? ViewGroup)?.getChildAt(2)?.visibility = View.GONE
-        if (selectedTabIndex == 2) selectedTabIndex = 1
+        // YTindir: scheduling is hidden, so the Scheduled tab (the second one) is skipped
+        val scheduledTab = 1
+        (tabLayout.getChildAt(0) as? ViewGroup)?.getChildAt(scheduledTab)?.visibility = View.GONE
+        if (selectedTabIndex == scheduledTab) selectedTabIndex = 0
 
         viewPager2.registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
-                if (position == 2) {
-                    viewPager2.setCurrentItem(if (selectedTabIndex < 2) 3 else 1, true)
+                if (position == scheduledTab) {
+                    viewPager2.setCurrentItem(if (selectedTabIndex < scheduledTab) scheduledTab + 1 else scheduledTab - 1, true)
                     return
                 }
                 tabLayout.selectTab(tabLayout.getTabAt(position))
@@ -140,9 +147,9 @@ class DownloadQueueMainFragment : Fragment(){
         initMenu()
 
         if (arguments?.getString("tab") != null){
-            tabLayout.getTabAt(4)!!.select()
+            tabLayout.getTabAt(3)!!.select()
             viewPager2.postDelayed( {
-                viewPager2.setCurrentItem(4, false)
+                viewPager2.setCurrentItem(3, false)
                 val reconfigureID = arguments?.getLong("reconfigure")
                 reconfigureID?.apply {
                     notificationUtil.cancelErroredNotification(this.toInt())
@@ -168,36 +175,30 @@ class DownloadQueueMainFragment : Fragment(){
 
         if (sharedPreferences.getBoolean("show_count_downloads", false)){
             lifecycleScope.launch {
-                downloadViewModel.activeDownloadsCount.collectLatest {
-                    tabLayout.getTabAt(0)?.apply {
-                        createBadge(it)
+                combine(downloadViewModel.activeDownloadsCount, downloadViewModel.queuedDownloadsCount) { active, queued -> active + queued }
+                    .collectLatest {
+                        tabLayout.getTabAt(0)?.apply {
+                            createBadge(it)
+                        }
                     }
-                }
             }
             lifecycleScope.launch {
-                downloadViewModel.queuedDownloadsCount.collectLatest {
+                downloadViewModel.scheduledDownloadsCount.collectLatest {
                     tabLayout.getTabAt(1)?.apply {
                         createBadge(it)
                     }
                 }
             }
             lifecycleScope.launch {
-                downloadViewModel.scheduledDownloadsCount.collectLatest {
+                downloadViewModel.cancelledDownloadsCount.collectLatest {
                     tabLayout.getTabAt(2)?.apply {
                         createBadge(it)
                     }
                 }
             }
             lifecycleScope.launch {
-                downloadViewModel.cancelledDownloadsCount.collectLatest {
-                    tabLayout.getTabAt(3)?.apply {
-                        createBadge(it)
-                    }
-                }
-            }
-            lifecycleScope.launch {
                 downloadViewModel.erroredDownloadsCount.collectLatest {
-                    tabLayout.getTabAt(4)?.apply {
+                    tabLayout.getTabAt(3)?.apply {
                         removeBadge()
                         if (it > 0) createBadge(it)
                     }
@@ -205,7 +206,7 @@ class DownloadQueueMainFragment : Fragment(){
             }
             lifecycleScope.launch {
                 downloadViewModel.savedDownloadsCount.collectLatest {
-                    tabLayout.getTabAt(5)?.apply {
+                    tabLayout.getTabAt(4)?.apply {
                         removeBadge()
                         if (it > 0) createBadge(it)
                     }

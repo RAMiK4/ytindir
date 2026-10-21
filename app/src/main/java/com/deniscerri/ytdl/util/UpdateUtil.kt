@@ -52,6 +52,7 @@ class UpdateUtil(var context: Context) {
             if (res.isEmpty()){
                 return Result.failure(Error(context.getString(R.string.network_error)))
             }
+            sharedPreferences.edit().putLong(APP_LAST_CHECK_KEY, System.currentTimeMillis()).apply()
 
             val currentVersion = BuildConfig.VERSION_NAME
             val currentVerNumber = "$currentVersion-build${BuildConfig.CI_BUILD}".tagNameToVersionNumber()
@@ -137,7 +138,7 @@ class UpdateUtil(var context: Context) {
             try {
                 val channel = if (c.isNullOrBlank()) sharedPreferences.getString("ytdlp_source", "nightly") else c
 
-                when(channel) {
+                val response = when(channel) {
                     "stable", "nightly", "master" -> {
                         val res = RuntimeManager.getInstance().updateYTDL(context, channelMap[channel]!!)
                         if (res != RuntimeManager.UpdateStatus.DONE) {
@@ -161,6 +162,11 @@ class UpdateUtil(var context: Context) {
                         }
                     }
                 }
+
+                if (response.status == YTDLPUpdateStatus.DONE || response.status == YTDLPUpdateStatus.ALREADY_UP_TO_DATE) {
+                    sharedPreferences.edit().putLong(YTDLP_LAST_CHECK_KEY, System.currentTimeMillis()).apply()
+                }
+                response
             } finally {
                 updatingYTDL = false
             }
@@ -220,6 +226,8 @@ class UpdateUtil(var context: Context) {
         const val APP_REPO = "RAMiK4/ytindir"
         // YTindir: every build (foss included) can update itself from APP_REPO releases
         const val APP_UPDATES_ENABLED = true
+        const val APP_LAST_CHECK_KEY = "app_last_update_check"
+        const val YTDLP_LAST_CHECK_KEY = "ytdlp_last_update_check"
         var updatingYTDL = false
         var updatingApp = false
     }

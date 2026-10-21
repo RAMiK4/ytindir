@@ -150,11 +150,11 @@ class TerminalFragment : Fragment() {
                         lifecycleScope.launch {
                             UiUtil.showCommandTemplates(requireActivity(), commandTemplateViewModel){ templates ->
                                 writeSpaced(templates.joinToString("") { c -> "${c.content} " })
-                                    terminalView.requestFocus()
-                                }
+                                terminalView.requestFocus()
                             }
                         }
                     }
+                }
                 R.id.shortcuts -> {
                     lifecycleScope.launch {
                         if (shortcutCount > 0){
@@ -220,10 +220,12 @@ class TerminalFragment : Fragment() {
                         NavOptions.Builder().setPopUpTo(R.id.terminalFragment, true).build())
                 }
                 R.id.exit -> {
-                    sessionId?.apply {
-                        terminalViewModel.sessionBinder?.terminateSession(this)
-                        requireActivity().onBackPressedDispatcher.onBackPressed()
+                    session.emulator?.let {
+                        val seq = "\u001b[3J".toByteArray()
+                        it.append(seq, seq.size)
+                        terminalView.onScreenUpdated()
                     }
+                    session.write("\u0001\u000b\u000cexit\n")
                 }
                 R.id.wrap -> {
 //                    var scrollView = requireView().findViewById<HorizontalScrollView>(R.id.horizontalscroll_output)

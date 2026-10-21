@@ -71,6 +71,7 @@ class DownloadAudioFragment(private var resultItem: ResultItem? = null, private 
     private lateinit var shownFields: List<String>
 
     private var disabledCutClicked: Boolean = false
+    private var selectedThumbnailPrefs: Pair<Boolean, Boolean?>? = null
 
     @SuppressLint("RestrictedApi")
     override fun onCreateView(
@@ -297,6 +298,9 @@ class DownloadAudioFragment(private var resultItem: ResultItem? = null, private 
                         downloadItem.container = containers[index]
                         if (containers[index] == getString(R.string.defaultValue)) downloadItem.container = ""
                         if (downloadItem.container == "wav") {
+                            if (selectedThumbnailPrefs == null) {
+                                selectedThumbnailPrefs = downloadItem.audioPreferences.embedThumb to downloadItem.audioPreferences.cropThumb
+                            }
                             downloadItem.audioPreferences.embedThumb = false
                             downloadItem.audioPreferences.cropThumb = false
                             view.findViewById<Chip>(R.id.thumbnail).apply {
@@ -305,7 +309,14 @@ class DownloadAudioFragment(private var resultItem: ResultItem? = null, private 
                                 createBadge(requireContext(), 0)
                             }
                         }else {
-                            view.findViewById<Chip>(R.id.thumbnail).isEnabled = true
+                            val chip = view.findViewById<Chip>(R.id.thumbnail)
+                            chip.isEnabled = true
+                            selectedThumbnailPrefs?.let { (embed, crop) ->
+                                downloadItem.audioPreferences.embedThumb = embed
+                                downloadItem.audioPreferences.cropThumb = crop
+                                chip.createBadge(requireContext(), listOf(embed, crop).count { it == true })
+                            }
+                            selectedThumbnailPrefs = null
                         }
                     }
 

@@ -16,13 +16,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowInsets
 import android.widget.CheckBox
-import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
-import androidx.core.content.edit
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.forEach
 import androidx.core.view.isVisible
@@ -58,7 +55,6 @@ import com.deniscerri.ytdl.util.CrashListener
 import com.deniscerri.ytdl.util.NavbarUtil
 import com.deniscerri.ytdl.util.NavbarUtil.applyNavBarStyle
 import com.deniscerri.ytdl.util.ThemeUtil
-import com.deniscerri.ytdl.util.UiUtil
 import com.deniscerri.ytdl.util.UpdateUtil
 import com.deniscerri.ytdl.util.FloatingNavUtil
 import com.deniscerri.ytdl.work.background.UpdateCheckWorker
@@ -67,7 +63,6 @@ import com.google.android.material.color.MaterialColors
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.elevation.SurfaceColors
-import com.google.android.material.materialswitch.MaterialSwitch
 import com.google.android.material.navigation.NavigationBarView
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.navigationrail.NavigationRailView
@@ -103,7 +98,8 @@ class MainActivity : BaseActivity() {
     private lateinit var navController : NavController
     private var loadingRuntimeDialog: androidx.appcompat.app.AlertDialog? = null
 
-    private lateinit var installLauncher: ActivityResultLauncher<Intent>
+    lateinit var installLauncher: ActivityResultLauncher<Intent>
+        private set
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

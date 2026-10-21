@@ -546,9 +546,9 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
             }
 
             e.message?.apply {
-            handler.post {
-                Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
-            }
+                handler.post {
+                    Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
+                }
             }
 
             e.printStackTrace()
