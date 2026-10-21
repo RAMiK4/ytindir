@@ -3,7 +3,9 @@
 <b>Features</b>
 
 - Audio and video downloads from more than 1000 websites, with format and quality selection
-- Trimming: download only part of a video
+- Best quality from Instagram, X and TikTok by default, saved with short names
+- Trimming and cropping; cut files are saved as Title_1, Title_2…
+- Clean file names, without characters Windows or file managers refuse
 - Download straight from the share menu of any app
 - Self-repair: yt-dlp updates itself and a failed download is retried once with the new version
 - Synced lyrics from lrclib.net, embedded into the audio file

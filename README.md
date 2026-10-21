@@ -17,7 +17,9 @@ YTindir is a personal download app powered by [yt-dlp](https://github.com/yt-dlp
 ## ✨ Features
 
 - 🎵 **Audio and video downloads** with format and quality selection
-- ✂️ **Trimming**: download only part of a video by entering minutes and seconds
+- ⭐ **Best quality from Instagram, X and TikTok** by default (TikTok in source quality when available), saved with short names like `username_postid`
+- ✂️ **Trimming and cropping**: download only part of a video, or crop it (for example to a square); the cut screen plays the video from the time you type, and cut files are saved as `Title_1`, `Title_2`…
+- 🧹 **Clean file names**: no characters that Windows or file managers refuse, no emojis or commas
 - 📤 **Download from the share menu**: tap "Share" in any app and download the link straight away
 - 🔁 **Self-repair**: yt-dlp updates itself from the nightly channel; if a download fails (for example after a website change), YTindir updates yt-dlp and retries the download once on its own
 - 🔄 **In-app updates**: the app tells you when a new YTindir version is out and installs it for you
@@ -37,7 +39,10 @@ To keep the app simple, these are hidden: terminal, command templates, source wa
 
 Download the latest APK from the **[Releases](https://github.com/RAMiK4/ytindir/releases/latest)** page. The package name is `com.rl.ytindr`, so it can be installed next to the original YTDLnis. Every release is signed with the same key, so new versions install over the old one without losing data.
 
-Every update to `main` is built by GitHub Actions and published automatically as an arm64 APK.
+Every release has two APKs: **arm64** (most phones) and **universal** (every device). The universal APK of the newest release is always at this link:
+`https://github.com/RAMiK4/ytindir/releases/latest/download/YTindir-universal_latest.apk`
+
+Every update to `main` is built by GitHub Actions and published automatically.
 
 ## 🙏 Credits and license
 

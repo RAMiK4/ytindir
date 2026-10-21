@@ -21,7 +21,9 @@ YTindir, [yt-dlp](https://github.com/yt-dlp/yt-dlp) kullanan kişisel bir indirm
 ## ✨ Özellikler
 
 - 🎵 **Ses ve video indirme**, format ve kalite seçimiyle, 1000'den fazla siteden
-- ✂️ **Kesme**: dakika ve saniye girerek videonun sadece bir bölümünü indirme
+- ⭐ **Instagram, X ve TikTok'tan en iyi kalite** varsayılan olarak (TikTok'ta mümkünse kaynak kalite), `kullanıcıadı_gönderiid` gibi kısa adlarla
+- ✂️ **Kesme ve kırpma**: videonun sadece bir bölümünü indirme ya da görüntüyü kırpma (örneğin kare); kesme ekranı yazdığınız süreden oynatır, kesilen dosyalar `Başlık_1`, `Başlık_2`… olarak kaydedilir
+- 🧹 **Temiz dosya adları**: Windows'un ve dosya yöneticilerinin kabul etmediği karakterler, emojiler ve virgüller olmadan
 - 📤 **Paylaş menüsünden indirme**: bir uygulamada "Paylaş"a basıp linki direkt indirme
 - 🔁 **Kendini onarma**: yt-dlp nightly kanalından otomatik güncellenir; bir indirme hata verirse (örneğin bir site değişikliği yüzünden) yt-dlp'yi güncelleyip indirmeyi bir kez daha kendiliğinden dener
 - 📋 **Hata kaydını tek dokunuşla kopyalama**
@@ -41,7 +43,10 @@ Arayüzü sade tutmak için şunlar gizlendi: terminal, komut şablonları, kayn
 
 En son APK'yı **[Releases](https://github.com/RAMiK4/ytindir/releases/latest)** sayfasından indirin. Paket adı `com.rl.ytindr` olduğu için orijinal YTDLnis ile yan yana kurulabilir. Tüm sürümler aynı anahtarla imzalanır; yeni sürümler eskisinin üzerine kurulur.
 
-Her `main` güncellemesinde GitHub Actions yeni bir arm64 APK derleyip otomatik olarak yayınlar.
+Her sürümde iki APK vardır: **arm64** (çoğu telefon) ve **universal** (tüm cihazlar). En yeni sürümün universal APK'sı her zaman şu bağlantıdadır:
+`https://github.com/RAMiK4/ytindir/releases/latest/download/YTindir-universal_latest.apk`
+
+Her `main` güncellemesini GitHub Actions derleyip otomatik olarak yayınlar.
 
 ## 🙏 Teşekkürler ve lisans
 
