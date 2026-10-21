@@ -1751,7 +1751,7 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
                             // (CRF 20) instead of a bitrate; size and frame rate stay the source's and the
                             // audio is copied as it is (FFmpegCopyStream copies every stream it isn't told
                             // to re-encode)
-                            val setting = "-c:v libx264 -profile:v high -pix_fmt yuv420p -crf 20 -preset medium"
+                            val setting = "-c:v libx264 -profile:v high -pix_fmt yuv420p -crf 20 -preset fast"
                             copyStream = "$setting -vf crop=($w/$refW)*iw:($h/$refH)*ih:($x/$refW)*iw:($y/$refH)*ih"
                         }
                     }

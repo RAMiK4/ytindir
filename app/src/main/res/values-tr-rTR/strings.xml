@@ -180,6 +180,7 @@
     <string name="original_source_quality">Orijinal (kaynak)</string>
     <string name="use_current_position">Şu anki konumu kullan</string>
     <string name="invalid_time">Geçersiz süre</string>
+    <string name="cut_preparing">Kesim hazırlanıyor…</string>
     <string name="kill_app">Uygulamayı sonlandır</string>
     <string name="confirm_terminate">Tüm indirmeleri durdurur ve uygulamayı kapatmaya zorlar</string>
     <string name="dont_ask_again">Tekrar sorma</string>

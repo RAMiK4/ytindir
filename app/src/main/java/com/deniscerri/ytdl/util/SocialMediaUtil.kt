@@ -127,17 +127,20 @@ object SocialMediaUtil {
         }
     }
 
+    /** Where a TikTok download comes from, and a line about it for the download log. */
+    class TikTokSource(val url: String?, val note: String)
+
     /**
      * The link of a TikTok video's original upload, the same one tikwm.com/originalDownloader.html
-     * gives. When tikwm can't make one, its HD link; null only when both fail (the download then
+     * gives. When tikwm can't make one, its HD link; no link only when both fail (the download then
      * falls back to yt-dlp, which TikTok sometimes answers with "HTTP Error 403").
      */
-    suspend fun getTikTokOriginalUrl(videoUrl: String): String? {
-        // the original is sometimes not ready on the first try
-        repeat(2) {
-            getTikTokSourceUrl(videoUrl)?.let { return it }
-        }
-        return getTikTokHdUrl(videoUrl)
+    suspend fun getTikTokOriginal(videoUrl: String): TikTokSource {
+        val original = getTikTokSourceUrl(videoUrl)
+        if (original.first != null) return TikTokSource(original.first, "TikTok: original file from tikwm.com")
+        val hd = getTikTokHdUrl(videoUrl)
+        if (hd != null) return TikTokSource(hd, "TikTok: original not available (${original.second}), tikwm.com HD file instead")
+        return TikTokSource(null, "TikTok: tikwm.com failed (${original.second}), downloading with yt-dlp")
     }
 
     private fun getTikTokHdUrl(videoUrl: String): String? = runCatching {
@@ -154,18 +157,19 @@ object SocialMediaUtil {
         }
     }.getOrNull()
 
-    private suspend fun getTikTokSourceUrl(videoUrl: String): String? {
+    // the link, or why there is none
+    private suspend fun getTikTokSourceUrl(videoUrl: String): Pair<String?, String> {
         try {
             val submit = tikwmRequest("$TIKWM/api/video/task/submit")
                 .post(FormBody.Builder().add("url", videoUrl).add("web", "1").build())
                 .build()
-            val submitted = getJson(submit) ?: return null
-            if (submitted.optInt("code", -1) != 0) return null
+            val submitted = getJson(submit) ?: return null to "no answer"
+            if (submitted.optInt("code", -1) != 0) return null to "refused: ${submitted.text("msg")}"
             val taskId = submitted.optJSONObject("data")?.text("task_id")
-                ?.ifBlank { null } ?: submitted.text("task_id").ifBlank { return null }
+                ?.ifBlank { null } ?: submitted.text("task_id").ifBlank { return null to "no task" }
 
-            // the original is prepared on tikwm's side; it usually takes a few seconds
-            repeat(30) {
+            // the original is prepared on tikwm's side; a large video can take a minute or more
+            repeat(90) {
                 delay(2000)
                 currentCoroutineContext().ensureActive()
                 val result = getJson(tikwmRequest("$TIKWM/api/video/task/result?task_id=$taskId").get().build())
@@ -175,15 +179,16 @@ object SocialMediaUtil {
                 when (data.optInt("status", -1)) {
                     2 -> {
                         val url = (data.optJSONObject("detail") ?: data).playUrl().ifBlank { data.playUrl() }
-                        return url.ifBlank { null }
+                        return url.ifBlank { null } to "no link in the answer"
                     }
-                    3 -> return null
+                    3 -> return null to "tikwm could not prepare it"
                 }
             }
+            return null to "not ready after 3 minutes"
         } catch (e: Exception) {
             if (e is kotlinx.coroutines.CancellationException) throw e
             Log.e("SocialMediaUtil", "tikwm: ${e.message}")
+            return null to (e.message ?: e.javaClass.simpleName)
         }
-        return null
     }
 }

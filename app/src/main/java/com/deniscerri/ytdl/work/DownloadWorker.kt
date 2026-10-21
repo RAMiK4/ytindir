@@ -36,6 +36,7 @@ import com.deniscerri.ytdl.util.AlarmScheduler
 import com.deniscerri.ytdl.util.Extensions.fixYtdlpPath
 import com.deniscerri.ytdl.util.Extensions.getMediaDuration
 import com.deniscerri.ytdl.util.Extensions.toStringDuration
+import com.deniscerri.ytdl.util.Extensions.tryConvertToTimestamp
 import com.deniscerri.ytdl.util.FileNameCleaner
 import com.deniscerri.ytdl.util.FileUtil
 import com.deniscerri.ytdl.util.NotificationUtil
@@ -226,12 +227,14 @@ class DownloadWorker(
                         val usesTikTokOriginal = SocialMediaUtil.isTikTokOriginal(formatId) || (
                             SocialMediaUtil.siteOf(downloadItem.url) == SocialMediaUtil.Site.TIKTOK &&
                                 (formatId == "best" || (genericHeight ?: 0) >= 1080))
-                        val sourceUrl = if (downloadItem.type == DownloadType.video && usesTikTokOriginal) {
+                        val sectionMs = sectionLengthMs(downloadItem.downloadSections)
+                        val tiktokSource = if (downloadItem.type == DownloadType.video && usesTikTokOriginal) {
                             WorkerEventBus.post(
                                 WorkerProgress(0, "Getting the original video", downloadItem.id, downloadItem.logID)
                             )
-                            withContext(Dispatchers.IO) { SocialMediaUtil.getTikTokOriginalUrl(downloadItem.url) }
+                            withContext(Dispatchers.IO) { SocialMediaUtil.getTikTokOriginal(downloadItem.url) }
                         } else null
+                        val sourceUrl = tiktokSource?.url
 
                         val request = ytdlpUtil.buildYTDLRequest(downloadItem, sourceUrl)
 
@@ -278,6 +281,7 @@ class DownloadWorker(
                                 "Title: ${downloadItem.title}\n" +
                                 "URL: ${downloadItem.url}\n" +
                                 "Type: ${downloadItem.type}\n" +
+                                (tiktokSource?.let { "${it.note}\n" } ?: "") +
                                 "Command:\n$commandString \n\n"
                         val logString = StringBuilder(initialLogDetails)
                         val logItem = LogItem(
@@ -315,11 +319,11 @@ class DownloadWorker(
                                 val title: String = downloadItem.title.ifEmpty { downloadItem.url }
                                 // YTindir: ffmpeg's "frame=0 ... time=N/A" lines say nothing; its other
                                 // lines are shown as "00:01:23 · 5.2MiB · 1.5x"
-                                val notificationLine = ffmpegStatsText(line)
-                                if (notificationLine.isNotEmpty()) {
+                                val stats = ffmpegStats(line, sectionMs)
+                                if (stats?.first?.isEmpty() != true) {
                                     notificationUtil.updateDownloadNotification(
                                         downloadItem.id.toInt(),
-                                        notificationLine, progress.toInt(), 0, title,
+                                        stats?.first ?: line, stats?.second ?: progress.toInt(), 0, title,
                                         NotificationUtil.Companion.DOWNLOAD_SERVICE_CHANNEL_ID
                                     )
                                 }
@@ -666,13 +670,37 @@ class DownloadWorker(
 
     private val ffmpegStatsRegex = Regex("""size=\s*(\S+).*?time=\s*(\S+).*?speed=\s*(\S+)""")
 
-    private fun ffmpegStatsText(line: String): String {
-        if (!line.trimStart().startsWith("frame=") && !line.trimStart().startsWith("size=")) return line
-        val m = ffmpegStatsRegex.find(line) ?: return line
+    /**
+     * ffmpeg's stats as "00:01:23 · 5.2MiB · 1.5x" and how far it is (0-99) through [sectionMs],
+     * the length of the part being cut; "" for its "time=N/A" lines; null when [line] isn't one.
+     * ffmpeg rewrites its stats line with "\r", so one line can hold many updates: the last counts.
+     */
+    private fun ffmpegStats(line: String, sectionMs: Long): Pair<String, Int?>? {
+        val m = ffmpegStatsRegex.findAll(line).lastOrNull() ?: return null
+        if (!line.contains("frame=") && !line.trimStart().startsWith("size=")) return null
         val (size, time, speed) = m.destructured
-        if (time.startsWith("N/A") || time.startsWith("-")) return ""
-        return listOf(time.substringBefore('.'), size, speed)
+        if (time.startsWith("N/A") || time.startsWith("-")) return "" to null
+        val progress = time.tryConvertToTimestamp()?.takeIf { sectionMs > 0 }?.let {
+            (it * 100 / sectionMs).toInt().coerceIn(1, 99)
+        }
+        // nothing written yet: ffmpeg is still reading its way to the start of the cut
+        if (time.tryConvertToTimestamp() == 0L && size.trimStart('0').firstOrNull()?.isDigit() != true) {
+            return context.getString(R.string.cut_preparing) to progress
+        }
+        val text = listOf(time.substringBefore('.'), size, speed)
             .filter { it.isNotBlank() && !it.startsWith("N/A") }
             .joinToString(" · ")
+        return text to progress
+    }
+
+    // the length of a single "1:10-2:30" cut, 0 when there are several or they are chapters
+    private fun sectionLengthMs(sections: String): Long {
+        val list = sections.split(";").filter { it.isNotBlank() }
+        if (list.size != 1) return 0
+        val parts = list[0].trim().split("-")
+        if (parts.size != 2) return 0
+        val start = parts[0].trim().tryConvertToTimestamp() ?: return 0
+        val end = parts[1].trim().tryConvertToTimestamp() ?: return 0
+        return (end - start).coerceAtLeast(0)
     }
 }
