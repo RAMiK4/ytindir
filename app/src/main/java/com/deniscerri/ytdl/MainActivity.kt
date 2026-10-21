@@ -392,6 +392,8 @@ class MainActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
+        // YTindir: back from the cookies browser, keep the app's own light/dark mode
+        com.deniscerri.ytdl.util.FloatingNavUtil.restoreNightMode(this)
         //incognito header
         val incognitoHeader = findViewById<TextView>(R.id.incognito_header)
         if (preferences.getBoolean("incognito", false)){

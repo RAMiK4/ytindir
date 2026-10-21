@@ -206,6 +206,32 @@ object FloatingNavUtil {
     private var webViewWarmed = false
 
     /**
+     * YTindir: a WebView (the log screen, the cookies browser) can put the app's resources back on
+     * the system's light/dark mode while it loads, even after [prewarmWebView]; with the app set to
+     * Dark on a light phone the next screens then come out half light. This puts the app's own
+     * mode back, and is called whenever a WebView screen loads a page, resumes or closes.
+     */
+    fun restoreNightMode(activity: android.app.Activity?) {
+        activity ?: return
+        val night = when (androidx.appcompat.app.AppCompatDelegate.getDefaultNightMode()) {
+            androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES -> android.content.res.Configuration.UI_MODE_NIGHT_YES
+            androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO -> android.content.res.Configuration.UI_MODE_NIGHT_NO
+            else -> return
+        }
+        runCatching {
+            listOf(activity.resources, activity.applicationContext.resources).forEach { r ->
+                val mask = android.content.res.Configuration.UI_MODE_NIGHT_MASK
+                if (r.configuration.uiMode and mask != night) {
+                    val c = android.content.res.Configuration(r.configuration)
+                    c.uiMode = (c.uiMode and mask.inv()) or night
+                    @Suppress("DEPRECATION")
+                    r.updateConfiguration(c, r.displayMetrics)
+                }
+            }
+        }
+    }
+
+    /**
      * Text fields inside the download card's pager: a sideways drag moves the text
      * instead of switching between the Audio and Video pages.
      */

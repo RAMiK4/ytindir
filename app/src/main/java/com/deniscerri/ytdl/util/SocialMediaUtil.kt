@@ -143,19 +143,46 @@ object SocialMediaUtil {
         return TikTokSource(null, "TikTok: tikwm.com failed (${original.second}), downloading with yt-dlp")
     }
 
-    private fun getTikTokHdUrl(videoUrl: String): String? = runCatching {
+    /** What tikwm.com knows about a TikTok post, for when yt-dlp can't read it (TikTok's HTTP 403). */
+    class TikTokInfo(
+        val id: String,
+        val handle: String,
+        val nickname: String,
+        val caption: String,
+        val cover: String,
+        val durationSeconds: Int,
+        val hdUrl: String?,
+    ) {
+        /** The same "username_postid" title [fileTitle] gives. */
+        val fileTitle: String get() = listOf(handle, id).filter { it.isNotBlank() }.joinToString("_")
+    }
+
+    fun getTikTokInfo(videoUrl: String): TikTokInfo? = runCatching {
         val url = "$TIKWM/api/?hd=1&url=" + java.net.URLEncoder.encode(videoUrl, "UTF-8")
         val json = getJson(tikwmRequest(url).get().build()) ?: return null
         if (json.optInt("code", -1) != 0) return null
         val data = json.optJSONObject("data") ?: return null
-        data.text("hdplay", "play").let {
+        val author = data.optJSONObject("author")
+        val hd = data.text("hdplay", "play").let {
             when {
                 it.isBlank() -> null
                 it.startsWith("/") -> "$TIKWM$it"
                 else -> it
             }
         }
+        val cover = data.text("origin_cover", "cover").let { if (it.startsWith("/")) "$TIKWM$it" else it }
+        TikTokInfo(
+            id = data.text("id").ifBlank { idFromUrl(Site.TIKTOK, videoUrl) },
+            handle = author?.text("unique_id").orEmpty(),
+            nickname = author?.text("nickname").orEmpty(),
+            caption = data.text("title"),
+            cover = cover,
+            durationSeconds = data.optInt("duration", 0),
+            hdUrl = hd,
+        )
     }.getOrNull()
+
+    private fun getTikTokHdUrl(videoUrl: String): String? = getTikTokInfo(videoUrl)?.hdUrl
 
     // the link, or why there is none
     private suspend fun getTikTokSourceUrl(videoUrl: String): Pair<String?, String> {

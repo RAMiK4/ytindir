@@ -163,6 +163,7 @@ open class WebViewActivity : BaseActivity() {
 
                 this.webViewClient = object : WebViewClient() {
                     override fun onPageFinished(view: WebView?, url: String?) {
+                        com.deniscerri.ytdl.util.FloatingNavUtil.restoreNightMode(this@WebViewActivity)
                         webView = view
                         super.onPageFinished(view, url)
                         runCatching {

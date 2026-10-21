@@ -235,6 +235,14 @@ class DownloadWorker(
                             withContext(Dispatchers.IO) { SocialMediaUtil.getTikTokOriginal(downloadItem.url) }
                         } else null
                         val sourceUrl = tiktokSource?.url
+                        // a quick download has no title yet: "username_postid" from tikwm, as in the card
+                        if (tiktokSource != null && downloadItem.title.isBlank()) {
+                            withContext(Dispatchers.IO) { SocialMediaUtil.getTikTokInfo(downloadItem.url) }?.let { info ->
+                                downloadItem.title = info.fileTitle
+                                if (downloadItem.author.isBlank()) downloadItem.author = info.handle
+                                if (downloadItem.thumb.isBlank()) downloadItem.thumb = info.cover
+                            }
+                        }
 
                         val request = ytdlpUtil.buildYTDLRequest(downloadItem, sourceUrl)
 

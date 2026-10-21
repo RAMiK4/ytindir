@@ -179,6 +179,7 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
         var postedProgress = false
         // callbacks run on the stdout reader thread inside runBlocking, which doesn't see the caller being cancelled
         val callerJob = currentCoroutineContext().job
+        try {
         RuntimeManager.getInstance().runKillable { processId ->
         RuntimeManager.getInstance().execute(request, processId) { progress, _, line ->
             if (!callerJob.isActive) return@execute
@@ -209,10 +210,40 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
             }
         }
         }
+        } catch (e: Exception) {
+            if (e is CancellationException) throw e
+            // YTindir: TikTok sometimes answers yt-dlp with "HTTP Error 403"; tikwm.com still knows
+            // the post, and its original is what gets downloaded anyway
+            val fallback = if (finalResults.isEmpty() && SocialMediaUtil.siteOf(query) == SocialMediaUtil.Site.TIKTOK) {
+                withContext(Dispatchers.IO) { tikTokResultFromTikwm(query) }
+            } else null
+            if (fallback == null) throw e
+            resultsGenerated(listOf(fallback))
+            return listOf(fallback)
+        }
 
         currentCoroutineContext().ensureActive()
         if (!postedProgress) resultsGenerated(finalResults)
         return finalResults
+    }
+
+    private fun tikTokResultFromTikwm(url: String): ResultItem? {
+        val info = SocialMediaUtil.getTikTokInfo(url) ?: return null
+        val formats = arrayListOf<Format>()
+        addSourceFormats(SocialMediaUtil.Site.TIKTOK, formats)
+        return ResultItem(
+            0,
+            url = url,
+            title = info.fileTitle.ifBlank { info.caption },
+            author = info.handle.ifBlank { info.nickname },
+            duration = if (info.durationSeconds > 0) info.durationSeconds.toStringDuration(Locale.US) else "-1",
+            thumb = info.cover,
+            website = "TikTok",
+            playlistTitle = "",
+            formats = formats,
+            urls = "",
+            chapters = arrayListOf(),
+        )
     }
 
     private fun parseYTDLPListResults(results: List<String?>, query: String = "") : ArrayList<ResultItem> {
@@ -592,7 +623,8 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
             return
         }
         if (site != SocialMediaUtil.Site.TIKTOK) return
-        if (formats.none { it.vcodec.isNotBlank() && it.vcodec != "none" }) return
+        // (a list yt-dlp couldn't read at all, TikTok's HTTP 403, still gets the original)
+        if (formats.isNotEmpty() && formats.none { it.vcodec.isNotBlank() && it.vcodec != "none" }) return
         if (formats.any { SocialMediaUtil.isTikTokOriginal(it.format_id) }) return
         formats.add(0, Format(
             format_id = SocialMediaUtil.TIKTOK_ORIGINAL_FORMAT_ID,

@@ -114,6 +114,7 @@ class DownloadLogFragment : Fragment() {
             Snackbar.make(bottomAppBar, getString(R.string.copied_to_clipboard), Snackbar.LENGTH_LONG)
                 .setAnchorView(bottomAppBar)
                 .show()
+            FloatingNavUtil.restoreNightMode(activity)
         }
 
         logID = arguments?.getLong("logID")
@@ -141,6 +142,7 @@ class DownloadLogFragment : Fragment() {
         webView.webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)
+                FloatingNavUtil.restoreNightMode(activity)
                 isWebViewLoaded = true
                 if (rawLogContent.isNotBlank()) {
                     updateLogInWebView(rawLogContent)
@@ -351,7 +353,14 @@ class DownloadLogFragment : Fragment() {
 """.trimIndent()
     }
 
+    override fun onResume() {
+        super.onResume()
+        FloatingNavUtil.restoreNightMode(activity)
+    }
+
     override fun onDestroyView() {
+        // YTindir: the screen we go back to is drawn in the app's own light/dark mode
+        FloatingNavUtil.restoreNightMode(activity)
         super.onDestroyView()
         lifecycleScope.launch(Dispatchers.IO) {
             runCatching {
