@@ -16,6 +16,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowInsets
 import android.widget.CheckBox
+import androidx.core.content.edit
+import com.deniscerri.ytdl.util.UiUtil
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
