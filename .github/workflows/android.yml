@@ -3,12 +3,14 @@ name: YTindir APK
 on:
   push:
     branches: [main]
-    # documentation-only changes don't need a new release
+    # documentation, CI and release notes changes don't need a new release
     paths-ignore:
       - '**.md'
       - '**.MD'
       - 'docs/**'
       - 'fastlane/**'
+      - '.github/**'
+      - 'release-notes/**'
   workflow_dispatch:
 
 permissions:
@@ -61,27 +63,28 @@ jobs:
           fi
           if [ "${{ github.ref }}" = "refs/heads/main" ]; then
             TAG="v${VERSION}-build${{ github.run_number }}"
-            cp $DIR/*arm64-v8a*.apk "out/YTindir-v${VERSION}_arm64.apk"
+            # GitHub lists a release's files by name (or newest first): "arm64" sorts before
+            # "universal" either way, and the arm64 APK is uploaded last
+            cp $DIR/*arm64-v8a*.apk "out/YTindir-arm64_v${VERSION}.apk"
             # the same name in every release, so this link always gives the newest one:
             # https://github.com/${{ github.repository }}/releases/latest/download/YTindir-universal_latest.apk
             cp $DIR/*universal*.apk "out/YTindir-universal_latest.apk"
-            # arm64 first, the universal APK uploaded after it so it is listed second
-            gh release create "$TAG" "out/YTindir-v${VERSION}_arm64.apk" \
+            gh release create "$TAG" "out/YTindir-universal_latest.apk" \
               --title "YTindir $VERSION (build ${{ github.run_number }})" \
               --notes-file notes.md \
               --target "${{ github.sha }}" --latest
-            gh release upload "$TAG" "out/YTindir-universal_latest.apk"
+            gh release upload "$TAG" "out/YTindir-arm64_v${VERSION}.apk"
           else
             # Test builds of other branches: a pre-release with "beta" in its tag, which the
             # app's updater skips unless beta updates are turned on, so nobody gets it by accident
             TAG="v${VERSION}-beta-build${{ github.run_number }}"
-            cp $DIR/*arm64-v8a*.apk "out/YTindir-v${VERSION}-test_arm64.apk"
+            cp $DIR/*arm64-v8a*.apk "out/YTindir-arm64_v${VERSION}-test.apk"
             cp $DIR/*universal*.apk "out/YTindir-universal-test_latest.apk"
-            gh release create "$TAG" "out/YTindir-v${VERSION}-test_arm64.apk" \
+            gh release create "$TAG" "out/YTindir-universal-test_latest.apk" \
               --title "YTindir $VERSION test (${{ github.ref_name }}, build ${{ github.run_number }})" \
               --notes-file notes.md \
               --target "${{ github.sha }}" --prerelease --latest=false
-            gh release upload "$TAG" "out/YTindir-universal-test_latest.apk"
+            gh release upload "$TAG" "out/YTindir-arm64_v${VERSION}-test.apk"
             # Only the newest test build is kept: older "-beta-build" pre-releases and their tags go
             # (normal releases and beta-test-latest are never touched)
             gh release list --limit 200 --json tagName -q '.[].tagName' | grep -E -- '-beta-build[0-9]+$' | while read -r OLD; do
