@@ -82,6 +82,13 @@ jobs:
               --notes-file notes.md \
               --target "${{ github.sha }}" --prerelease --latest=false
             gh release upload "$TAG" "out/YTindir-universal-test_latest.apk"
+            # Only the newest test build is kept: older "-beta-build" pre-releases and their tags go
+            # (normal releases and beta-test-latest are never touched)
+            gh release list --limit 200 --json tagName -q '.[].tagName' | grep -E -- '-beta-build[0-9]+$' | while read -r OLD; do
+              if [ "$OLD" != "$TAG" ]; then
+                gh release delete "$OLD" --yes --cleanup-tag || true
+              fi
+            done
             # A fixed pre-release that always holds the newest test build, so this link never changes:
             # https://github.com/${{ github.repository }}/releases/download/beta-test-latest/YTindir-universal-test_latest.apk
             # (its tag has no version number, so the app's updater never offers it)
