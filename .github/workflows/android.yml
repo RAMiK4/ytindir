@@ -51,15 +51,53 @@ jobs:
         run: |
           DIR=app/build/outputs/apk/foss/release
           VERSION=$(ls $DIR/*arm64-v8a*.apk | sed -E 's/.*YTindir-(.*)-arm64-v8a\.apk/\1/')
-          TAG="v${VERSION}-build${{ github.run_number }}"
           mkdir -p out
-          cp $DIR/*arm64-v8a*.apk "out/YTindir-v${VERSION}_arm64.apk"
-          # Release notes: the commit message without its trailer lines
-          git log -1 --format=%B | grep -v -E '^(Co-Authored-By|Claude-Session):' | sed -e :a -e '/^\n*$/{$d;N;ba' -e '}' > notes.md
-          gh release create "$TAG" out/*.apk \
-            --title "YTindir $VERSION (build ${{ github.run_number }})" \
-            --notes-file notes.md \
-            --target "${{ github.sha }}" --latest
+          # Release notes: release-notes/vX.Y.Z.md when there is one (written and checked before the
+          # release), otherwise the commit message without its trailer lines
+          if [ -f "release-notes/v${VERSION}.md" ]; then
+            cp "release-notes/v${VERSION}.md" notes.md
+          else
+            git log -1 --format=%B | grep -v -E '^(Co-Authored-By|Claude-Session):' | sed -e :a -e '/^\n*$/{$d;N;ba' -e '}' > notes.md
+          fi
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            TAG="v${VERSION}-build${{ github.run_number }}"
+            cp $DIR/*arm64-v8a*.apk "out/YTindir-v${VERSION}_arm64.apk"
+            # the same name in every release, so this link always gives the newest one:
+            # https://github.com/${{ github.repository }}/releases/latest/download/YTindir-universal_latest.apk
+            cp $DIR/*universal*.apk "out/YTindir-universal_latest.apk"
+            # arm64 first, the universal APK uploaded after it so it is listed second
+            gh release create "$TAG" "out/YTindir-v${VERSION}_arm64.apk" \
+              --title "YTindir $VERSION (build ${{ github.run_number }})" \
+              --notes-file notes.md \
+              --target "${{ github.sha }}" --latest
+            gh release upload "$TAG" "out/YTindir-universal_latest.apk"
+          else
+            # Test builds of other branches: a pre-release with "beta" in its tag, which the
+            # app's updater skips unless beta updates are turned on, so nobody gets it by accident
+            TAG="v${VERSION}-beta-build${{ github.run_number }}"
+            cp $DIR/*arm64-v8a*.apk "out/YTindir-v${VERSION}-test_arm64.apk"
+            cp $DIR/*universal*.apk "out/YTindir-universal-test_latest.apk"
+            gh release create "$TAG" "out/YTindir-v${VERSION}-test_arm64.apk" \
+              --title "YTindir $VERSION test (${{ github.ref_name }}, build ${{ github.run_number }})" \
+              --notes-file notes.md \
+              --target "${{ github.sha }}" --prerelease --latest=false
+            gh release upload "$TAG" "out/YTindir-universal-test_latest.apk"
+            # Only the newest test build is kept: older "-beta-build" pre-releases and their tags go
+            # (normal releases and beta-test-latest are never touched)
+            gh release list --limit 200 --json tagName -q '.[].tagName' | grep -E -- '-beta-build[0-9]+$' | while read -r OLD; do
+              if [ "$OLD" != "$TAG" ]; then
+                gh release delete "$OLD" --yes --cleanup-tag || true
+              fi
+            done
+            # A fixed pre-release that always holds the newest test build, so this link never changes:
+            # https://github.com/${{ github.repository }}/releases/download/beta-test-latest/YTindir-universal-test_latest.apk
+            # (its tag has no version number, so the app's updater never offers it)
+            gh release delete beta-test-latest --yes --cleanup-tag || true
+            gh release create beta-test-latest out/YTindir-universal-test_latest.apk \
+              --title "YTindir test (latest)" \
+              --notes "Newest test build: YTindir $VERSION, build ${{ github.run_number }} (${{ github.ref_name }}). Its own release is $TAG." \
+              --target "${{ github.sha }}" --prerelease --latest=false
+          fi
 
       - name: Save failure log to ci-logs branch
         if: failure()

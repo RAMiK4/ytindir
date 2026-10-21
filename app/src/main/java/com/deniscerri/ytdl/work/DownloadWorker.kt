@@ -13,6 +13,8 @@ import android.os.Looper
 import android.util.DisplayMetrics
 import android.util.Log
 import android.widget.Toast
+import androidx.core.net.toUri
+import androidx.documentfile.provider.DocumentFile
 import androidx.preference.PreferenceManager
 import androidx.work.ForegroundInfo
 import androidx.work.WorkManager
@@ -30,12 +32,16 @@ import com.deniscerri.ytdl.database.repository.DownloadRepository
 import com.deniscerri.ytdl.util.UpdateUtil
 import com.deniscerri.ytdl.database.repository.LogRepository
 import com.deniscerri.ytdl.database.repository.ResultRepository
+import com.deniscerri.ytdl.util.LocaleUtil
 import com.deniscerri.ytdl.util.AlarmScheduler
 import com.deniscerri.ytdl.util.Extensions.fixYtdlpPath
 import com.deniscerri.ytdl.util.Extensions.getMediaDuration
 import com.deniscerri.ytdl.util.Extensions.toStringDuration
+import com.deniscerri.ytdl.util.Extensions.tryConvertToTimestamp
+import com.deniscerri.ytdl.util.FileNameCleaner
 import com.deniscerri.ytdl.util.FileUtil
 import com.deniscerri.ytdl.util.NotificationUtil
+import com.deniscerri.ytdl.util.SocialMediaUtil
 import com.deniscerri.ytdl.util.WorkerEventBus
 import com.deniscerri.ytdl.util.extractors.ytdlp.YTDLPUtil
 import kotlinx.coroutines.CoroutineScope
@@ -115,16 +121,7 @@ class DownloadWorker(
         //val createResultItem = inputData.getBoolean("createResultItem", true)
 
         val confTmp = Configuration(context.resources.configuration)
-        val locale = if (Build.VERSION.SDK_INT < 33) {
-            sharedPreferences.getString("app_language", "")!!.ifEmpty { Locale.getDefault().language }
-        }else{
-            Locale.getDefault().language
-        }.run {
-            split("-")
-        }.run {
-            if (this.size == 1) Locale(this[0]) else Locale(this[0], this[1])
-        }
-        confTmp.setLocale(locale)
+        confTmp.setLocale(LocaleUtil.currentLocale())
         val metrics = DisplayMetrics()
         val resources = Resources(context.assets, metrics, confTmp)
 
@@ -215,7 +212,31 @@ class DownloadWorker(
                             }
                         }
 
-                        val request = ytdlpUtil.buildYTDLRequest(downloadItem)
+                        // YTindir: TikTok's original upload, through tikwm.com; TikTok's best format if it fails
+                        val formatId = downloadItem.format.format_id
+                        // (also for quick downloads without a format list, unless a quality under 1080p is set)
+                        val genericHeight = Regex("^(\\d+)p_ytdlnisgeneric$").find(formatId)?.groupValues?.get(1)?.toIntOrNull()
+                        val usesTikTokOriginal = SocialMediaUtil.isTikTokOriginal(formatId) || (
+                            SocialMediaUtil.siteOf(downloadItem.url) == SocialMediaUtil.Site.TIKTOK &&
+                                (formatId == "best" || (genericHeight ?: 0) >= 1080))
+                        val sectionMs = sectionLengthMs(downloadItem.downloadSections)
+                        val tiktokSource = if (downloadItem.type == DownloadType.video && usesTikTokOriginal) {
+                            WorkerEventBus.post(
+                                WorkerProgress(0, "Getting the original video", downloadItem.id, downloadItem.logID)
+                            )
+                            withContext(Dispatchers.IO) { SocialMediaUtil.getTikTokOriginal(downloadItem.url) }
+                        } else null
+                        val sourceUrl = tiktokSource?.url
+                        // a quick download has no title yet: "username_postid" from tikwm, as in the card
+                        if (tiktokSource != null && downloadItem.title.isBlank()) {
+                            withContext(Dispatchers.IO) { SocialMediaUtil.getTikTokInfo(downloadItem.url) }?.let { info ->
+                                downloadItem.title = info.fileTitle
+                                if (downloadItem.author.isBlank()) downloadItem.author = info.handle
+                                if (downloadItem.thumb.isBlank()) downloadItem.thumb = info.cover
+                            }
+                        }
+
+                        val request = ytdlpUtil.buildYTDLRequest(downloadItem, sourceUrl)
 
                         // DISABLED BECAUSE YT_DLP CONSIDERS DOWNLOAD FAILURE IF -U PART FAILS, ytdlnis #1043
     //                    val updateYTDLP = sharedPreferences.getBoolean("update_ytdlp_while_downloading", false)
@@ -251,6 +272,8 @@ class DownloadWorker(
                         val cacheDownloads = sharedPreferences.getBoolean("cache_downloads", true)
                         val writtenPath = downloadItem.type == DownloadType.command && downloadItem.format.format_note.contains("-P ")
                         val writeDirectly = writtenPath || (!cacheDownloads && targetDir.canWrite())
+                        val cleanFileNames = downloadItem.type != DownloadType.command &&
+                                sharedPreferences.getBoolean("clean_filenames", true)
 
 
                         val commandString = ytdlpUtil.parseYTDLRequestString(request)
@@ -258,6 +281,7 @@ class DownloadWorker(
                                 "Title: ${downloadItem.title}\n" +
                                 "URL: ${downloadItem.url}\n" +
                                 "Type: ${downloadItem.type}\n" +
+                                (tiktokSource?.let { "${it.note}\n" } ?: "") +
                                 "Command:\n$commandString \n\n"
                         val logString = StringBuilder(initialLogDetails)
                         val logItem = LogItem(
@@ -293,11 +317,16 @@ class DownloadWorker(
                                     )
                                 )
                                 val title: String = downloadItem.title.ifEmpty { downloadItem.url }
-                                notificationUtil.updateDownloadNotification(
-                                    downloadItem.id.toInt(),
-                                    line, progress.toInt(), 0, title,
-                                    NotificationUtil.Companion.DOWNLOAD_SERVICE_CHANNEL_ID
-                                )
+                                // YTindir: ffmpeg's "frame=0 ... time=N/A" lines say nothing; its other
+                                // lines are shown as "00:01:23 · 5.2MiB · 1.5x"
+                                val stats = ffmpegStats(line, sectionMs)
+                                if (stats?.first?.isEmpty() != true) {
+                                    notificationUtil.updateDownloadNotification(
+                                        downloadItem.id.toInt(),
+                                        stats?.first ?: line, stats?.second ?: progress.toInt(), 0, title,
+                                        NotificationUtil.Companion.DOWNLOAD_SERVICE_CHANNEL_ID
+                                    )
+                                }
                                 CoroutineScope(Dispatchers.IO).launch {
                                     if (logDownloads) {
                                         logRepo.update(line, logItem.id)
@@ -342,6 +371,36 @@ class DownloadWorker(
                                         .filter { o -> o.isNotBlank() }
                                         .distinct()
                                         .toMutableList()
+                                }
+
+                                // YTindir: no | / , or emojis in file names, nothing Windows can't open
+                                if (cleanFileNames) {
+                                    runCatching {
+                                        if (writeDirectly) {
+                                            finalPaths = finalPaths.map { p -> FileNameCleaner.cleanDownloadedFile(p) }.toMutableList()
+                                        } else {
+                                            FileNameCleaner.cleanFolder(tempFileDir.absoluteFile)
+                                        }
+                                    }
+                                }
+
+                                // YTindir: cut or cropped downloads are saved as "Title_1", "Title_2"...
+                                val isCutOrCropped = downloadItem.type != DownloadType.command && (
+                                    downloadItem.downloadSections.isNotBlank() ||
+                                        (downloadItem.type == DownloadType.video && downloadItem.videoPreferences.cropValues.isNotBlank()))
+                                if (isCutOrCropped) {
+                                    runCatching {
+                                        if (writeDirectly) {
+                                            finalPaths = finalPaths.map { p -> FileNameCleaner.numberDownloadedFile(p) }.toMutableList()
+                                        } else {
+                                            val existingNames = runCatching {
+                                                File(FileUtil.formatPath(downloadLocation)).list()?.toList()
+                                                    ?: DocumentFile.fromTreeUri(context, downloadLocation.toUri())
+                                                        ?.listFiles()?.mapNotNull { f -> f.name }
+                                            }.getOrNull().orEmpty()
+                                            FileNameCleaner.numberFolder(tempFileDir.absoluteFile, existingNames)
+                                        }
+                                    }
                                 }
 
                                 //move files manually if external provider
@@ -608,4 +667,40 @@ class DownloadWorker(
         val logItemID: Long?
     )
 
+
+    private val ffmpegStatsRegex = Regex("""size=\s*(\S+).*?time=\s*(\S+).*?speed=\s*(\S+)""")
+
+    /**
+     * ffmpeg's stats as "00:01:23 · 5.2MiB · 1.5x" and how far it is (0-99) through [sectionMs],
+     * the length of the part being cut; "" for its "time=N/A" lines; null when [line] isn't one.
+     * ffmpeg rewrites its stats line with "\r", so one line can hold many updates: the last counts.
+     */
+    private fun ffmpegStats(line: String, sectionMs: Long): Pair<String, Int?>? {
+        val m = ffmpegStatsRegex.findAll(line).lastOrNull() ?: return null
+        if (!line.contains("frame=") && !line.trimStart().startsWith("size=")) return null
+        val (size, time, speed) = m.destructured
+        if (time.startsWith("N/A") || time.startsWith("-")) return "" to null
+        val progress = time.tryConvertToTimestamp()?.takeIf { sectionMs > 0 }?.let {
+            (it * 100 / sectionMs).toInt().coerceIn(1, 99)
+        }
+        // nothing written yet: ffmpeg is still reading its way to the start of the cut
+        if (time.tryConvertToTimestamp() == 0L && size.trimStart('0').firstOrNull()?.isDigit() != true) {
+            return context.getString(R.string.cut_preparing) to progress
+        }
+        val text = listOf(time.substringBefore('.'), size, speed)
+            .filter { it.isNotBlank() && !it.startsWith("N/A") }
+            .joinToString(" · ")
+        return text to progress
+    }
+
+    // the length of a single "1:10-2:30" cut, 0 when there are several or they are chapters
+    private fun sectionLengthMs(sections: String): Long {
+        val list = sections.split(";").filter { it.isNotBlank() }
+        if (list.size != 1) return 0
+        val parts = list[0].trim().split("-")
+        if (parts.size != 2) return 0
+        val start = parts[0].trim().tryConvertToTimestamp() ?: return 0
+        val end = parts[1].trim().tryConvertToTimestamp() ?: return 0
+        return (end - start).coerceAtLeast(0)
+    }
 }

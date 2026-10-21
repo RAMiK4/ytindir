@@ -445,7 +445,7 @@
     <string name="prefer_container_over_codec_audio">Səs yükləmələr üçün kodlama əvəzinə konteynerə üstünlük ver</string>
     <string name="prefer_container_over_codec_audio_summary">Bu aktivləşdikdə, üstünlük verilən səs kodlayıcı seçiminə məhəl qoyulmayacaq və yalnız konteyner dəyişdiriləcək</string>
     <string name="player_client">Oynadıcı qəbuledici</string>
-    <string name="player_client_summary"><![CDATA[YouTube Player Clients &amp; PO Token]]></string>
+    <string name="player_client_summary">YouTube Player Clients &amp; PO Token</string>
     <string name="use_app_language_for_metadata">Şərhi məlumat üçün tətbiq dili istifadə et</string>
     <string name="layout">Düzülüş</string>
     <string name="list">Siyahı</string>
@@ -689,4 +689,22 @@
     <string name="embed_lyrics_summary">Mahnı sözlərini lrclib.net-dən əldə et və səs yükləmələrində yerləşdir</string>
     <string name="save_lrc_file_summary">Sinxronlaşdırılmış sözləri səs yükləmələrin yanında .lrc faylı kimi saxla</string>
     <string name="based_on_ytdlnis">YTDLnis əsasında</string>
+    <plurals name="updates_available_summary">
+        <item quantity="one">%d yeniləmə var</item>
+        <item quantity="other">%d yeniləmə var</item>
+    </plurals>
+    <string name="update_install">Quraşdır</string>
+    <string name="welcome_perm_folders_header">Bərpa edilmiş qovluqlar</string>
+    <string name="welcome_perm_folders_summary">Nüsxəniz bu qovluqları istifadə edir, lakin tətbiq onlara girişi itirib. Hər birinə təkrar icazə verin və ya əvəzində istifadə etmək üçün başqa qovluq seçin.</string>
+    <string name="crop_unsupported">Qırpma bu element üçün əlçatan deyil</string>
+    <plurals name="queue_items">
+        <item quantity="one">%d element</item>
+        <item quantity="other">%d element</item>
+    </plurals>
+    <string name="reorder_queue">Növbəni yenidən sırala</string>
+    <string name="crop_unavailable_please_update_item">Qırpma xüsusiyyətini istifadə edə bilmək üçün sırada element məlumatlarını yeniləməlisiniz</string>
+    <string name="version_update_available">%1$s → %2$s</string>
+    <string name="update_checked_ago">%1$s yoxlanıldı</string>
+    <string name="update_checked_just_now">İndicə yoxlanılıb</string>
+    <string name="update_not_checked_yet">Hələ yoxlanılmayıb</string>
 </resources>

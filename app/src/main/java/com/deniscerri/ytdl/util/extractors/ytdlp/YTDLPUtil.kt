@@ -33,8 +33,10 @@ import com.deniscerri.ytdl.util.Extensions.isYoutubeURL
 import com.deniscerri.ytdl.util.Extensions.isYoutubeWatchVideosURL
 import com.deniscerri.ytdl.util.Extensions.readJsonValue
 import com.deniscerri.ytdl.util.Extensions.toStringDuration
+import com.deniscerri.ytdl.util.FileNameCleaner
 import com.deniscerri.ytdl.util.FileUtil
 import com.deniscerri.ytdl.util.FormatUtil
+import com.deniscerri.ytdl.util.SocialMediaUtil
 import com.google.gson.Gson
 import com.google.gson.Strictness
 import com.google.gson.reflect.TypeToken
@@ -177,6 +179,7 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
         var postedProgress = false
         // callbacks run on the stdout reader thread inside runBlocking, which doesn't see the caller being cancelled
         val callerJob = currentCoroutineContext().job
+        try {
         RuntimeManager.getInstance().runKillable { processId ->
         RuntimeManager.getInstance().execute(request, processId) { progress, _, line ->
             if (!callerJob.isActive) return@execute
@@ -207,10 +210,40 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
             }
         }
         }
+        } catch (e: Exception) {
+            if (e is CancellationException) throw e
+            // YTindir: TikTok sometimes answers yt-dlp with "HTTP Error 403"; tikwm.com still knows
+            // the post, and its original is what gets downloaded anyway
+            val fallback = if (finalResults.isEmpty() && SocialMediaUtil.siteOf(query) == SocialMediaUtil.Site.TIKTOK) {
+                withContext(Dispatchers.IO) { tikTokResultFromTikwm(query) }
+            } else null
+            if (fallback == null) throw e
+            resultsGenerated(listOf(fallback))
+            return listOf(fallback)
+        }
 
         currentCoroutineContext().ensureActive()
         if (!postedProgress) resultsGenerated(finalResults)
         return finalResults
+    }
+
+    private fun tikTokResultFromTikwm(url: String): ResultItem? {
+        val info = SocialMediaUtil.getTikTokInfo(url) ?: return null
+        val formats = arrayListOf<Format>()
+        addSourceFormats(SocialMediaUtil.Site.TIKTOK, formats)
+        return ResultItem(
+            0,
+            url = url,
+            title = info.fileTitle.ifBlank { info.caption },
+            author = info.handle.ifBlank { info.nickname },
+            duration = if (info.durationSeconds > 0) info.durationSeconds.toStringDuration(Locale.US) else "-1",
+            thumb = info.cover,
+            website = "TikTok",
+            playlistTitle = "",
+            formats = formats,
+            urls = "",
+            chapters = arrayListOf(),
+        )
     }
 
     private fun parseYTDLPListResults(results: List<String?>, query: String = "") : ArrayList<ResultItem> {
@@ -280,6 +313,15 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
 
             val formatsInJSON = if (jsonObject.has("formats") && jsonObject.get("formats") is JSONArray) jsonObject.getJSONArray("formats") else null
             val formats : ArrayList<Format> = parseYTDLFormats(formatsInJSON)
+
+            // YTindir: Instagram, X and TikTok posts get "username_postid" titles instead of
+            // "Video by …" or a whole caption, and TikTok its original (source) quality
+            SocialMediaUtil.siteOf(url, website)?.let { site ->
+                if (jsonObject.getStringByAny("_type") != "playlist") {
+                    SocialMediaUtil.fileTitle(site, jsonObject, url, author)?.let { title = it }
+                }
+                addSourceFormats(site, formats)
+            }
 
             val chaptersInJSON = if (jsonObject.has("chapters") && jsonObject.get("chapters") is JSONArray) jsonObject.getJSONArray("chapters") else null
             val listType: Type = object : TypeToken<List<ChapterItem>>() {}.type
@@ -504,9 +546,9 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
             }
 
             e.message?.apply {
-            handler.post {
-                Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
-            }
+                handler.post {
+                    Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
+                }
             }
 
             e.printStackTrace()
@@ -563,7 +605,34 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
             }
         }
 
+        SocialMediaUtil.siteOf(url)?.let { addSourceFormats(it, formats) }
+
         return formats
+    }
+
+    // YTindir: TikTok's own formats are recompressed; the original upload comes from tikwm.com
+    // when the download starts (see DownloadWorker), with TikTok's best format as the fallback
+    // X: its http files fail to download and report much larger sizes than they are, so only its
+    // hls streams are offered (when it has any)
+    private fun addSourceFormats(site: SocialMediaUtil.Site, formats: MutableList<Format>) {
+        if (site == SocialMediaUtil.Site.X) {
+            val isHttp = { f: Format -> f.format_id.startsWith("http-") }
+            if (formats.any { it.format_id.startsWith("hls-") && it.vcodec.isNotBlank() && it.vcodec != "none" }) {
+                formats.removeAll(isHttp)
+            }
+            return
+        }
+        if (site != SocialMediaUtil.Site.TIKTOK) return
+        // (a list yt-dlp couldn't read at all, TikTok's HTTP 403, still gets the original)
+        if (formats.isNotEmpty() && formats.none { it.vcodec.isNotBlank() && it.vcodec != "none" }) return
+        if (formats.any { SocialMediaUtil.isTikTokOriginal(it.format_id) }) return
+        formats.add(0, Format(
+            format_id = SocialMediaUtil.TIKTOK_ORIGINAL_FORMAT_ID,
+            container = "mp4",
+            vcodec = "source",
+            acodec = "aac",
+            format_note = context.getString(R.string.original_source_quality)
+        ))
     }
 
     fun readFormatsList(reader: JsonReader): ArrayList<Format> {
@@ -941,8 +1010,9 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
         }
     }
 
+    /** [sourceUrl]: a direct link to download instead of the item's url, like a TikTok original. */
     @SuppressLint("RestrictedApi")
-    fun buildYTDLRequest(downloadItem: DownloadItem) : YTDLRequest {
+    fun buildYTDLRequest(downloadItem: DownloadItem, sourceUrl: String? = null) : YTDLRequest {
         var useItemURL = sharedPreferences.getBoolean("use_itemurl_instead_playlisturl", false)
         // for /releases youtube channel playlists that have playlists inside of them, cant use indexing or match filter id, so download on its own
         if (downloadItem.url.isYoutubeURL() && downloadItem.url.getIDFromYoutubeURL() == null) {
@@ -953,7 +1023,9 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
 
         val request = StringJoiner(" ")
 
-        val ytDlRequest = if (downloadItem.url.endsWith(".txt")) {
+        val ytDlRequest = if (!sourceUrl.isNullOrBlank()) {
+            YTDLRequest(sourceUrl)
+        }else if (downloadItem.url.endsWith(".txt")) {
             YTDLRequest(listOf()).apply {
                 request.addOption("-a", downloadItem.url)
             }
@@ -1072,6 +1144,13 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
         val embedMetadata = sharedPreferences.getBoolean("embed_metadata", true)
         val thumbnailFormat = sharedPreferences.getString("thumbnail_format", "jpg")
         var filenameTemplate = downloadItem.customFileNameTemplate
+        // YTindir: the cleaned title and author go straight into the file name (no | / , or emojis)
+        if (downloadItem.type != DownloadType.command && sharedPreferences.getBoolean("clean_filenames", true)) {
+            // never let file name cleaning stop a download
+            filenameTemplate = runCatching {
+                FileNameCleaner.fillTemplate(filenameTemplate, downloadItem.title, downloadItem.author)
+            }.getOrDefault(filenameTemplate)
+        }
 
         if(downloadItem.type != DownloadType.command){
             if (sharedPreferences.getBoolean("no_part", false)){
@@ -1639,6 +1718,13 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
                 // YTindir: after resolution, codec and container, take the highest frame rate the video has
                 if (hasGenericResulutionFormat.isNotBlank()) formatSorting.add("fps")
 
+                // YTindir: Instagram, X and TikTok get their best quality (yt-dlp's own order already
+                // puts Instagram's dash first), not the resolution cap or codec
+                val socialSite = SocialMediaUtil.siteOf(downloadItem.url)
+                if (socialSite != null && usingGenericFormat) {
+                    formatSorting.removeAll { it.startsWith("res:") || it.startsWith("vcodec:") || it.startsWith("vext:") || it == "fps" }
+                }
+
                 if (downloadItem.format.format_id == context.resources.getString(R.string.worst_quality) || downloadItem.format.format_id == "worst") {
                     formatSorting.remove("+size")
                     formatSorting.remove("size")
@@ -1673,6 +1759,10 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
                         if (!formatString.startsWith("$alt/")) formatString = "$alt/$formatString"
                     }
                 }
+                // YTindir: X's http files fail to download; without a chosen format its best hls stream
+                if (usingGenericFormat && SocialMediaUtil.siteOf(downloadItem.url) == SocialMediaUtil.Site.X) {
+                    formatString = "bv*[format_id^=hls]+ba[format_id^=hls]/b[format_id^=hls]/$formatString"
+                }
                 request.addOption("-f", formatString)
 
                 var copyStream = ""
@@ -1688,13 +1778,12 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
                         val refH = parts[5].toIntOrNull() ?: 0
 
                         if (w > 0 && h > 0) {
-                            val setting = when {
-                                downloadItem.format.vcodec.contains("vp9", true) -> "-c:v libvpx-vp9"
-                                downloadItem.format.vcodec.contains("av1", true) -> "-c:v libaom-av1"
-                                downloadItem.format.vcodec.contains("hevc", true) -> "-c:v libx265 -preset veryfast"
-                                else -> "-c:v libx264 -preset veryfast"
-                            }
-
+                            // YTindir: cropping re-encodes the video, always to H.264 (High profile, 8-bit
+                            // 4:2:0) which every player opens, at a constant quality close to the source
+                            // (CRF 20) instead of a bitrate; size and frame rate stay the source's and the
+                            // audio is copied as it is (FFmpegCopyStream copies every stream it isn't told
+                            // to re-encode)
+                            val setting = "-c:v libx264 -profile:v high -pix_fmt yuv420p -crf 20 -preset fast"
                             copyStream = "$setting -vf crop=($w/$refW)*iw:($h/$refH)*ih:($x/$refW)*iw:($y/$refH)*ih"
                         }
                     }

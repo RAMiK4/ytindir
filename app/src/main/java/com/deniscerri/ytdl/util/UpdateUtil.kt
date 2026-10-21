@@ -47,11 +47,14 @@ class UpdateUtil(var context: Context) {
     fun tryGetNewVersion() : Result<GithubRelease> {
         try {
             val skippedVersions = sharedPreferences.getString("skip_updates", "")?.split(",")?.distinct()?.toMutableList() ?: mutableListOf()
-            val res = getGithubReleases()
+            // YTindir: only versioned releases ("beta-test-latest" holds the newest test build for a fixed link)
+            val versionTag = Regex("""\d+\.\d+\.\d+""")
+            val res = getGithubReleases().filter { versionTag.containsMatchIn(it.tag_name) }
 
             if (res.isEmpty()){
                 return Result.failure(Error(context.getString(R.string.network_error)))
             }
+            sharedPreferences.edit().putLong(APP_LAST_CHECK_KEY, System.currentTimeMillis()).apply()
 
             val currentVersion = BuildConfig.VERSION_NAME
             val currentVerNumber = "$currentVersion-build${BuildConfig.CI_BUILD}".tagNameToVersionNumber()
@@ -137,7 +140,7 @@ class UpdateUtil(var context: Context) {
             try {
                 val channel = if (c.isNullOrBlank()) sharedPreferences.getString("ytdlp_source", "nightly") else c
 
-                when(channel) {
+                val response = when(channel) {
                     "stable", "nightly", "master" -> {
                         val res = RuntimeManager.getInstance().updateYTDL(context, channelMap[channel]!!)
                         if (res != RuntimeManager.UpdateStatus.DONE) {
@@ -161,6 +164,11 @@ class UpdateUtil(var context: Context) {
                         }
                     }
                 }
+
+                if (response.status == YTDLPUpdateStatus.DONE || response.status == YTDLPUpdateStatus.ALREADY_UP_TO_DATE) {
+                    sharedPreferences.edit().putLong(YTDLP_LAST_CHECK_KEY, System.currentTimeMillis()).apply()
+                }
+                response
             } finally {
                 updatingYTDL = false
             }
@@ -170,10 +178,12 @@ class UpdateUtil(var context: Context) {
     suspend fun downloadReleaseApk(release: GithubRelease, onProgress: (Long) -> Unit) : Result<File> {
         return withContext(Dispatchers.IO) {
             try {
-                // YTindir releases carry a single arm64 APK
-                val releaseVersion = release.assets.firstOrNull {
-                    it.name.endsWith(".apk") && it.name.contains("arm64")
-                } ?: release.assets.first { it.name.endsWith(".apk") }
+                // YTindir releases carry an arm64 APK and a universal one (every other device)
+                val apks = release.assets.filter { it.name.endsWith(".apk") }
+                val isArm64 = android.os.Build.SUPPORTED_ABIS.contains("arm64-v8a")
+                val releaseVersion = (if (isArm64) apks.firstOrNull { it.name.contains("arm64") } else null)
+                    ?: apks.firstOrNull { it.name.contains("universal") }
+                    ?: apks.first()
                 File(FileUtil.getDefaultApksPath()).mkdirs()
                 val tempApk = File(FileUtil.getDefaultApksPath(), "${releaseVersion.browser_download_url.split("/").last()}")
 
@@ -220,6 +230,8 @@ class UpdateUtil(var context: Context) {
         const val APP_REPO = "RAMiK4/ytindir"
         // YTindir: every build (foss included) can update itself from APP_REPO releases
         const val APP_UPDATES_ENABLED = true
+        const val APP_LAST_CHECK_KEY = "app_last_update_check"
+        const val YTDLP_LAST_CHECK_KEY = "ytdlp_last_update_check"
         var updatingYTDL = false
         var updatingApp = false
     }

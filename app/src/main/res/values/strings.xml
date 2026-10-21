@@ -159,6 +159,8 @@
     <string name="access_all_directories_summary">Let the app download on directories that are restricted by default</string>
     <string name="redownload">Redownload</string>
     <string name="in_queue">In queue</string>
+    <plurals name="queue_items"><item quantity="one">%d item</item><item quantity="other">%d items</item></plurals>
+    <string name="reorder_queue">Reorder queue</string>
     <string name="clear_cancelled">Clear cancelled</string>
     <string name="clear_errored">Clear errored</string>
     <string name="split_by_chapters">Split by chapters</string>
@@ -180,6 +182,12 @@
     <string name="link_you_copied">Link you copied</string>
     <string name="restrict_filenames">Restrict filenames</string>
     <string name="restrict_filenames_summary">Restrict filenames to only ASCII characters, and avoid \"&amp;\" and spaces in filenames</string>
+    <string name="clean_filenames">Clean filenames</string>
+    <string name="clean_filenames_summary">Remove characters some file managers and Windows don\'t accept (| / : , …) and emojis from file names, without leaving double spaces</string>
+    <string name="original_source_quality">Original (source)</string>
+    <string name="use_current_position">Use current position</string>
+    <string name="invalid_time">Invalid time</string>
+    <string name="cut_preparing">Preparing the cut…</string>
     <string name="kill_app">Terminate app</string>
     <string name="confirm_terminate">Stops all downloads and force closes the app</string>
     <string name="dont_ask_again">Don\'t ask again</string>
@@ -336,6 +344,7 @@
     <string name="source">Source</string>
     <string name="app">App</string>
     <string name="cut_unavailable_please_update_item">You need to update the item data in order to be able to use cut feature</string>
+    <string name="crop_unavailable_please_update_item">You need to update the item data in order to be able to use crop feature</string>
     <string name="changed_path_for_everyone_to">Changed every item\'s download path to:</string>
     <string name="dismiss">Dismiss</string>
     <string name="all">All</string>
@@ -460,7 +469,7 @@
     <string name="prefer_container_over_codec_audio">Prefer container over codec for audio downloads</string>
     <string name="prefer_container_over_codec_audio_summary">With this enabled, the preferred audio codec preference will be ignored and only container will change</string>
     <string name="player_client">Player client</string>
-    <string name="player_client_summary"><![CDATA[YouTube Player Clients & PO Token]]></string>
+    <string name="player_client_summary">YouTube Player Clients &amp; PO Token</string>
     <string name="use_app_language_for_metadata">Use app language for metadata</string>
     <string name="layout">Layout</string>
     <string name="list">List</string>
@@ -543,6 +552,8 @@
     <string name="write_atleast_one_potoken">You need to write at least one PO Token</string>
     <string name="version_ready_to_download">Version %s is ready to download</string>
     <string name="package_version_ready_to_download">Package %1$s with version %2$s is ready to download</string>
+    <plurals name="updates_available_summary"><item quantity="one">%d update available</item><item quantity="other">%d updates available</item></plurals>
+    <string name="update_install">Install</string>
     <string name="tap_to_see_changes_and_install">Tap to see changes and install</string>
     <string name="view">View</string>
     <string name="next_run">Next: %1$s</string>
@@ -607,6 +618,10 @@
     <string name="checking_for_updates">Checking for updates…</string>
     <string name="version_installed">%1$s installed</string>
     <string name="check_now">Check now</string>
+    <string name="version_update_available">%1$s → %2$s</string>
+    <string name="update_checked_ago">Checked %1$s</string>
+    <string name="update_checked_just_now">Checked just now</string>
+    <string name="update_not_checked_yet">Not checked yet</string>
     <string name="update_channel">Update channel</string>
     <string name="custom_channels">Custom fork</string>
     <string name="custom_channels_summary">Update from your own yt-dlp release repositories</string>
@@ -665,6 +680,8 @@
     <string name="welcome_allow">Allow</string>
     <string name="welcome_allowed">Allowed</string>
     <string name="welcome_required">Required</string>
+    <string name="welcome_perm_folders_header">Restored folders</string>
+    <string name="welcome_perm_folders_summary">Your backup uses these folders, but the app lost access to them. Allow each one again, or pick a different folder to use instead.</string>
     <string name="welcome_updates_title">Updates</string>
     <string name="welcome_updates_summary">Choose how YTindir stays up to date.</string>
     <string name="welcome_next">Next</string>
@@ -683,4 +700,5 @@
     <string name="save_lrc_file_summary">Save synced lyrics as a .lrc file next to audio downloads</string>
     <string name="ytindr_tone" translatable="false">YTindir</string>
     <string name="based_on_ytdlnis">Based on YTDLnis</string>
+    <string name="crop_unsupported">Cropping is not available for this item</string>
 </resources>

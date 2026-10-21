@@ -445,7 +445,7 @@
     <string name="use_alarm_manager_summary">기기 제조사가 WorkManager를 제한했거나 예약 작업이 너무 부정확한 경우 켭니다</string>
     <string name="layout">레이아웃</string>
     <string name="player_client">플레이어 클라이언트</string>
-    <string name="player_client_summary"><![CDATA[YouTube 플레이어 클라이언트 및 PO 토큰]]></string>
+    <string name="player_client_summary">YouTube 플레이어 클라이언트 및 PO 토큰</string>
     <string name="use_app_language_for_metadata">메타데이터에 앱 언어 사용</string>
     <string name="list">목록</string>
     <string name="grid">격자</string>
@@ -681,4 +681,9 @@
     <string name="lyrics_source">lrclib.net에서 가사 제공</string>
     <string name="merge_cuts">자른 조각을 한 파일로 병합</string>
     <string name="based_on_ytdlnis">YTDLnis 기반</string>
+    <plurals name="updates_available_summary">
+        <item quantity="other">%d개 업데이트 가능</item>
+    </plurals>
+    <string name="update_install">설치</string>
+    <string name="crop_unsupported">이 항목은 자르기 작업을 지원하지 않습니다</string>
 </resources>

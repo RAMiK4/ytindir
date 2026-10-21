@@ -175,6 +175,12 @@
     <string name="best_quality">En iyi kalite</string>
     <string name="restrict_filenames">Dosya adlarını kısıtla</string>
     <string name="restrict_filenames_summary">Dosya adlarını yalnızca ASCII karakterleriyle kısıtla ve dosya adlarında \"&amp;\" ve boşluklardan kaçın</string>
+    <string name="clean_filenames">Dosya adlarını temizle</string>
+    <string name="clean_filenames_summary">Bazı dosya yöneticilerinin ve Windows\'un kabul etmediği karakterleri (| / : , …) ve emojileri dosya adlarından kaldır, çift boşluk bırakmadan</string>
+    <string name="original_source_quality">Orijinal (kaynak)</string>
+    <string name="use_current_position">Şu anki konumu kullan</string>
+    <string name="invalid_time">Geçersiz süre</string>
+    <string name="cut_preparing">Kesim hazırlanıyor…</string>
     <string name="kill_app">Uygulamayı sonlandır</string>
     <string name="confirm_terminate">Tüm indirmeleri durdurur ve uygulamayı kapatmaya zorlar</string>
     <string name="dont_ask_again">Tekrar sorma</string>
@@ -443,7 +449,7 @@
     <string name="layout">Düzen</string>
     <string name="list">Liste</string>
     <string name="grid">Izgara</string>
-    <string name="player_client_summary"><![CDATA[YouTube Player Clients &amp; PO Token]]></string>
+    <string name="player_client_summary">YouTube Player Clients &amp; PO Token</string>
     <string name="no_check_certificates">HTTPS sertifika doğrulamasını bastır</string>
     <string name="live_stream">Canlı yayın</string>
     <string name="live_from_start">Baştan canlı yayın</string>

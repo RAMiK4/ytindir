@@ -755,7 +755,7 @@ class DownloadMultipleBottomSheetDialog : BottomSheetDialogFragment(), Configure
                                                 if(checked) {
                                                     it.container = "mp4"
                                                 }
-                                                it.format = downloadViewModel.getFormat(it.allFormats,DownloadType.video)
+                                                it.format = downloadViewModel.getFormat(it.allFormats,DownloadType.video, it.url)
                                             }
                                             CoroutineScope(Dispatchers.IO).launch { items.forEach { downloadViewModel.updateDownload(it) } }
                                         },

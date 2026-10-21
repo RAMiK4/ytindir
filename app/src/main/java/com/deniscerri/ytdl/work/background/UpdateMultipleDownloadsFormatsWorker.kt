@@ -61,7 +61,7 @@ class UpdateMultipleDownloadsFormatsWorker(
                     runCatching {
                         d.allFormats.clear()
                         d.allFormats.addAll(resultRepo.getFormats(d.url))
-                        d.format = vm.getFormat(d.allFormats,d.type)
+                        d.format = vm.getFormat(d.allFormats,d.type, d.url)
 
                         r?.formats = d.allFormats
 

@@ -448,7 +448,7 @@
     <string name="list">列表</string>
     <string name="grid">网格</string>
     <string name="player_client">播放器客户端</string>
-    <string name="player_client_summary"><![CDATA[YouTube 播放器客户端 &amp; PO 令牌]]></string>
+    <string name="player_client_summary">YouTube 播放器客户端 &amp; PO 令牌</string>
     <string name="use_only_po_token">只使用 PO 令牌（忽略播放器客户端）</string>
     <string name="cache_directory">缓存文件夹</string>
     <string name="cache_directory_warning">更改缓存文件夹可能导致意外问题。如果应用无法写入配置的路径，它将使用默认的内部缓存目录</string>
@@ -681,4 +681,20 @@
     <string name="embed_lyrics_summary">从 lrclib.net 获取歌词并将它们嵌入音频下载中</string>
     <string name="save_lrc_file_summary">将同步的歌词保存为音频下载文件旁边的 .lrc 文件</string>
     <string name="based_on_ytdlnis">基于 YTDLnis</string>
+    <plurals name="updates_available_summary">
+        <item quantity="other">有 %d 个更新</item>
+    </plurals>
+    <string name="update_install">安装</string>
+    <string name="welcome_perm_folders_header">恢复的文件夹</string>
+    <string name="welcome_perm_folders_summary">你的备份使用这些文件夹，但本应用失去了对它们的访问。再次允许访问每个文件夹，或者选择用别的文件夹。</string>
+    <string name="crop_unsupported">裁剪对这个项目不可用</string>
+    <plurals name="queue_items">
+        <item quantity="other">%d 个项目</item>
+    </plurals>
+    <string name="reorder_queue">调整队列顺序</string>
+    <string name="crop_unavailable_please_update_item">为了能使用裁剪功能需要更新项目数据</string>
+    <string name="version_update_available">%1$s → %2$s</string>
+    <string name="update_checked_ago">%1$s 前检查</string>
+    <string name="update_checked_just_now">刚检查过</string>
+    <string name="update_not_checked_yet">还没检查过</string>
 </resources>

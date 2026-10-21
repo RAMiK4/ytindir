@@ -71,6 +71,7 @@ class DownloadAudioFragment(private var resultItem: ResultItem? = null, private 
     private lateinit var shownFields: List<String>
 
     private var disabledCutClicked: Boolean = false
+    private var selectedThumbnailPrefs: Pair<Boolean, Boolean?>? = null
 
     @SuppressLint("RestrictedApi")
     override fun onCreateView(
@@ -98,7 +99,7 @@ class DownloadAudioFragment(private var resultItem: ResultItem? = null, private 
                         title = resultItem!!.title
                         author = resultItem!!.author
                         allFormats = resultItem!!.formats.toMutableList()
-                        format = downloadViewModel.getFormat(allFormats, DownloadType.audio)
+                        format = downloadViewModel.getFormat(allFormats, DownloadType.audio, url)
                         duration = resultItem!!.duration
                         playlistIndex = resultItem!!.playlistIndex
                         playlistURL = resultItem!!.playlistURL
@@ -205,7 +206,7 @@ class DownloadAudioFragment(private var resultItem: ResultItem? = null, private 
                     if (currentDownloadItem!!.type != DownloadType.audio){
                         downloadItem.type = DownloadType.audio
                         runCatching {
-                            downloadItem.format = downloadViewModel.getFormat(downloadItem.allFormats, DownloadType.audio)
+                            downloadItem.format = downloadViewModel.getFormat(downloadItem.allFormats, DownloadType.audio, downloadItem.url)
                         }.onFailure {
                             downloadItem.format = genericAudioFormats.last()
                         }
@@ -258,7 +259,7 @@ class DownloadAudioFragment(private var resultItem: ResultItem? = null, private 
                         }
                         formats = allFormats.filter { !genericAudioFormats.contains(it) }.toMutableList()
                         formats.removeAll(genericAudioFormats)
-                        val preferredFormat = downloadViewModel.getFormat(formats, DownloadType.audio)
+                        val preferredFormat = downloadViewModel.getFormat(formats, DownloadType.audio, downloadItem.url)
                         downloadItem.format = preferredFormat
                         downloadItem.allFormats = formats
                         val filesize = UiUtil.populateFormatCard(requireContext(), formatCard, preferredFormat, null, showSize = downloadItem.downloadSections.isEmpty())
@@ -297,6 +298,9 @@ class DownloadAudioFragment(private var resultItem: ResultItem? = null, private 
                         downloadItem.container = containers[index]
                         if (containers[index] == getString(R.string.defaultValue)) downloadItem.container = ""
                         if (downloadItem.container == "wav") {
+                            if (selectedThumbnailPrefs == null) {
+                                selectedThumbnailPrefs = downloadItem.audioPreferences.embedThumb to downloadItem.audioPreferences.cropThumb
+                            }
                             downloadItem.audioPreferences.embedThumb = false
                             downloadItem.audioPreferences.cropThumb = false
                             view.findViewById<Chip>(R.id.thumbnail).apply {
@@ -305,7 +309,14 @@ class DownloadAudioFragment(private var resultItem: ResultItem? = null, private 
                                 createBadge(requireContext(), 0)
                             }
                         }else {
-                            view.findViewById<Chip>(R.id.thumbnail).isEnabled = true
+                            val chip = view.findViewById<Chip>(R.id.thumbnail)
+                            chip.isEnabled = true
+                            selectedThumbnailPrefs?.let { (embed, crop) ->
+                                downloadItem.audioPreferences.embedThumb = embed
+                                downloadItem.audioPreferences.cropThumb = crop
+                                chip.createBadge(requireContext(), listOf(embed, crop).count { it == true })
+                            }
+                            selectedThumbnailPrefs = null
                         }
                     }
 

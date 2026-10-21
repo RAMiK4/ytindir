@@ -39,7 +39,9 @@ object VideoPlayerUtil {
             .setTrackSelector(DefaultTrackSelector(context))
             .setHandleAudioBecomingNoisy(true)
             .setLoadControl(loadControl)
-            .setAudioAttributes(audioAttributes, false)
+            // YTindir: take the audio focus, so a video playing in YouTube (or any other app)
+            // pauses while the cut, crop or preview player plays instead of both playing at once
+            .setAudioAttributes(audioAttributes, true)
             .build()
             .apply {
                 skipSilenceEnabled = false

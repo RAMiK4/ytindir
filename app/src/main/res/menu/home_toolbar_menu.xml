@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/app_updates"
+        android:icon="@drawable/ic_notifications"
+        android:title="@string/update"
+        android:visible="false"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/failed_fetches"
         android:icon="@drawable/baseline_error_24"
         android:title="@string/failed_to_fetch"
