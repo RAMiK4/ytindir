@@ -40,7 +40,7 @@ To keep the app simple, these are hidden: terminal, command templates, source wa
 Download the latest APK from the **[Releases](https://github.com/RAMiK4/ytindir/releases/latest)** page. The package name is `com.rl.ytindr`, so it can be installed next to the original YTDLnis. Every release is signed with the same key, so new versions install over the old one without losing data.
 
 Every release has two APKs: **arm64** (most phones) and **universal** (every device). The universal APK of the newest release is always at this link:
-`https://github.com/RAMiK4/ytindir/releases/latest/download/YTindir-universal_latest.apk`
+`https://github.com/RAMiK4/ytindir/releases/latest/download/YTindir-x-universal.apk`
 
 Every update to `main` is built by GitHub Actions and published automatically.
 

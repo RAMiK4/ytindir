@@ -44,7 +44,7 @@ Arayüzü sade tutmak için şunlar gizlendi: terminal, komut şablonları, kayn
 En son APK'yı **[Releases](https://github.com/RAMiK4/ytindir/releases/latest)** sayfasından indirin. Paket adı `com.rl.ytindr` olduğu için orijinal YTDLnis ile yan yana kurulabilir. Tüm sürümler aynı anahtarla imzalanır; yeni sürümler eskisinin üzerine kurulur.
 
 Her sürümde iki APK vardır: **arm64** (çoğu telefon) ve **universal** (tüm cihazlar). En yeni sürümün universal APK'sı her zaman şu bağlantıdadır:
-`https://github.com/RAMiK4/ytindir/releases/latest/download/YTindir-universal_latest.apk`
+`https://github.com/RAMiK4/ytindir/releases/latest/download/YTindir-x-universal.apk`
 
 Her `main` güncellemesini GitHub Actions derleyip otomatik olarak yayınlar.
 
