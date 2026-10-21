@@ -43,7 +43,35 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appbarlayout">
 
-        <!-- YTindir: the WebView is added in code after the screen is built (see DownloadLogFragment) -->
+        <!-- YTindir: plain text instead of a WebView, which switched the app to the system's
+             light mode and left the screens half light on a dark app -->
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/log_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true">
+
+            <HorizontalScrollView
+                android:id="@+id/log_hscroll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="none">
+
+                <TextView
+                    android:id="@+id/log_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="monospace"
+                    android:paddingStart="10dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="90dp"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textIsSelectable="true" />
+
+            </HorizontalScrollView>
+
+        </androidx.core.widget.NestedScrollView>
     </FrameLayout>
 
     <com.google.android.material.progressindicator.LinearProgressIndicator

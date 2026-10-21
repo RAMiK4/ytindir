@@ -1,38 +1,32 @@
 package com.deniscerri.ytdl.ui.more.downloadLogs
 
-import android.annotation.SuppressLint
 import android.content.ClipboardManager
 import android.content.Context.CLIPBOARD_SERVICE
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.JavascriptInterface
-import android.webkit.WebResourceRequest
-import android.webkit.WebResourceResponse
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import android.widget.HorizontalScrollView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.edit
 import androidx.core.view.children
 import androidx.core.view.isVisible
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.preference.PreferenceManager
-import androidx.webkit.WebSettingsCompat
-import androidx.webkit.WebViewAssetLoader
-import androidx.webkit.WebViewFeature
 import com.deniscerri.ytdl.MainActivity
 import com.deniscerri.ytdl.R
 import com.deniscerri.ytdl.database.viewmodel.LogViewModel
 import com.deniscerri.ytdl.util.FileUtil
 import com.deniscerri.ytdl.util.FloatingNavUtil
-import com.google.android.material.color.MaterialColors
 import com.deniscerri.ytdl.util.WorkerEventBus
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomappbar.BottomAppBar
@@ -44,11 +38,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
 
 class DownloadLogFragment : Fragment() {
 
-    private lateinit var webView: WebView
+    // YTindir: the log is plain text in a TextView. It used to be a WebView, which put the app's
+    // resources back on the system's light mode at moments no workaround could catch, so on a
+    // light phone with the app set to Dark this screen and the ones after it came out half light.
+    private lateinit var logScroll: NestedScrollView
+    private lateinit var logHScroll: HorizontalScrollView
+    private lateinit var logText: TextView
     private lateinit var topAppBar: MaterialToolbar
     private lateinit var copyLog: ExtendedFloatingActionButton
     private lateinit var mainActivity: MainActivity
@@ -59,7 +57,8 @@ class DownloadLogFragment : Fragment() {
     private var autoScroll: Boolean = true
     private var scrollDownBtn: MenuItem? = null
     private var rawLogContent: String = ""
-    private var isWebViewLoaded = false
+    private var shownLogContent: String? = null
+    private var updatePending = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -69,13 +68,11 @@ class DownloadLogFragment : Fragment() {
         mainActivity = activity as MainActivity
         mainActivity.hideBottomNavigation()
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
-        // YTindir: the first WebView of the process resets the app's day/night configuration,
-        // which turned this screen and the rest of the app light. Warm it up and restore first.
-        FloatingNavUtil.prewarmWebView(requireActivity())
+        // a WebView elsewhere (the cookies browser) may still have left the app on the system's mode
+        FloatingNavUtil.restoreNightMode(activity)
         return inflater.inflate(R.layout.fragment_download_log, container, false)
     }
 
-    @SuppressLint("SetJavaScriptEnabled", "JavascriptInterface")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -84,40 +81,28 @@ class DownloadLogFragment : Fragment() {
             mainActivity.onBackPressedDispatcher.onBackPressed()
         }
 
-        // YTindir: a WebView puts the app's resources back on the system's light/dark mode the
-        // moment it is created. Inside the layout that made everything inflated after it (the
-        // bottom bar, the text colors) light on a dark app, so it is created here, once the rest
-        // of the screen is built, and the app's own mode is put back right away.
-        webView = WebView(requireActivity())
-        view.findViewById<android.widget.FrameLayout>(R.id.frameLayout).addView(
-            webView,
-            android.widget.FrameLayout.LayoutParams(
-                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
-                android.view.ViewGroup.LayoutParams.MATCH_PARENT
-            )
-        )
-        FloatingNavUtil.restoreNightMode(activity)
+        logScroll = view.findViewById(R.id.log_scroll)
+        logHScroll = view.findViewById(R.id.log_hscroll)
+        logText = view.findViewById(R.id.log_text)
         val bottomAppBar = view.findViewById<BottomAppBar>(R.id.bottomAppBar)
         copyLog = view.findViewById(R.id.copy_log)
         val slider = view.findViewById<Slider>(R.id.textsize_seekbar)
 
-        // WebSettings configuration
-        webView.setBackgroundColor(android.graphics.Color.TRANSPARENT)
-        webView.addJavascriptInterface(WebAppInterface(), "Android")
-        if (WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING)) {
-            WebSettingsCompat.setAlgorithmicDarkeningAllowed(webView.settings, true)
-        }
-        webView.settings.apply {
-            javaScriptEnabled = true
-            domStorageEnabled = true
-            useWideViewPort = true
-            loadWithOverviewMode = true
-        }
+        setWrap(sharedPreferences.getBoolean("wrap_text_log", false))
+        setFontSize(sharedPreferences.getFloat("log_zoom", 2f))
 
         topAppBar.setOnClickListener {
-            webView.evaluateJavascript("window.scrollTo(0, 0);", null)
-            bottomAppBar?.menu?.children?.firstOrNull { it.itemId == R.id.scroll_down }?.isVisible = true
+            autoScroll = false
+            logScroll.smoothScrollTo(0, 0)
         }
+
+        // the scroll down button shows while there is more below; at the bottom the log follows new lines
+        logScroll.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, _, scrollY, _, oldScrollY ->
+            val canScrollDown = v.canScrollVertically(1)
+            if (scrollY < oldScrollY && canScrollDown) autoScroll = false
+            if (!canScrollDown) autoScroll = true
+            scrollDownBtn?.isVisible = canScrollDown
+        })
 
         copyLog.setOnClickListener {
             val clipboard: ClipboardManager =
@@ -126,7 +111,6 @@ class DownloadLogFragment : Fragment() {
             Snackbar.make(bottomAppBar, getString(R.string.copied_to_clipboard), Snackbar.LENGTH_LONG)
                 .setAnchorView(bottomAppBar)
                 .show()
-            FloatingNavUtil.restoreNightMode(activity)
         }
 
         logID = arguments?.getLong("logID")
@@ -151,30 +135,15 @@ class DownloadLogFragment : Fragment() {
             }
         }
 
-        webView.webViewClient = object : WebViewClient() {
-            override fun onPageFinished(view: WebView?, url: String?) {
-                super.onPageFinished(view, url)
-                FloatingNavUtil.restoreNightMode(activity)
-                isWebViewLoaded = true
-                if (rawLogContent.isNotBlank()) {
-                    updateLogInWebView(rawLogContent)
-                }
-            }
-        }
-
         scrollDownBtn = bottomAppBar?.menu?.children?.firstOrNull { it.itemId == R.id.scroll_down }
-
-        val zoomValue = sharedPreferences.getFloat("log_zoom", 2f)
+        scrollDownBtn?.isVisible = false
 
         bottomAppBar?.setOnMenuItemClickListener { m: MenuItem ->
             when (m.itemId) {
                 R.id.wrap -> {
-                    val currentWrap = sharedPreferences.getBoolean("wrap_text_log", false)
-                    val newWrap = !currentWrap
+                    val newWrap = !sharedPreferences.getBoolean("wrap_text_log", false)
                     sharedPreferences.edit().putBoolean("wrap_text_log", newWrap).apply()
-
-                    val cssClass = if (newWrap) "pre-wrap" else "pre"
-                    webView.evaluateJavascript("setWrap('$cssClass');", null)
+                    setWrap(newWrap)
                 }
 
                 R.id.scroll_down -> {
@@ -210,30 +179,20 @@ class DownloadLogFragment : Fragment() {
         slider?.apply {
             valueFrom = 0f
             valueTo = 10f
-            value = zoomValue
+            value = sharedPreferences.getFloat("log_zoom", 2f).coerceIn(0f, 10f)
             addOnChangeListener { _, valChoice, _ ->
-                val fontSizePx = valChoice + 13f
-                webView.evaluateJavascript("setFontSize(${fontSizePx});", null)
+                setFontSize(valChoice)
                 sharedPreferences.edit(true) {
                     putFloat("log_zoom", valChoice)
                 }
             }
         }
 
-        val fontSize = sharedPreferences.getFloat("log_zoom", 2f) + 13f
-        val whiteSpace = if (sharedPreferences.getBoolean("wrap_text_log", false)) "pre-wrap" else "pre"
-        val textColor = String.format("#%06X", 0xFFFFFF and MaterialColors.getColor(view, com.google.android.material.R.attr.colorOnSurface))
-        val baseHtml = buildHtmlWrapper(fontSize, whiteSpace, textColor)
-
-        webView.loadDataWithBaseURL("https://appassets.androidplatform.net/", baseHtml, "text/html", "UTF-8", null)
-
         // Real-time Log Updates
         logViewModel.getLogFlowByID(logID!!).observe(viewLifecycleOwner) { logItem ->
             if (logItem != null && logItem.content.isNotBlank()) {
                 rawLogContent = logItem.content
-                if (isWebViewLoaded) {
-                    updateLogInWebView(logItem.content)
-                }
+                scheduleLogUpdate()
             }
         }
 
@@ -250,144 +209,44 @@ class DownloadLogFragment : Fragment() {
         }
     }
 
-    private fun updateLogInWebView(fullText: String) {
-        // Escapes text for Javascript safety
-        val escaped = fullText
-            .replace("\\", "\\\\")
-            .replace("`", "\\`")
-            .replace("\$", "\\\$")
-
-        webView.evaluateJavascript("updateContent(`$escaped`, $autoScroll);", null)
+    // a running download adds a line at a time; the text is laid out again at most every 300 ms
+    private fun scheduleLogUpdate() {
+        if (updatePending) return
+        updatePending = true
+        logText.postDelayed({
+            updatePending = false
+            if (view == null || rawLogContent == shownLogContent) return@postDelayed
+            shownLogContent = rawLogContent
+            logText.text = rawLogContent
+            if (autoScroll) logText.post { scrollToBottom() }
+            else logText.post { scrollDownBtn?.isVisible = logScroll.canScrollVertically(1) }
+        }, if (shownLogContent == null) 0L else 300L)
     }
 
     private fun scrollToBottom() {
-        webView.evaluateJavascript("scrollToBottom();", null)
+        logScroll.post {
+            logScroll.scrollTo(logScroll.scrollX, logText.height)
+            scrollDownBtn?.isVisible = false
+        }
     }
 
-    private fun buildHtmlWrapper(fontSizePx: Float, whiteSpaceMode: String, textColor: String): String {
-        val wordBreakMode = if (whiteSpaceMode == "pre-wrap") "break-all" else "normal"
-        val overflowXMode = if (whiteSpaceMode == "pre-wrap") "hidden" else "auto"
+    private fun setFontSize(zoom: Float) {
+        logText.setTextSize(TypedValue.COMPLEX_UNIT_SP, zoom + 10f)
+    }
 
-        return """
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <style>
-            :root {
-                --text-color: #000000;
-            }
-
-            @media (prefers-color-scheme: dark) {
-                :root {
-                    --text-color: #FFFFFF;
-                }
-            }
-        
-            html, body {
-                background-color: transparent;
-                margin: 0;
-                padding: 0;
-                width: 100%;
-                overflow-x: $overflowXMode;
-            }
-            #log-content {
-                color: $textColor;
-                font-family: monospace;
-                font-size: ${fontSizePx}px;
-                white-space: $whiteSpaceMode;
-                word-break: $wordBreakMode;
-                padding: 10px;
-                padding-bottom: 90px; /* Leave space for BottomAppBar */
-                user-select: text;
-                -webkit-user-select: text;
-            }
-        </style>
-    </head>
-    <body>
-        <div id="log-content"></div>
-        <script>
-            const el = document.getElementById('log-content');
-
-            function updateContent(text, shouldScroll) {
-                el.textContent = text;
-                if (shouldScroll) {
-                    scrollToBottom();
-                } else {
-                    checkScrollPosition();
-                }
-            }
-
-            function scrollToBottom() {
-                window.scrollTo(0, document.documentElement.scrollHeight);
-                checkScrollPosition();
-            }
-
-            function setFontSize(px) {
-                el.style.fontSize = px + 'px';
-            }
-
-            function setWrap(wrapMode) {
-                el.style.whiteSpace = wrapMode;
-                if (wrapMode === 'pre-wrap') {
-                    el.style.wordBreak = 'break-all';
-                    document.body.style.overflowX = 'hidden';
-                } else {
-                    el.style.wordBreak = 'normal';
-                    document.body.style.overflowX = 'auto';
-                }
-            }
-
-            function checkScrollPosition() {
-                const scrollPosition = window.scrollY || window.pageYOffset;
-                const viewportHeight = window.innerHeight;
-                const totalHeight = Math.max(
-                    document.body.scrollHeight, 
-                    document.documentElement.scrollHeight
-                );
-
-                // True if user is more than 30px away from the very bottom
-                const canScrollDown = (scrollPosition + viewportHeight) < (totalHeight - 30);
-
-                if (window.Android && window.Android.onScrollStateChanged) {
-                    window.Android.onScrollStateChanged(canScrollDown);
-                }
-            }
-
-            let scrollTimeout;
-            window.addEventListener('scroll', function() {
-                if (scrollTimeout) clearTimeout(scrollTimeout);
-                scrollTimeout = setTimeout(checkScrollPosition, 50);
-            });
-        </script>
-    </body>
-    </html>
-""".trimIndent()
+    // wrapped: the text is as wide as the screen; not wrapped: long lines scroll sideways
+    private fun setWrap(wrap: Boolean) {
+        logHScroll.isFillViewport = wrap
+        logText.layoutParams = logText.layoutParams.apply {
+            width = if (wrap) ViewGroup.LayoutParams.MATCH_PARENT else ViewGroup.LayoutParams.WRAP_CONTENT
+        }
+        logText.setHorizontallyScrolling(!wrap)
+        if (!wrap) logHScroll.scrollTo(0, 0)
+        logText.requestLayout()
     }
 
     override fun onResume() {
         super.onResume()
         FloatingNavUtil.restoreNightMode(activity)
-    }
-
-    override fun onDestroyView() {
-        // YTindir: the screen we go back to is drawn in the app's own light/dark mode
-        FloatingNavUtil.restoreNightMode(activity)
-        super.onDestroyView()
-        lifecycleScope.launch(Dispatchers.IO) {
-            runCatching {
-                File(requireContext().cacheDir, "log_viewer.html").delete()
-            }
-        }
-    }
-
-    inner class WebAppInterface {
-        @JavascriptInterface
-        fun onScrollStateChanged(canScrollDown: Boolean) {
-            activity?.runOnUiThread {
-                // Show button if user scrolled up (can scroll down further)
-                scrollDownBtn?.isVisible = canScrollDown
-            }
-        }
     }
 }
