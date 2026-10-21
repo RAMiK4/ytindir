@@ -224,7 +224,7 @@ class FormatUtil(private var context: Context) {
         val protocolFirst = site != SocialMediaUtil.Site.X
         return formats.sortedWith(
             compareByDescending<Format> { videoFormatIDPreference.contains(it.format_id) }
-                .thenByDescending { it.format_id == SocialMediaUtil.TIKTOK_ORIGINAL_FORMAT_ID }
+                .thenByDescending { SocialMediaUtil.isTikTokOriginal(it.format_id) }
                 .thenByDescending { protocolFirst && preferredProtocol(it) }
                 .thenByDescending { it.shortSide() }
                 .thenByDescending { preferredProtocol(it) }

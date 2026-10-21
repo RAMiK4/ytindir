@@ -440,18 +440,26 @@ class NotificationUtil(var context: Context) {
         var allow = false
 
         lastNotifiedProgress.compute(id) { _, lastProgress ->
-            if (progress == 0 || progress == 100) {
+            val lastTime = lastNotifiedTime[id] ?: 0L
+            val minInterval = if (canPostPromotedNotifications) MIN_PROMOTED_UPDATE_INTERVAL_MS else MIN_UPDATE_INTERVAL_MS
+            if (lastProgress == null || (progress == 100 && lastProgress != 100)) {
                 allow = true
                 lastNotifiedTime[id] = now
 
+                return@compute progress
+            }
+            // YTindir: at 0% and 100% (ffmpeg cutting, merging, cropping...) the text changes on every
+            // line; updating it that often makes Android drop the updates and the notification
+            // freezes on an old line, so these are throttled too
+            if (progress == 0 || progress == 100) {
+                allow = now - lastTime >= minInterval
+                if (allow) lastNotifiedTime[id] = now
                 return@compute progress
             }
             if (progress == lastProgress) {
                 allow = false
                 return@compute lastProgress
             }
-            val lastTime = lastNotifiedTime[id] ?: 0L
-            val minInterval = if (canPostPromotedNotifications) MIN_PROMOTED_UPDATE_INTERVAL_MS else MIN_UPDATE_INTERVAL_MS
             if (now - lastTime < minInterval) {
                 allow = false
                 return@compute lastProgress

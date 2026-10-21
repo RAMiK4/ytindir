@@ -107,6 +107,9 @@ class CutVideoBottomSheetDialog(private val _item: DownloadItem? = null, private
      * The duration of the video in milliseconds.
      */
     private var itemDurationTimestamp = 0L
+
+    // YTindir: the end of a cut is previewed from this long before it
+    private val END_PREVIEW_MS = 3000L
     private lateinit var selectedCuts: MutableList<String>
 
     private var startTimestamp = 0L
@@ -313,7 +316,7 @@ class CutVideoBottomSheetDialog(private val _item: DownloadItem? = null, private
 
         forwardBtn.setOnClickListener {
             kotlin.runCatching {
-                player.seekTo(max(startTimestamp, endTimestamp - 1500))
+                player.seekTo(max(startTimestamp, endTimestamp - END_PREVIEW_MS))
                 player.play()
             }
         }
@@ -593,7 +596,7 @@ class CutVideoBottomSheetDialog(private val _item: DownloadItem? = null, private
         }
 
         setEndTimestamp(timestamp) // also update text input to normalize
-        player.seekTo(max(timestamp - 1500, startTimestamp))
+        player.seekTo(max(timestamp - END_PREVIEW_MS, startTimestamp))
         player.play()
     }
 
@@ -612,7 +615,7 @@ class CutVideoBottomSheetDialog(private val _item: DownloadItem? = null, private
             if (draggedFromBeginning) {
                 player.seekTo(startTimestamp)
             } else {
-                player.seekTo(max(startTimestamp, endTimestamp - 1500))
+                player.seekTo(max(startTimestamp, endTimestamp - END_PREVIEW_MS))
             }
             player.play()
         }catch (ignored: Exception) {}

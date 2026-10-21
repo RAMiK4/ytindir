@@ -19,7 +19,11 @@ object SocialMediaUtil {
     enum class Site { INSTAGRAM, X, TIKTOK }
 
     /** The TikTok original quality "format", resolved through tikwm.com when the download starts. */
-    const val TIKTOK_ORIGINAL_FORMAT_ID = "tikwm-original"
+    const val TIKTOK_ORIGINAL_FORMAT_ID = "original"
+    private const val OLD_TIKTOK_ORIGINAL_FORMAT_ID = "tikwm-original"
+
+    fun isTikTokOriginal(formatId: String?) =
+        formatId == TIKTOK_ORIGINAL_FORMAT_ID || formatId == OLD_TIKTOK_ORIGINAL_FORMAT_ID
 
     private val instagramRegex = Regex("""^(?:https?://)?(?:[\w-]+\.)*(?:instagram\.com|instagr\.am)/""", RegexOption.IGNORE_CASE)
     private val xRegex = Regex("""^(?:https?://)?(?:[\w-]+\.)*(?:twitter\.com|x\.com|fxtwitter\.com|vxtwitter\.com|fixupx\.com)/""", RegexOption.IGNORE_CASE)
@@ -125,9 +129,32 @@ object SocialMediaUtil {
 
     /**
      * The link of a TikTok video's original upload, the same one tikwm.com/originalDownloader.html
-     * gives, or null when tikwm can't make one (the download then falls back to TikTok's own best format).
+     * gives. When tikwm can't make one, its HD link; null only when both fail (the download then
+     * falls back to yt-dlp, which TikTok sometimes answers with "HTTP Error 403").
      */
     suspend fun getTikTokOriginalUrl(videoUrl: String): String? {
+        // the original is sometimes not ready on the first try
+        repeat(2) {
+            getTikTokSourceUrl(videoUrl)?.let { return it }
+        }
+        return getTikTokHdUrl(videoUrl)
+    }
+
+    private fun getTikTokHdUrl(videoUrl: String): String? = runCatching {
+        val url = "$TIKWM/api/?hd=1&url=" + java.net.URLEncoder.encode(videoUrl, "UTF-8")
+        val json = getJson(tikwmRequest(url).get().build()) ?: return null
+        if (json.optInt("code", -1) != 0) return null
+        val data = json.optJSONObject("data") ?: return null
+        data.text("hdplay", "play").let {
+            when {
+                it.isBlank() -> null
+                it.startsWith("/") -> "$TIKWM$it"
+                else -> it
+            }
+        }
+    }.getOrNull()
+
+    private suspend fun getTikTokSourceUrl(videoUrl: String): String? {
         try {
             val submit = tikwmRequest("$TIKWM/api/video/task/submit")
                 .post(FormBody.Builder().add("url", videoUrl).add("web", "1").build())
@@ -138,7 +165,7 @@ object SocialMediaUtil {
                 ?.ifBlank { null } ?: submitted.text("task_id").ifBlank { return null }
 
             // the original is prepared on tikwm's side; it usually takes a few seconds
-            repeat(45) {
+            repeat(30) {
                 delay(2000)
                 currentCoroutineContext().ensureActive()
                 val result = getJson(tikwmRequest("$TIKWM/api/video/task/result?task_id=$taskId").get().build())

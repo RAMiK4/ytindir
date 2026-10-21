@@ -223,12 +223,12 @@ class DownloadWorker(
                         val formatId = downloadItem.format.format_id
                         // (also for quick downloads without a format list, unless a quality under 1080p is set)
                         val genericHeight = Regex("^(\\d+)p_ytdlnisgeneric$").find(formatId)?.groupValues?.get(1)?.toIntOrNull()
-                        val usesTikTokOriginal = formatId == SocialMediaUtil.TIKTOK_ORIGINAL_FORMAT_ID || (
+                        val usesTikTokOriginal = SocialMediaUtil.isTikTokOriginal(formatId) || (
                             SocialMediaUtil.siteOf(downloadItem.url) == SocialMediaUtil.Site.TIKTOK &&
                                 (formatId == "best" || (genericHeight ?: 0) >= 1080))
                         val sourceUrl = if (downloadItem.type == DownloadType.video && usesTikTokOriginal) {
                             WorkerEventBus.post(
-                                WorkerProgress(0, "Getting the original video from tikwm.com", downloadItem.id, downloadItem.logID)
+                                WorkerProgress(0, "Getting the original video", downloadItem.id, downloadItem.logID)
                             )
                             withContext(Dispatchers.IO) { SocialMediaUtil.getTikTokOriginalUrl(downloadItem.url) }
                         } else null
@@ -313,11 +313,16 @@ class DownloadWorker(
                                     )
                                 )
                                 val title: String = downloadItem.title.ifEmpty { downloadItem.url }
-                                notificationUtil.updateDownloadNotification(
-                                    downloadItem.id.toInt(),
-                                    line, progress.toInt(), 0, title,
-                                    NotificationUtil.Companion.DOWNLOAD_SERVICE_CHANNEL_ID
-                                )
+                                // YTindir: ffmpeg's "frame=0 ... time=N/A" lines say nothing; its other
+                                // lines are shown as "00:01:23 · 5.2MiB · 1.5x"
+                                val notificationLine = ffmpegStatsText(line)
+                                if (notificationLine.isNotEmpty()) {
+                                    notificationUtil.updateDownloadNotification(
+                                        downloadItem.id.toInt(),
+                                        notificationLine, progress.toInt(), 0, title,
+                                        NotificationUtil.Companion.DOWNLOAD_SERVICE_CHANNEL_ID
+                                    )
+                                }
                                 CoroutineScope(Dispatchers.IO).launch {
                                     if (logDownloads) {
                                         logRepo.update(line, logItem.id)
@@ -658,4 +663,16 @@ class DownloadWorker(
         val logItemID: Long?
     )
 
+
+    private val ffmpegStatsRegex = Regex("""size=\s*(\S+).*?time=\s*(\S+).*?speed=\s*(\S+)""")
+
+    private fun ffmpegStatsText(line: String): String {
+        if (!line.trimStart().startsWith("frame=") && !line.trimStart().startsWith("size=")) return line
+        val m = ffmpegStatsRegex.find(line) ?: return line
+        val (size, time, speed) = m.destructured
+        if (time.startsWith("N/A") || time.startsWith("-")) return ""
+        return listOf(time.substringBefore('.'), size, speed)
+            .filter { it.isNotBlank() && !it.startsWith("N/A") }
+            .joinToString(" · ")
+    }
 }

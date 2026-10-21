@@ -593,7 +593,7 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
         }
         if (site != SocialMediaUtil.Site.TIKTOK) return
         if (formats.none { it.vcodec.isNotBlank() && it.vcodec != "none" }) return
-        if (formats.any { it.format_id == SocialMediaUtil.TIKTOK_ORIGINAL_FORMAT_ID }) return
+        if (formats.any { SocialMediaUtil.isTikTokOriginal(it.format_id) }) return
         formats.add(0, Format(
             format_id = SocialMediaUtil.TIKTOK_ORIGINAL_FORMAT_ID,
             container = "mp4",
@@ -1746,15 +1746,12 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
                         val refH = parts[5].toIntOrNull() ?: 0
 
                         if (w > 0 && h > 0) {
-                            // YTindir: cropping re-encodes the video; a constant quality that keeps the
-                            // picture as it was (x264 CRF 18 is visually lossless), whatever bitrate it takes
-                            val setting = when {
-                                downloadItem.format.vcodec.contains("vp9", true) -> "-c:v libvpx-vp9 -crf 24 -b:v 0"
-                                downloadItem.format.vcodec.contains("av1", true) -> "-c:v libaom-av1"
-                                downloadItem.format.vcodec.contains("hevc", true) -> "-c:v libx265 -preset veryfast -crf 20"
-                                else -> "-c:v libx264 -preset veryfast -crf 18"
-                            }
-
+                            // YTindir: cropping re-encodes the video, always to H.264 (High profile, 8-bit
+                            // 4:2:0) which every player opens, at a constant quality close to the source
+                            // (CRF 20) instead of a bitrate; size and frame rate stay the source's and the
+                            // audio is copied as it is (FFmpegCopyStream copies every stream it isn't told
+                            // to re-encode)
+                            val setting = "-c:v libx264 -profile:v high -pix_fmt yuv420p -crf 20 -preset medium"
                             copyStream = "$setting -vf crop=($w/$refW)*iw:($h/$refH)*ih:($x/$refW)*iw:($y/$refH)*ih"
                         }
                     }
