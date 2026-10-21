@@ -581,7 +581,16 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
 
     // YTindir: TikTok's own formats are recompressed; the original upload comes from tikwm.com
     // when the download starts (see DownloadWorker), with TikTok's best format as the fallback
+    // X: its http files fail to download and report much larger sizes than they are, so only its
+    // hls streams are offered (when it has any)
     private fun addSourceFormats(site: SocialMediaUtil.Site, formats: MutableList<Format>) {
+        if (site == SocialMediaUtil.Site.X) {
+            val isHttp = { f: Format -> f.format_id.startsWith("http-") }
+            if (formats.any { it.format_id.startsWith("hls-") && it.vcodec.isNotBlank() && it.vcodec != "none" }) {
+                formats.removeAll(isHttp)
+            }
+            return
+        }
         if (site != SocialMediaUtil.Site.TIKTOK) return
         if (formats.none { it.vcodec.isNotBlank() && it.vcodec != "none" }) return
         if (formats.any { it.format_id == SocialMediaUtil.TIKTOK_ORIGINAL_FORMAT_ID }) return
@@ -1682,8 +1691,6 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
                 val socialSite = SocialMediaUtil.siteOf(downloadItem.url)
                 if (socialSite != null && usingGenericFormat) {
                     formatSorting.removeAll { it.startsWith("res:") || it.startsWith("vcodec:") || it.startsWith("vext:") || it == "fps" }
-                    // X's http files fail to download: its hls stream of the same resolution instead
-                    if (socialSite == SocialMediaUtil.Site.X) formatSorting.addAll(0, listOf("res", "proto:m3u8"))
                 }
 
                 if (downloadItem.format.format_id == context.resources.getString(R.string.worst_quality) || downloadItem.format.format_id == "worst") {
@@ -1720,6 +1727,10 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
                         if (!formatString.startsWith("$alt/")) formatString = "$alt/$formatString"
                     }
                 }
+                // YTindir: X's http files fail to download; without a chosen format its best hls stream
+                if (usingGenericFormat && SocialMediaUtil.siteOf(downloadItem.url) == SocialMediaUtil.Site.X) {
+                    formatString = "bv*[format_id^=hls]+ba[format_id^=hls]/b[format_id^=hls]/$formatString"
+                }
                 request.addOption("-f", formatString)
 
                 var copyStream = ""
@@ -1735,24 +1746,16 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
                         val refH = parts[5].toIntOrNull() ?: 0
 
                         if (w > 0 && h > 0) {
+                            // YTindir: cropping re-encodes the video; a constant quality that keeps the
+                            // picture as it was (x264 CRF 18 is visually lossless), whatever bitrate it takes
                             val setting = when {
-                                downloadItem.format.vcodec.contains("vp9", true) -> "-c:v libvpx-vp9"
+                                downloadItem.format.vcodec.contains("vp9", true) -> "-c:v libvpx-vp9 -crf 24 -b:v 0"
                                 downloadItem.format.vcodec.contains("av1", true) -> "-c:v libaom-av1"
-                                downloadItem.format.vcodec.contains("hevc", true) -> "-c:v libx265 -preset veryfast"
-                                else -> "-c:v libx264 -preset veryfast"
+                                downloadItem.format.vcodec.contains("hevc", true) -> "-c:v libx265 -preset veryfast -crf 20"
+                                else -> "-c:v libx264 -preset veryfast -crf 18"
                             }
 
-                            // YTindir: cropping re-encodes the video; keep its bitrate at most the source's,
-                            // scaled to the part that's kept (a 1:1 crop of 16:9 keeps 56% of the picture)
-                            var rateLimit = ""
-                            val sourceKbps = downloadItem.format.tbr?.lowercase()?.removeSuffix("k")?.trim()?.toDoubleOrNull()
-                            if (sourceKbps != null && sourceKbps > 0 && refW > 0 && refH > 0 && setting.contains("libx26")) {
-                                val keptArea = ((w.toDouble() * h) / (refW.toDouble() * refH)).coerceIn(0.5, 1.0)
-                                val maxKbps = (sourceKbps * keptArea).toInt()
-                                rateLimit = " -maxrate ${maxKbps}k -bufsize ${maxKbps * 2}k"
-                            }
-
-                            copyStream = "$setting$rateLimit -vf crop=($w/$refW)*iw:($h/$refH)*ih:($x/$refW)*iw:($y/$refH)*ih"
+                            copyStream = "$setting -vf crop=($w/$refW)*iw:($h/$refH)*ih:($x/$refW)*iw:($y/$refH)*ih"
                         }
                     }
                 }

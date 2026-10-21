@@ -146,4 +146,54 @@ object FileNameCleaner {
             }
         return result
     }
+    /**
+     * Cut or cropped downloads get a number: "Title" becomes "Title_1", or "Title_2" when the
+     * destination already has a "Title_1", even when it has no plain "Title". The files next to
+     * a video that share its name (thumbnail, subtitles) get the same number.
+     * [existingNames] are the file names already in the destination.
+     */
+    fun numberFolder(dir: File, existingNames: Collection<String>) {
+        val taken = existingNames.map { it.substringBeforeLast('.') }.toMutableSet()
+        val files = dir.walkTopDown().filter { it.isFile }.toList()
+        // shortest names first: "Title" is numbered before (and together with) "Title.en"
+        val stems = files.map { it.nameWithoutExtension }.distinct().sortedBy { it.length }
+        val numbered = mutableListOf<String>()
+        for (stem in stems) {
+            if (numbered.any { stem.startsWith("$it.") }) continue
+            var n = 1
+            while ("${stem}_$n" in taken) n++
+            val newStem = "${stem}_$n"
+            taken.add(newStem)
+            numbered.add(stem)
+            files.filter { it.name.startsWith("$stem.") }.forEach {
+                runCatching { it.renameTo(File(it.parentFile, newStem + it.name.removePrefix(stem))) }
+            }
+        }
+    }
+
+    /** [numberFolder] for a file already saved in its destination; returns its new path. */
+    fun numberDownloadedFile(path: String): String {
+        val file = File(path)
+        val dir = file.parentFile ?: return path
+        if (!file.exists()) return path
+        val stem = file.nameWithoutExtension
+        val taken = (dir.list()?.toList() ?: emptyList())
+            .filterNot { it.startsWith("$stem.") }
+            .map { it.substringBeforeLast('.') }
+            .toSet()
+        var n = 1
+        while ("${stem}_$n" in taken) n++
+        val newStem = "${stem}_$n"
+
+        var result = path
+        dir.listFiles()
+            ?.filter { it.isFile && it.name.startsWith("$stem.") }
+            ?.forEach {
+                val target = File(dir, newStem + it.name.removePrefix(stem))
+                if (!target.exists() && it.renameTo(target) && it.absolutePath == file.absolutePath) {
+                    result = target.absolutePath
+                }
+            }
+        return result
+    }
 }

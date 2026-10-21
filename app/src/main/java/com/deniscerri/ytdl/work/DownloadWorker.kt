@@ -13,6 +13,8 @@ import android.os.Looper
 import android.util.DisplayMetrics
 import android.util.Log
 import android.widget.Toast
+import androidx.core.net.toUri
+import androidx.documentfile.provider.DocumentFile
 import androidx.preference.PreferenceManager
 import androidx.work.ForegroundInfo
 import androidx.work.WorkManager
@@ -369,6 +371,25 @@ class DownloadWorker(
                                             finalPaths = finalPaths.map { p -> FileNameCleaner.cleanDownloadedFile(p) }.toMutableList()
                                         } else {
                                             FileNameCleaner.cleanFolder(tempFileDir.absoluteFile)
+                                        }
+                                    }
+                                }
+
+                                // YTindir: cut or cropped downloads are saved as "Title_1", "Title_2"...
+                                val isCutOrCropped = downloadItem.type != DownloadType.command && (
+                                    downloadItem.downloadSections.isNotBlank() ||
+                                        (downloadItem.type == DownloadType.video && downloadItem.videoPreferences.cropValues.isNotBlank()))
+                                if (isCutOrCropped) {
+                                    runCatching {
+                                        if (writeDirectly) {
+                                            finalPaths = finalPaths.map { p -> FileNameCleaner.numberDownloadedFile(p) }.toMutableList()
+                                        } else {
+                                            val existingNames = runCatching {
+                                                File(FileUtil.formatPath(downloadLocation)).list()?.toList()
+                                                    ?: DocumentFile.fromTreeUri(context, downloadLocation.toUri())
+                                                        ?.listFiles()?.mapNotNull { f -> f.name }
+                                            }.getOrNull().orEmpty()
+                                            FileNameCleaner.numberFolder(tempFileDir.absoluteFile, existingNames)
                                         }
                                     }
                                 }
