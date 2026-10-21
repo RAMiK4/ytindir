@@ -84,7 +84,19 @@ class DownloadLogFragment : Fragment() {
             mainActivity.onBackPressedDispatcher.onBackPressed()
         }
 
-        webView = view.findViewById(R.id.log_webview)
+        // YTindir: a WebView puts the app's resources back on the system's light/dark mode the
+        // moment it is created. Inside the layout that made everything inflated after it (the
+        // bottom bar, the text colors) light on a dark app, so it is created here, once the rest
+        // of the screen is built, and the app's own mode is put back right away.
+        webView = WebView(requireActivity())
+        view.findViewById<android.widget.FrameLayout>(R.id.frameLayout).addView(
+            webView,
+            android.widget.FrameLayout.LayoutParams(
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT
+            )
+        )
+        FloatingNavUtil.restoreNightMode(activity)
         val bottomAppBar = view.findViewById<BottomAppBar>(R.id.bottomAppBar)
         copyLog = view.findViewById(R.id.copy_log)
         val slider = view.findViewById<Slider>(R.id.textsize_seekbar)

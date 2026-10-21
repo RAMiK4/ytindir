@@ -57,6 +57,9 @@ jobs:
           if [ "${{ github.ref }}" = "refs/heads/main" ]; then
             TAG="v${VERSION}-build${{ github.run_number }}"
             cp $DIR/*arm64-v8a*.apk "out/YTindir-v${VERSION}_arm64.apk"
+            # the same name in every release, so this link always gives the newest one:
+            # https://github.com/${{ github.repository }}/releases/latest/download/YTindir-universal_latest.apk
+            cp $DIR/*universal*.apk "out/YTindir-universal_latest.apk"
             gh release create "$TAG" out/*.apk \
               --title "YTindir $VERSION (build ${{ github.run_number }})" \
               --notes-file notes.md \
@@ -66,9 +69,18 @@ jobs:
             # app's updater skips unless beta updates are turned on, so nobody gets it by accident
             TAG="v${VERSION}-beta-build${{ github.run_number }}"
             cp $DIR/*arm64-v8a*.apk "out/YTindir-v${VERSION}-test_arm64.apk"
+            cp $DIR/*universal*.apk "out/YTindir-universal-test_latest.apk"
             gh release create "$TAG" out/*.apk \
               --title "YTindir $VERSION test (${{ github.ref_name }}, build ${{ github.run_number }})" \
               --notes-file notes.md \
+              --target "${{ github.sha }}" --prerelease --latest=false
+            # A fixed pre-release that always holds the newest test build, so this link never changes:
+            # https://github.com/${{ github.repository }}/releases/download/beta-test-latest/YTindir-universal-test_latest.apk
+            # (its tag has no version number, so the app's updater never offers it)
+            gh release delete beta-test-latest --yes --cleanup-tag || true
+            gh release create beta-test-latest out/YTindir-universal-test_latest.apk \
+              --title "YTindir test (latest)" \
+              --notes "Newest test build: YTindir $VERSION, build ${{ github.run_number }} (${{ github.ref_name }}). Its own release is $TAG." \
               --target "${{ github.sha }}" --prerelease --latest=false
           fi
 

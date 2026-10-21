@@ -43,11 +43,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appbarlayout">
 
-        <android.webkit.WebView
-            android:id="@+id/log_webview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
+        <!-- YTindir: the WebView is added in code after the screen is built (see DownloadLogFragment) -->
     </FrameLayout>
 
     <com.google.android.material.progressindicator.LinearProgressIndicator

@@ -47,7 +47,9 @@ class UpdateUtil(var context: Context) {
     fun tryGetNewVersion() : Result<GithubRelease> {
         try {
             val skippedVersions = sharedPreferences.getString("skip_updates", "")?.split(",")?.distinct()?.toMutableList() ?: mutableListOf()
-            val res = getGithubReleases()
+            // YTindir: only versioned releases ("beta-test-latest" holds the newest test build for a fixed link)
+            val versionTag = Regex("""\d+\.\d+\.\d+""")
+            val res = getGithubReleases().filter { versionTag.containsMatchIn(it.tag_name) }
 
             if (res.isEmpty()){
                 return Result.failure(Error(context.getString(R.string.network_error)))
@@ -176,10 +178,12 @@ class UpdateUtil(var context: Context) {
     suspend fun downloadReleaseApk(release: GithubRelease, onProgress: (Long) -> Unit) : Result<File> {
         return withContext(Dispatchers.IO) {
             try {
-                // YTindir releases carry a single arm64 APK
-                val releaseVersion = release.assets.firstOrNull {
-                    it.name.endsWith(".apk") && it.name.contains("arm64")
-                } ?: release.assets.first { it.name.endsWith(".apk") }
+                // YTindir releases carry an arm64 APK and a universal one (every other device)
+                val apks = release.assets.filter { it.name.endsWith(".apk") }
+                val isArm64 = android.os.Build.SUPPORTED_ABIS.contains("arm64-v8a")
+                val releaseVersion = (if (isArm64) apks.firstOrNull { it.name.contains("arm64") } else null)
+                    ?: apks.firstOrNull { it.name.contains("universal") }
+                    ?: apks.first()
                 File(FileUtil.getDefaultApksPath()).mkdirs()
                 val tempApk = File(FileUtil.getDefaultApksPath(), "${releaseVersion.browser_download_url.split("/").last()}")
 
