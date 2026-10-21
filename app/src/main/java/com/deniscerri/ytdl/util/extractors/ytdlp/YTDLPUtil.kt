@@ -1105,7 +1105,10 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
         var filenameTemplate = downloadItem.customFileNameTemplate
         // YTindir: the cleaned title and author go straight into the file name (no | / , or emojis)
         if (downloadItem.type != DownloadType.command && sharedPreferences.getBoolean("clean_filenames", true)) {
-            filenameTemplate = FileNameCleaner.fillTemplate(filenameTemplate, downloadItem.title, downloadItem.author)
+            // never let file name cleaning stop a download
+            filenameTemplate = runCatching {
+                FileNameCleaner.fillTemplate(filenameTemplate, downloadItem.title, downloadItem.author)
+            }.getOrDefault(filenameTemplate)
         }
 
         if(downloadItem.type != DownloadType.command){

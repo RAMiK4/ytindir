@@ -11,7 +11,8 @@ object FileNameCleaner {
     // characters Windows (and many file managers) refuse, the full-width look-alikes yt-dlp
     // puts in their place, and commas
     private val forbiddenChars = Regex("[\\\\/:*?\"<>|,\\u0000-\\u001F\\u007F＼⧸⧹：？＂＊＜＞｜，]")
-    private val emptyBrackets = Regex("""\(\s*\)|\[\s*]|\{\s*}|【\s*】|「\s*」""")
+    // (every bracket escaped: Android's ICU regex engine rejects a bare "]" or "}")
+    private val emptyBrackets = Regex("""\(\s*\)|\[\s*\]|\{\s*\}|【\s*】|「\s*」""")
     private val repeatedSeparators = Regex("""\s*([-–—~_])(?:\s*\1)+\s*""")
     private val danglingSeparators = Regex("""^[\s\-–—~_.•·]+|[\s\-–—~_.•·]+$""")
     private val whitespace = Regex("""\s+""")
