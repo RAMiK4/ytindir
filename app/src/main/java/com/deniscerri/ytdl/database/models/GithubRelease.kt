@@ -9,6 +9,9 @@ data class GithubRelease(
     val html_url: String,
     @SerializedName(value = "tag_name")
     var tag_name: String,
+    // release title, e.g. "YTindir 2.12.0: cleaner file names, best-quality social downloads"
+    @SerializedName(value = "name")
+    var name: String? = null,
     @SerializedName(value = "body")
     var body: String,
     @SerializedName(value = "published_at")

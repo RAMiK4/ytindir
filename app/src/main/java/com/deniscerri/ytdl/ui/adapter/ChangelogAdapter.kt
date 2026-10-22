@@ -2,6 +2,7 @@ package com.deniscerri.ytdl.ui.adapter
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
 import android.text.format.DateFormat
@@ -56,10 +57,22 @@ class ChangelogAdapter(activity: Activity) : ListAdapter<GithubRelease?, Changel
 
         val layoutParams = holder.layoutParams
 
-        card.findViewById<TextView>(R.id.version).text = it.tag_name
-        card.findViewById<TextView>(R.id.date).text =  SimpleDateFormat(
+        val date = SimpleDateFormat(
             DateFormat.getBestDateTimePattern(
                 Locale.getDefault(), "ddMMMyyyy - HHmm"), Locale.getDefault()).format(it.published_at.time)
+        val versionView = card.findViewById<TextView>(R.id.version)
+        val dateView = card.findViewById<TextView>(R.id.date)
+        val title = it.name?.trim().orEmpty()
+        if (title.isNotEmpty() && title != it.tag_name) {
+            // release title as the headline, tag next to the date
+            versionView.text = title
+            versionView.typeface = Typeface.DEFAULT_BOLD
+            dateView.text = "${it.tag_name} · $date"
+        } else {
+            versionView.text = it.tag_name
+            versionView.typeface = Typeface.create(Typeface.MONOSPACE, Typeface.BOLD)
+            dateView.text = date
+        }
 
         val mdText = card.findViewById<TextView>(R.id.content)
         val mw = Markwon.builder(activity).usePlugin(object: AbstractMarkwonPlugin() {
