@@ -198,7 +198,7 @@ class FormatUtil(private var context: Context) {
             }
             return@Comparator 0
         }
-        // YTindir: Instagram, X and TikTok: among otherwise equal audio, the best one
+        // YTindir: Instagram, X, TikTok, Facebook and VK: among otherwise equal audio, the best one
         if (SocialMediaUtil.siteOf(url) != null) {
             return formats.sortedWith(comparator.thenByDescending { it.bitrateValue() }.thenByDescending { it.filesize })
         }
@@ -206,9 +206,9 @@ class FormatUtil(private var context: Context) {
     }
 
     /**
-     * YTindir: Instagram, X and TikTok posts default to their best quality, whatever the
-     * resolution cap or codec settings: TikTok's original upload, Instagram's best dash stream,
-     * X's best hls stream. A format id set in the settings still comes first.
+     * YTindir: Instagram, X, TikTok, Facebook and VK posts default to their best quality, whatever the
+     * resolution cap or codec settings: TikTok's original upload, Instagram's and Facebook's best
+     * dash stream, X's best hls stream, VK's best hls or dash stream. A format id set in the settings still comes first.
      */
     private fun sortSocialVideoFormats(formats: List<Format>, site: SocialMediaUtil.Site): List<Format> {
         val preferredProtocol: (Format) -> Boolean = when (site) {
@@ -218,8 +218,12 @@ class FormatUtil(private var context: Context) {
             SocialMediaUtil.Site.X -> { f -> f.format_id.startsWith("hls-") }
             // "download" is TikTok's watermarked file
             SocialMediaUtil.Site.TIKTOK -> { f -> !f.format_id.startsWith("download") }
+            // Facebook: its dash streams, over the "sd" and "hd" files
+            SocialMediaUtil.Site.FACEBOOK -> { f -> f.format_note.contains("DASH", ignoreCase = true) }
+            // VK: its hls and dash streams, over the "url…" mp4 files
+            SocialMediaUtil.Site.VK -> { f -> f.format_id.startsWith("hls") || f.format_id.startsWith("dash") }
         }
-        // Instagram's dash and TikTok's non watermarked files win over any resolution,
+        // Instagram's and Facebook's dash, VK's hls/dash and TikTok's non watermarked files win over any resolution,
         // X's hls only over the http file of the same resolution
         val protocolFirst = site != SocialMediaUtil.Site.X
         return formats.sortedWith(

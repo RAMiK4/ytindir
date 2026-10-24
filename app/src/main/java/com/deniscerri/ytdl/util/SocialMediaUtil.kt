@@ -11,12 +11,13 @@ import org.json.JSONObject
 import java.util.concurrent.TimeUnit
 
 /**
- * YTindir: Instagram, X and TikTok helpers: picking their best quality by default,
+ * YTindir: Instagram, X, TikTok, Facebook and VK helpers: picking their best quality by default,
  * short file names like "fifaworldcup_DdhJKSdzuMT" and TikTok's original (source) video.
+ * (VK keeps its own titles: they are real video titles, as on YouTube.)
  */
 object SocialMediaUtil {
 
-    enum class Site { INSTAGRAM, X, TIKTOK }
+    enum class Site { INSTAGRAM, X, TIKTOK, FACEBOOK, VK }
 
     /** The TikTok original quality "format", resolved through tikwm.com when the download starts. */
     const val TIKTOK_ORIGINAL_FORMAT_ID = "original"
@@ -28,6 +29,8 @@ object SocialMediaUtil {
     private val instagramRegex = Regex("""^(?:https?://)?(?:[\w-]+\.)*(?:instagram\.com|instagr\.am)/""", RegexOption.IGNORE_CASE)
     private val xRegex = Regex("""^(?:https?://)?(?:[\w-]+\.)*(?:twitter\.com|x\.com|fxtwitter\.com|vxtwitter\.com|fixupx\.com)/""", RegexOption.IGNORE_CASE)
     private val tiktokRegex = Regex("""^(?:https?://)?(?:[\w-]+\.)*tiktok\.com/""", RegexOption.IGNORE_CASE)
+    private val facebookRegex = Regex("""^(?:https?://)?(?:[\w-]+\.)*(?:facebook\.com|fb\.com|fb\.watch)/""", RegexOption.IGNORE_CASE)
+    private val vkRegex = Regex("""^(?:https?://)?(?:[\w-]+\.)*(?:vk\.com|vk\.ru|vkvideo\.ru)/""", RegexOption.IGNORE_CASE)
 
     fun siteOf(url: String?): Site? {
         if (url.isNullOrBlank()) return null
@@ -36,6 +39,8 @@ object SocialMediaUtil {
             instagramRegex.containsMatchIn(u) -> Site.INSTAGRAM
             xRegex.containsMatchIn(u) -> Site.X
             tiktokRegex.containsMatchIn(u) -> Site.TIKTOK
+            facebookRegex.containsMatchIn(u) -> Site.FACEBOOK
+            vkRegex.containsMatchIn(u) -> Site.VK
             else -> null
         }
     }
@@ -47,6 +52,9 @@ object SocialMediaUtil {
             e.startsWith("instagram") -> Site.INSTAGRAM
             e.startsWith("twitter") -> Site.X
             e.startsWith("tiktok") -> Site.TIKTOK
+            e.startsWith("facebook") -> Site.FACEBOOK
+            // (not "vkplay", a streaming site of its own)
+            e == "vk" || e.startsWith("vkwallpost") -> Site.VK
             else -> null
         }
     }
@@ -64,8 +72,20 @@ object SocialMediaUtil {
             Site.INSTAGRAM -> Regex("""/(?:p|reels?|tv|stories/[^/]+)/([\w-]+)""")
             Site.X -> Regex("""/status(?:es)?/(\d+)""")
             Site.TIKTOK -> Regex("""/(?:video|photo)/(\d+)""")
+            // facebook.com/<page>/videos/<id>, /reel/<id>, /watch/?v=<id>, video.php?v=<id>
+            Site.FACEBOOK -> Regex("""(?:/videos/(?:[^/?#]+/)?|/reel/|[?&]v=)(\d+)""")
+            Site.VK -> Regex("""video(-?\d+_\d+)""")
         }
         return regex.find(url)?.groupValues?.get(1).orEmpty()
+    }
+
+    // facebook.com/<page>/videos/<id>: the page's user name, when the link has it
+    private val facebookVanityRegex = Regex("""facebook\.com/([\w.-]+)/videos/""", RegexOption.IGNORE_CASE)
+    private val facebookNotNames = setOf("watch", "reel", "reels", "share", "video", "videos", "groups", "events", "pg", "people", "story.php", "permalink.php")
+
+    private fun facebookUserName(url: String): String {
+        val name = facebookVanityRegex.find(url)?.groupValues?.get(1).orEmpty()
+        return name.takeIf { it.isNotBlank() && it.lowercase() !in facebookNotNames && !it.all(Char::isDigit) }.orEmpty()
     }
 
     /**
@@ -73,6 +93,7 @@ object SocialMediaUtil {
      * the account's user name, then the post's id, e.g. "fifaworldcup_DdhJKSdzuMT".
      */
     fun fileTitle(site: Site, json: JSONObject, url: String, fallbackAuthor: String): String? {
+        if (site == Site.VK) return null
         val handles = when (site) {
             // Instagram: channel is the user name, uploader the full name, uploader_id a number
             Site.INSTAGRAM -> json.text("channel", "uploader_id")
@@ -80,6 +101,9 @@ object SocialMediaUtil {
             Site.X -> json.text("uploader_id", "channel_id")
             // TikTok: uploader is the @handle, channel the nickname, uploader_id a number
             Site.TIKTOK -> json.text("uploader", "creator")
+            // Facebook: no @handle, so the page name in the link, otherwise the name it shows
+            Site.FACEBOOK -> facebookUserName(url).ifBlank { json.text("uploader", "channel") }
+            Site.VK -> ""
         }.removePrefix("@")
         val handle = handles.takeIf { it.isNotBlank() && !it.all(Char::isDigit) }
             ?: fallbackAuthor.ifBlank { json.text("uploader", "channel") }
@@ -88,10 +112,38 @@ object SocialMediaUtil {
             Site.INSTAGRAM -> idFromUrl(site, url).ifBlank { json.text("display_id", "id") }
             Site.X -> json.text("display_id").ifBlank { idFromUrl(site, url) }.ifBlank { json.text("id") }
             Site.TIKTOK -> json.text("id").ifBlank { idFromUrl(site, url) }
+            Site.FACEBOOK -> json.text("id").ifBlank { idFromUrl(site, url) }
+            Site.VK -> ""
         }
 
         if (handle.isBlank() && id.isBlank()) return null
         return listOf(handle, id).filter { it.isNotBlank() }.joinToString("_")
+    }
+
+    /**
+     * [fileTitle] for a download that starts before the post was read (a quick download):
+     * a yt-dlp output template that gives the same "username_postid" name, instead of
+     * "Video by …" or a whole tweet. Null when the site keeps yt-dlp's own title.
+     */
+    fun outputTitleTemplate(url: String): String? {
+        val site = siteOf(url) ?: return null
+        val urlId = idFromUrl(site, url)
+        // "handle_" only when yt-dlp knows the handle
+        val handle = when (site) {
+            Site.INSTAGRAM -> "%(channel,uploader_id&{}_|)s"
+            Site.X -> "%(uploader_id&{}_|)s"
+            Site.TIKTOK -> "%(uploader,creator&{}_|)s"
+            Site.FACEBOOK -> facebookUserName(url).takeIf { it.isNotBlank() }?.let { "${it.replace("%", "%%")}_" }
+                ?: "%(uploader,channel&{}_|)s"
+            Site.VK -> return null
+        }
+        val id = when (site) {
+            // (a shared Facebook link has no id in it; the post's own id matches /videos/<id>)
+            Site.FACEBOOK -> "%(id)s"
+            Site.TIKTOK -> urlId.ifBlank { "%(id)s" }
+            else -> urlId.ifBlank { "%(display_id,id)s" }
+        }
+        return handle + id
     }
 
     private val client by lazy {

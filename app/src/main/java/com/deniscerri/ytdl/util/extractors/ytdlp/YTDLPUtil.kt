@@ -314,7 +314,7 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
             val formatsInJSON = if (jsonObject.has("formats") && jsonObject.get("formats") is JSONArray) jsonObject.getJSONArray("formats") else null
             val formats : ArrayList<Format> = parseYTDLFormats(formatsInJSON)
 
-            // YTindir: Instagram, X and TikTok posts get "username_postid" titles instead of
+            // YTindir: Instagram, X, TikTok and Facebook posts get "username_postid" titles instead of
             // "Video by …" or a whole caption, and TikTok its original (source) quality
             SocialMediaUtil.siteOf(url, website)?.let { site ->
                 if (jsonObject.getStringByAny("_type") != "playlist") {
@@ -1151,6 +1151,13 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
                 FileNameCleaner.fillTemplate(filenameTemplate, downloadItem.title, downloadItem.author)
             }.getOrDefault(filenameTemplate)
         }
+        // YTindir: a quick download that starts before the post was read has no title yet; Instagram,
+        // X, TikTok and Facebook still get "username_postid" (not "Video by …" or a whole tweet)
+        if (downloadItem.type != DownloadType.command && downloadItem.title.isBlank()) {
+            SocialMediaUtil.outputTitleTemplate(downloadItem.url)?.let {
+                filenameTemplate = FileNameCleaner.replaceTitleField(filenameTemplate, it)
+            }
+        }
 
         if(downloadItem.type != DownloadType.command){
             if (sharedPreferences.getBoolean("no_part", false)){
@@ -1718,8 +1725,8 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
                 // YTindir: after resolution, codec and container, take the highest frame rate the video has
                 if (hasGenericResulutionFormat.isNotBlank()) formatSorting.add("fps")
 
-                // YTindir: Instagram, X and TikTok get their best quality (yt-dlp's own order already
-                // puts Instagram's dash first), not the resolution cap or codec
+                // YTindir: Instagram, X, TikTok, Facebook and VK get their best quality (yt-dlp's own order
+                // already puts Instagram's dash first), not the resolution cap or codec
                 val socialSite = SocialMediaUtil.siteOf(downloadItem.url)
                 if (socialSite != null && usingGenericFormat) {
                     formatSorting.removeAll { it.startsWith("res:") || it.startsWith("vcodec:") || it.startsWith("vext:") || it == "fps" }
@@ -1750,6 +1757,17 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
                 }
 
                 var formatString = f.toString().replace("/$".toRegex(), "")
+                // YTindir: without a chosen format, Facebook's best dash stream (not its "sd"/"hd" files)
+                // and VK's best hls or dash stream (not its "url…" mp4 files)
+                if (usingGenericFormat && !downloadItem.videoPreferences.removeAudio) {
+                    when (socialSite) {
+                        SocialMediaUtil.Site.FACEBOOK ->
+                            formatString = "bv*[format_note*=DASH]+ba/b[format_note*=DASH]/$formatString"
+                        SocialMediaUtil.Site.VK ->
+                            formatString = "bv*[format_id!^=url][format_id!^=cache]+ba/b[format_id!^=url][format_id!^=cache]/$formatString"
+                        else -> {}
+                    }
+                }
                 if (downloadItem.downloadSections.isNotBlank()) {
                     // YTindir: cutting goes through ffmpeg, which often fails on HLS (m3u8) audio,
                     // so an https audio stream is tried first and the chosen one stays as fallback
