@@ -117,7 +117,12 @@ object SocialMediaUtil {
         }
 
         if (handle.isBlank() && id.isBlank()) return null
-        return listOf(handle, id).filter { it.isNotBlank() }.joinToString("_")
+        // one of a post's several videos (an Instagram carousel): _1, _2…, so they don't end up
+        // as "name", "name (1)", "name (2)"
+        val index = json.optInt("playlist_index", 0)
+        val count = maxOf(json.optInt("n_entries", 0), json.optInt("playlist_count", 0))
+        val number = if (index > 0 && count > 1) "_$index" else ""
+        return listOf(handle, id).filter { it.isNotBlank() }.joinToString("_") + number
     }
 
     /**
@@ -146,6 +151,26 @@ object SocialMediaUtil {
         // posts with several videos (an Instagram carousel, a tweet with two videos) get _1, _2…
         return handle + id + "%(playlist_index&_{}|)s"
     }
+
+    // Instagram posts the app API couldn't read this session: read from the website again
+    private val instagramWebOnly: MutableSet<String> = java.util.Collections.synchronizedSet(mutableSetOf())
+
+    private fun instagramKey(url: String) = idFromUrl(Site.INSTAGRAM, url).ifBlank { url.trim() }
+
+    fun isInstagramWebOnly(url: String) = instagramKey(url) in instagramWebOnly
+
+    /** Returns true the first time [url] is marked, so a fallback runs only once. */
+    fun markInstagramWebOnly(url: String) = instagramWebOnly.add(instagramKey(url))
+
+    /** Whether a Netscape cookies file holds a logged-in Instagram session. */
+    fun hasInstagramSession(cookieFile: java.io.File): Boolean = runCatching {
+        cookieFile.useLines { lines ->
+            lines.any { l ->
+                val parts = l.split('\t')
+                parts.size >= 7 && parts[0].contains("instagram.com") && parts[5] == "sessionid" && parts[6].isNotBlank()
+            }
+        }
+    }.getOrDefault(false)
 
     private val client by lazy {
         OkHttpClient.Builder()

@@ -90,6 +90,7 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
             FileUtil.getCookieFile(context){
                 addOption("--cookies", it)
             }
+            addInstagramAppApi(url)
 
             val useHeader = sharedPreferences.getBoolean("use_header", false)
             val header = sharedPreferences.getString("useragent_header", "")
@@ -124,6 +125,23 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
             addConfig(extraCommands.joinToString(" ") { it.content })
         }
     }
+
+    /**
+     * YTindir: with a logged-in Instagram account in the cookies, posts are read through Instagram's
+     * app API (as the app does), whose dash audio is the higher quality xHE-AAC (turned into AAC-LC
+     * after the download); the website only gives a lower bitrate HE-AAC. When the app API fails for
+     * a post, it's read from the website again (see [usesInstagramAppApi]).
+     */
+    private fun YTDLRequest.addInstagramAppApi(url: String?) {
+        if (url == null || SocialMediaUtil.siteOf(url) != SocialMediaUtil.Site.INSTAGRAM) return
+        if (!sharedPreferences.getBoolean("instagram_app_api", true)) return
+        if (SocialMediaUtil.isInstagramWebOnly(url)) return
+        FileUtil.getCookieFile(context) {
+            if (SocialMediaUtil.hasInstagramSession(File(it))) addOption("--extractor-args", INSTAGRAM_APP_API_ARGS)
+        }
+    }
+
+    private fun YTDLRequest.usesInstagramAppApi() = toString().contains(INSTAGRAM_APP_API_ARGS)
 
     private fun canApplyFlatPlaylist(url: String) : Boolean {
         var noFlatPlaylist = sharedPreferences.getBoolean("no_flat_playlist", false)
@@ -212,6 +230,9 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
         }
         } catch (e: Exception) {
             if (e is CancellationException) throw e
+            if (finalResults.isEmpty() && request.usesInstagramAppApi() && SocialMediaUtil.markInstagramWebOnly(query)) {
+                return getFromYTDL(query, singleItem, resultsGenerated)
+            }
             // YTindir: TikTok sometimes answers yt-dlp with "HTTP Error 403"; tikwm.com still knows
             // the post, and its original is what gets downloaded anyway
             val fallback = if (finalResults.isEmpty() && SocialMediaUtil.siteOf(query) == SocialMediaUtil.Site.TIKTOK) {
@@ -223,6 +244,9 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
         }
 
         currentCoroutineContext().ensureActive()
+        if (finalResults.isEmpty() && request.usesInstagramAppApi() && SocialMediaUtil.markInstagramWebOnly(query)) {
+            return getFromYTDL(query, singleItem, resultsGenerated)
+        }
         if (!postedProgress) resultsGenerated(finalResults)
         return finalResults
     }
@@ -318,6 +342,9 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
             // "Video by …" or a whole caption, and TikTok its original (source) quality
             SocialMediaUtil.siteOf(url, website)?.let { site ->
                 if (jsonObject.getStringByAny("_type") != "playlist") {
+                    SocialMediaUtil.fileTitle(site, jsonObject, url, author)?.let { title = it }
+                } else if (playlistTitle.isBlank() || playlistTitle == title) {
+                    // a whole carousel: "username_postid" for it too, not its caption or nothing
                     SocialMediaUtil.fileTitle(site, jsonObject, url, author)?.let { title = it }
                 }
                 addSourceFormats(site, formats)
@@ -597,6 +624,9 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
         } catch (e: Exception) {
             if (e is CancellationException) throw e
             arrayListOf()
+        }
+        if (formats.isEmpty() && request.usesInstagramAppApi() && SocialMediaUtil.markInstagramWebOnly(url)) {
+            return getFormats(url, ignoreInfoJSON)
         }
 
         if (formats.isEmpty()) {
@@ -1125,6 +1155,7 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
             FileUtil.getCookieFile(context){
                 request.addOption("--cookies", it)
             }
+            if (downloadItem.type != DownloadType.command) request.addInstagramAppApi(downloadItem.url)
         }
 
         if (sharedPreferences.getBoolean("no_check_certificates", false) && !request.toString().contains("--no-check-certificates")) {
@@ -1875,5 +1906,9 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
         val ytdlpCache = File(FileUtil.getCacheYTDLPPath(context))
         ytDlRequest.addOption("--cache-dir", ytdlpCache.absolutePath)
         return ytDlRequest
+    }
+
+    companion object {
+        const val INSTAGRAM_APP_API_ARGS = "instagram:app_id=ios"
     }
 }

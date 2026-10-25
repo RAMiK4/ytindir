@@ -300,6 +300,14 @@
             android:summary="@string/convert_xhe_aac_summary"
             app:title="@string/convert_xhe_aac" />
 
+        <SwitchPreferenceCompat
+            android:widgetLayout="@layout/preferece_material_switch"
+            app:defaultValue="true"
+            app:icon="@drawable/ic_music"
+            app:key="instagram_app_api"
+            android:summary="@string/instagram_app_api_summary"
+            app:title="@string/instagram_app_api" />
+
 
         <ListPreference
             android:defaultValue=""

@@ -509,8 +509,13 @@ class DownloadWorker(
                                         if (finalPaths.isNotEmpty()) {
                                             // YTindir: a quick download has no title yet: the file's name
                                             // ("username_postid" and the like) for the history and notification
-                                            if (downloadItem.title.isBlank() && downloadItem.playlistTitle.isBlank()) {
-                                                downloadItem.title = File(finalPaths.first()).nameWithoutExtension
+                                            if (downloadItem.title.isBlank()) {
+                                                var name = File(finalPaths.first()).nameWithoutExtension
+                                                // a carousel's files are name_1, name_2…: the post's own name
+                                                if (finalPaths.size > 1 && SocialMediaUtil.siteOf(downloadItem.url) != null) {
+                                                    name = name.replace(Regex("""_\d+$"""), "")
+                                                }
+                                                if (downloadItem.playlistTitle.isBlank() || finalPaths.size == 1) downloadItem.title = name
                                             }
                                             val unixTime = System.currentTimeMillis() / 1000
                                             finalPaths.first().apply {
@@ -584,6 +589,18 @@ class DownloadWorker(
                             }
                             if (this@DownloadWorker.isStopped) return@onFailure
                             if (it is RuntimeManager.CanceledException) return@onFailure
+
+                            // YTindir: Instagram's app API failed for this post: once more from the website
+                            if (request.toString().contains(YTDLPUtil.INSTAGRAM_APP_API_ARGS) &&
+                                SocialMediaUtil.markInstagramWebOnly(downloadItem.url)) {
+                                tempFileDir.delete()
+                                val note = "\n[YTindir] ${it.message?.lines()?.lastOrNull { l -> l.isNotBlank() } ?: "Error"}\n" +
+                                    "[YTindir] Instagram app API failed, retrying from the website...\n"
+                                if (logDownloads) logRepo.update(note, logItem.id)
+                                downloadItem.status = DownloadRepository.Status.Queued.toString()
+                                dao.update(downloadItem)
+                                return@onFailure
+                            }
 
                             // YTindir: self-recovery. Most YouTube breakages are fixed by a newer yt-dlp,
                             // so update it once and re-queue the item. Only retries when an update was

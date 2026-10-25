@@ -179,6 +179,8 @@
     <string name="clean_filenames_summary">Bazı dosya yöneticilerinin ve Windows\'un kabul etmediği karakterleri (| / : , …) ve emojileri dosya adlarından kaldır, çift boşluk bırakmadan</string>
     <string name="convert_xhe_aac">Uyumlu ses (AAC)</string>
     <string name="convert_xhe_aac_summary">xHE-AAC sesi (Instagram, Facebook) cihazda AAC-LC 192 kbps\'a dönüştür; her oynatıcıda ve uygulamada çalışsın</string>
+    <string name="instagram_app_api">Instagram uygulama kalitesi</string>
+    <string name="instagram_app_api_summary">Çerezlerde bir Instagram hesabı varsa gönderileri Instagram uygulaması gibi oku, daha yüksek kaliteli ses için (başarısız olursa web sitesine döner)</string>
     <string name="original_source_quality">Orijinal (kaynak)</string>
     <string name="use_current_position">Şu anki konumu kullan</string>
     <string name="invalid_time">Geçersiz süre</string>
