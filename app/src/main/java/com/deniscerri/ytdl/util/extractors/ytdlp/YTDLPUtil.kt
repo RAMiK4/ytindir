@@ -90,11 +90,6 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
             FileUtil.getCookieFile(context){
                 addOption("--cookies", it)
             }
-            if (useInstagramAppApi(url)) {
-                addOption("--extractor-args", INSTAGRAM_APP_API_ARGS)
-                // the app API answers anything but its own app with "HTTP Error 400"
-                addOption("--add-headers", "User-Agent:$INSTAGRAM_IOS_USER_AGENT")
-            }
 
             val useHeader = sharedPreferences.getBoolean("use_header", false)
             val header = sharedPreferences.getString("useragent_header", "")
@@ -131,22 +126,43 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
     }
 
     /**
-     * YTindir: with a logged-in Instagram account in the cookies, posts are read through Instagram's
-     * app API (as the app does), whose dash audio is the higher quality xHE-AAC (turned into AAC-LC
-     * after the download); the website only gives a lower bitrate HE-AAC. When the app API fails for
-     * a post, it's read from the website again (see [usesInstagramAppApi]).
+     * YTindir: Instagram's website gives a lower bitrate HE-AAC audio; its app API (as the app reads
+     * posts, which needs a logged-in account in the cookies) has the higher quality xHE-AAC, but its
+     * best video streams are AV1, HEVC or HDR VP9. So the video stays the website's and only the app's
+     * audio is downloaded on its own after it (then converted to AAC-LC, see XheAacConverter).
      */
-    private fun useInstagramAppApi(url: String?): Boolean {
-        if (url == null || SocialMediaUtil.siteOf(url) != SocialMediaUtil.Site.INSTAGRAM) return false
+    fun canUseInstagramAppAudio(url: String): Boolean {
+        if (SocialMediaUtil.siteOf(url) != SocialMediaUtil.Site.INSTAGRAM) return false
+        if (!sharedPreferences.getBoolean("use_cookies", false)) return false
         if (!sharedPreferences.getBoolean("instagram_app_api", true)) return false
-        if (SocialMediaUtil.isInstagramWebOnly(url)) return false
         var session = false
         FileUtil.getCookieFile(context) { session = SocialMediaUtil.hasInstagramSession(File(it)) }
         return session
     }
 
-    private fun YTDLRequest.usesInstagramAppApi() =
-        getArguments("--extractor-args")?.contains(INSTAGRAM_APP_API_ARGS) == true
+    /** Downloads the post's audio through Instagram's app API into [dir]; null when it fails. */
+    suspend fun downloadInstagramAppAudio(url: String, dir: File, processId: String): File? {
+        dir.deleteRecursively()
+        dir.mkdirs()
+        val request = YTDLRequest(url)
+        FileUtil.getCookieFile(context) { request.addOption("--cookies", it) }
+        request.addOption("--extractor-args", INSTAGRAM_APP_API_ARGS)
+        // the app API answers anything but its own app with "HTTP Error 400"
+        request.addOption("--add-headers", "User-Agent:$INSTAGRAM_IOS_USER_AGENT")
+        request.addOption("--no-playlist")
+        request.addOption("--no-mtime")
+        request.addOption("-f", "ba[vcodec=none]/ba")
+        request.addOption("-P", dir.absolutePath)
+        request.addOption("-o", "app_audio.%(ext)s")
+        val proxy = sharedPreferences.getString("proxy", "")
+        if (!proxy.isNullOrBlank()) request.addOption("--proxy", proxy)
+        return runCatching {
+            RuntimeManager.getInstance().runKillable { id ->
+                RuntimeManager.getInstance().execute(request, id)
+            }
+            dir.listFiles()?.firstOrNull { it.isFile && it.name.startsWith("app_audio.") && !it.name.endsWith(".part") }
+        }.getOrNull()
+    }
 
     private fun canApplyFlatPlaylist(url: String) : Boolean {
         var noFlatPlaylist = sharedPreferences.getBoolean("no_flat_playlist", false)
@@ -235,9 +251,6 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
         }
         } catch (e: Exception) {
             if (e is CancellationException) throw e
-            if (finalResults.isEmpty() && request.usesInstagramAppApi() && SocialMediaUtil.markInstagramWebOnly(query)) {
-                return getFromYTDL(query, singleItem, resultsGenerated)
-            }
             // YTindir: TikTok sometimes answers yt-dlp with "HTTP Error 403"; tikwm.com still knows
             // the post, and its original is what gets downloaded anyway
             val fallback = if (finalResults.isEmpty() && SocialMediaUtil.siteOf(query) == SocialMediaUtil.Site.TIKTOK) {
@@ -249,9 +262,6 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
         }
 
         currentCoroutineContext().ensureActive()
-        if (finalResults.isEmpty() && request.usesInstagramAppApi() && SocialMediaUtil.markInstagramWebOnly(query)) {
-            return getFromYTDL(query, singleItem, resultsGenerated)
-        }
         if (!postedProgress) resultsGenerated(finalResults)
         return finalResults
     }
@@ -630,9 +640,7 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
             if (e is CancellationException) throw e
             arrayListOf()
         }
-        if (formats.isEmpty() && request.usesInstagramAppApi() && SocialMediaUtil.markInstagramWebOnly(url)) {
-            return getFormats(url, ignoreInfoJSON)
-        }
+
 
         if (formats.isEmpty()) {
             runCatching {
@@ -1159,11 +1167,6 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
         if (sharedPreferences.getBoolean("use_cookies", false)){
             FileUtil.getCookieFile(context){
                 request.addOption("--cookies", it)
-            }
-            // (only for videos: the app API's xHE-AAC audio can't be converted to mp3 by ffmpeg)
-            if (downloadItem.type == DownloadType.video && useInstagramAppApi(downloadItem.url)) {
-                request.addOption("--extractor-args", INSTAGRAM_APP_API_ARGS)
-                request.addOption("--add-headers", "User-Agent:$INSTAGRAM_IOS_USER_AGENT")
             }
         }
 

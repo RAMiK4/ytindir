@@ -49,22 +49,55 @@ object XheAacConverter {
         return audioObjectType(csd) == USAC_OBJECT_TYPE
     }
 
+    private fun findXheTrack(file: File): Pair<Int, MediaFormat>? = runCatching {
+        val extractor = MediaExtractor()
+        try {
+            extractor.setDataSource(file.absolutePath)
+            (0 until extractor.trackCount)
+                .map { it to extractor.getTrackFormat(it) }
+                .firstOrNull { isXheAac(it.second) }
+        } finally {
+            extractor.release()
+        }
+    }.getOrNull()
+
+    private fun durationUs(file: File): Long = runCatching {
+        val extractor = MediaExtractor()
+        try {
+            extractor.setDataSource(file.absolutePath)
+            (0 until extractor.trackCount).maxOfOrNull {
+                val f = extractor.getTrackFormat(it)
+                if (f.containsKey(MediaFormat.KEY_DURATION)) f.getLong(MediaFormat.KEY_DURATION) else 0L
+            } ?: 0L
+        } finally {
+            extractor.release()
+        }
+    }.getOrDefault(0L)
+
+    /**
+     * Puts [audioSource]'s xHE-AAC audio (Instagram's app audio, downloaded on its own), converted to
+     * AAC-LC, in place of [video]'s audio. Null when [audioSource] has no xHE-AAC or doesn't match.
+     */
+    fun replaceAudio(video: File, audioSource: File): Result? {
+        if (!video.isFile || video.extension.lowercase() !in supportedExtensions) return null
+        val (trackIndex, trackFormat) = findXheTrack(audioSource) ?: return null
+        // the same post: lengths within a second of each other
+        val videoLength = durationUs(video)
+        val audioLength = durationUs(audioSource)
+        if (videoLength > 0 && audioLength > 0 && kotlin.math.abs(videoLength - audioLength) > 1_000_000L) {
+            return Result(false, "Audio: Instagram app audio skipped (length doesn't match the video)")
+        }
+        return convert(video, audioSource, trackIndex, trackFormat, "Instagram app audio (xHE-AAC) converted to AAC-LC")
+    }
+
     /** Converts [file]'s xHE-AAC audio to AAC-LC in place. Returns null when there's nothing to do. */
     fun convertIfNeeded(file: File): Result? {
         if (!file.isFile || file.extension.lowercase() !in supportedExtensions) return null
+        val (trackIndex, trackFormat) = findXheTrack(file) ?: return null
+        return convert(file, file, trackIndex, trackFormat, "xHE-AAC converted to AAC-LC")
+    }
 
-        val (trackIndex, trackFormat) = runCatching {
-            val extractor = MediaExtractor()
-            try {
-                extractor.setDataSource(file.absolutePath)
-                (0 until extractor.trackCount)
-                    .map { it to extractor.getTrackFormat(it) }
-                    .firstOrNull { isXheAac(it.second) }
-            } finally {
-                extractor.release()
-            }
-        }.getOrNull() ?: return null
-
+    private fun convert(file: File, audioSource: File, trackIndex: Int, trackFormat: MediaFormat, done: String): Result {
         if (!RuntimeManager.ffmpegLocation.isAvailable) {
             return Result(false, "Audio: xHE-AAC kept (ffmpeg not available)")
         }
@@ -72,11 +105,11 @@ object XheAacConverter {
         val m4a = File(file.parentFile, "${file.nameWithoutExtension}.aac-lc.tmp.m4a")
         val output = File(file.parentFile, "${file.nameWithoutExtension}.aac-lc.tmp.${file.extension}")
         return try {
-            val sampleRate = transcode(file, trackIndex, trackFormat, m4a)
+            val sampleRate = transcode(audioSource, trackIndex, trackFormat, m4a)
             remux(file, m4a, sampleRate, output)
             if (!output.isFile || output.length() == 0L) error("ffmpeg wrote no file")
             if (!file.delete() || !output.renameTo(file)) error("couldn't replace the file")
-            Result(true, "Audio: xHE-AAC converted to AAC-LC")
+            Result(true, "Audio: $done")
         } catch (e: Throwable) {
             output.delete()
             Result(false, "Audio: xHE-AAC kept, conversion failed (${e.message ?: e.javaClass.simpleName})")

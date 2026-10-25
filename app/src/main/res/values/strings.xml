@@ -187,7 +187,7 @@
     <string name="convert_xhe_aac">Compatible audio (AAC)</string>
     <string name="convert_xhe_aac_summary">Convert xHE-AAC audio (Instagram, Facebook) to AAC-LC 192 kbps on the device, so it plays in every player and app</string>
     <string name="instagram_app_api">Instagram app quality</string>
-    <string name="instagram_app_api_summary">With an Instagram account in the cookies, read posts the way the Instagram app does, for higher quality audio (falls back to the website when it fails)</string>
+    <string name="instagram_app_api_summary">With an Instagram account in the cookies, video downloads get the higher quality audio the Instagram app plays; the video stays the website\'s</string>
     <string name="original_source_quality">Original (source)</string>
     <string name="use_current_position">Use current position</string>
     <string name="invalid_time">Invalid time</string>

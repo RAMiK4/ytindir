@@ -381,6 +381,21 @@ class DownloadWorker(
                                     } else {
                                         tempFileDir.walkTopDown().filter { f -> f.isFile }.toList()
                                     }
+                                    // Instagram: the app's higher quality audio in place of the website's
+                                    val video = mediaFiles.filter { f -> f.extension.lowercase() in listOf("mp4", "mkv", "mov", "m4v") }
+                                    if (video.size == 1 && ytdlpUtil.canUseInstagramAppAudio(downloadItem.url)) {
+                                        WorkerEventBus.post(WorkerProgress(100, "Getting Instagram's app audio", downloadItem.id, downloadItem.logID))
+                                        val audioDir = File(cacheDir, "app_audio_${downloadItem.id}")
+                                        val note = runCatching {
+                                            val audio = ytdlpUtil.downloadInstagramAppAudio(downloadItem.url, audioDir, "${downloadItem.id}_app_audio")
+                                            if (audio == null) "Audio: Instagram app audio not available, website audio kept"
+                                            else withContext(Dispatchers.IO) { XheAacConverter.replaceAudio(video.first(), audio) }?.note
+                                                ?: "Audio: Instagram app audio isn't xHE-AAC, website audio kept"
+                                        }.getOrElse { e -> "Audio: Instagram app audio failed (${e.message}), website audio kept" }
+                                        audioDir.deleteRecursively()
+                                        logString.append("$note\n")
+                                        if (logDownloads) runCatching { logRepo.update(note, logItem.id) }
+                                    }
                                     mediaFiles.forEach { f ->
                                         val result = runCatching {
                                             withContext(Dispatchers.IO) { XheAacConverter.convertIfNeeded(f) }
@@ -589,18 +604,6 @@ class DownloadWorker(
                             }
                             if (this@DownloadWorker.isStopped) return@onFailure
                             if (it is RuntimeManager.CanceledException) return@onFailure
-
-                            // YTindir: Instagram's app API failed for this post: once more from the website
-                            if (commandString.contains(YTDLPUtil.INSTAGRAM_APP_API_ARGS) &&
-                                SocialMediaUtil.markInstagramWebOnly(downloadItem.url)) {
-                                tempFileDir.delete()
-                                val note = "\n[YTindir] ${it.message?.lines()?.lastOrNull { l -> l.isNotBlank() } ?: "Error"}\n" +
-                                    "[YTindir] Instagram app API failed, retrying from the website...\n"
-                                if (logDownloads) logRepo.update(note, logItem.id)
-                                downloadItem.status = DownloadRepository.Status.Queued.toString()
-                                dao.update(downloadItem)
-                                return@onFailure
-                            }
 
                             // YTindir: self-recovery. Most YouTube breakages are fixed by a newer yt-dlp,
                             // so update it once and re-queue the item. Only retries when an update was

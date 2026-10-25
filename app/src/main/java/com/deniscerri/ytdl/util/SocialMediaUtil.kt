@@ -165,16 +165,6 @@ object SocialMediaUtil {
     /** A yt-dlp format filter with the same rule as [isPlainVideoCodec]. */
     const val PLAIN_VIDEO_FILTER = "[vcodec!^=av01][vcodec!^=vp09.02][vcodec!^=vp09.03][vcodec!^=hvc1][vcodec!^=hev1][vcodec!^=dvh]"
 
-    // Instagram posts the app API couldn't read this session: read from the website again
-    private val instagramWebOnly: MutableSet<String> = java.util.Collections.synchronizedSet(mutableSetOf())
-
-    private fun instagramKey(url: String) = idFromUrl(Site.INSTAGRAM, url).ifBlank { url.trim() }
-
-    fun isInstagramWebOnly(url: String) = instagramKey(url) in instagramWebOnly
-
-    /** Returns true the first time [url] is marked, so a fallback runs only once. */
-    fun markInstagramWebOnly(url: String) = instagramWebOnly.add(instagramKey(url))
-
     /** Whether a Netscape cookies file holds a logged-in Instagram session. */
     fun hasInstagramSession(cookieFile: java.io.File): Boolean = runCatching {
         cookieFile.useLines { lines ->
