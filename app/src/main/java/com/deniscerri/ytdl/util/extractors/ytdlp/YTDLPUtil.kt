@@ -125,6 +125,45 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
         }
     }
 
+    /**
+     * YTindir: Instagram's website gives a lower bitrate HE-AAC audio; its app API (as the app reads
+     * posts, which needs a logged-in account in the cookies) has the higher quality xHE-AAC, but its
+     * best video streams are AV1, HEVC or HDR VP9. So the video stays the website's and only the app's
+     * audio is downloaded on its own after it (then converted to AAC-LC, see XheAacConverter).
+     */
+    fun canUseInstagramAppAudio(url: String): Boolean {
+        if (SocialMediaUtil.siteOf(url) != SocialMediaUtil.Site.INSTAGRAM) return false
+        if (!sharedPreferences.getBoolean("use_cookies", false)) return false
+        if (!sharedPreferences.getBoolean("instagram_app_api", true)) return false
+        var session = false
+        FileUtil.getCookieFile(context) { session = SocialMediaUtil.hasInstagramSession(File(it)) }
+        return session
+    }
+
+    /** Downloads the post's audio through Instagram's app API into [dir]; null when it fails. */
+    suspend fun downloadInstagramAppAudio(url: String, dir: File, processId: String): File? {
+        dir.deleteRecursively()
+        dir.mkdirs()
+        val request = YTDLRequest(url)
+        FileUtil.getCookieFile(context) { request.addOption("--cookies", it) }
+        request.addOption("--extractor-args", INSTAGRAM_APP_API_ARGS)
+        // the app API answers anything but its own app with "HTTP Error 400"
+        request.addOption("--add-headers", "User-Agent:$INSTAGRAM_IOS_USER_AGENT")
+        request.addOption("--no-playlist")
+        request.addOption("--no-mtime")
+        request.addOption("-f", "ba[vcodec=none]/ba")
+        request.addOption("-P", dir.absolutePath)
+        request.addOption("-o", "app_audio.%(ext)s")
+        val proxy = sharedPreferences.getString("proxy", "")
+        if (!proxy.isNullOrBlank()) request.addOption("--proxy", proxy)
+        return runCatching {
+            RuntimeManager.getInstance().runKillable { id ->
+                RuntimeManager.getInstance().execute(request, id)
+            }
+            dir.listFiles()?.firstOrNull { it.isFile && it.name.startsWith("app_audio.") && !it.name.endsWith(".part") }
+        }.getOrNull()
+    }
+
     private fun canApplyFlatPlaylist(url: String) : Boolean {
         var noFlatPlaylist = sharedPreferences.getBoolean("no_flat_playlist", false)
         if (url.isSoundCloudURL()) {
@@ -314,10 +353,13 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
             val formatsInJSON = if (jsonObject.has("formats") && jsonObject.get("formats") is JSONArray) jsonObject.getJSONArray("formats") else null
             val formats : ArrayList<Format> = parseYTDLFormats(formatsInJSON)
 
-            // YTindir: Instagram, X and TikTok posts get "username_postid" titles instead of
+            // YTindir: Instagram, X, TikTok and Facebook posts get "username_postid" titles instead of
             // "Video by …" or a whole caption, and TikTok its original (source) quality
             SocialMediaUtil.siteOf(url, website)?.let { site ->
                 if (jsonObject.getStringByAny("_type") != "playlist") {
+                    SocialMediaUtil.fileTitle(site, jsonObject, url, author)?.let { title = it }
+                } else if (playlistTitle.isBlank() || playlistTitle == title) {
+                    // a whole carousel: "username_postid" for it too, not its caption or nothing
                     SocialMediaUtil.fileTitle(site, jsonObject, url, author)?.let { title = it }
                 }
                 addSourceFormats(site, formats)
@@ -598,6 +640,7 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
             if (e is CancellationException) throw e
             arrayListOf()
         }
+
 
         if (formats.isEmpty()) {
             runCatching {
@@ -1151,6 +1194,13 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
                 FileNameCleaner.fillTemplate(filenameTemplate, downloadItem.title, downloadItem.author)
             }.getOrDefault(filenameTemplate)
         }
+        // YTindir: a quick download that starts before the post was read has no title yet; Instagram,
+        // X, TikTok and Facebook still get "username_postid" (not "Video by …" or a whole tweet)
+        if (downloadItem.type != DownloadType.command && downloadItem.title.isBlank()) {
+            SocialMediaUtil.outputTitleTemplate(downloadItem.url)?.let {
+                filenameTemplate = FileNameCleaner.replaceTitleField(filenameTemplate, it)
+            }
+        }
 
         if(downloadItem.type != DownloadType.command){
             if (sharedPreferences.getBoolean("no_part", false)){
@@ -1197,6 +1247,13 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
             if(downloadItem.title.isNotBlank()){
                 metadataCommands.addOption("--replace-in-metadata", "title", """^.*$""", downloadItem.title.replace("""\""", """\\"""))
                 metadataCommands.addOption("--parse-metadata", "%(title)s:%(meta_title)s")
+            } else {
+                // YTindir: a quick download's embedded title is "username_postid" too, like its file
+                // name, not "Video by …"
+                SocialMediaUtil.outputTitleTemplate(downloadItem.url)?.let {
+                    metadataCommands.addOption("--parse-metadata", "$it:%(title)s")
+                    metadataCommands.addOption("--parse-metadata", "%(title)s:%(meta_title)s")
+                }
             }
 
             val useArtistTags = if (downloadItem.url.isYoutubeURL()) "artists,artist,creators," else ""
@@ -1718,8 +1775,8 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
                 // YTindir: after resolution, codec and container, take the highest frame rate the video has
                 if (hasGenericResulutionFormat.isNotBlank()) formatSorting.add("fps")
 
-                // YTindir: Instagram, X and TikTok get their best quality (yt-dlp's own order already
-                // puts Instagram's dash first), not the resolution cap or codec
+                // YTindir: Instagram, X, TikTok, Facebook and VK get their best quality (yt-dlp's own order
+                // already puts Instagram's dash first), not the resolution cap or codec
                 val socialSite = SocialMediaUtil.siteOf(downloadItem.url)
                 if (socialSite != null && usingGenericFormat) {
                     formatSorting.removeAll { it.startsWith("res:") || it.startsWith("vcodec:") || it.startsWith("vext:") || it == "fps" }
@@ -1750,6 +1807,22 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
                 }
 
                 var formatString = f.toString().replace("/$".toRegex(), "")
+                // YTindir: without a chosen format, Facebook's best dash stream (not its "sd"/"hd" files)
+                // and VK's best hls or dash stream (not its "url…" mp4 files)
+                if (usingGenericFormat && !downloadItem.videoPreferences.removeAudio) {
+                    when (socialSite) {
+                        SocialMediaUtil.Site.FACEBOOK -> {
+                            val plain = SocialMediaUtil.PLAIN_VIDEO_FILTER
+                            formatString = "bv*[format_note*=DASH]$plain+ba/bv*[format_note*=DASH]+ba/b[format_note*=DASH]/$formatString"
+                        }
+                        // Instagram: H.264 / 8-bit VP9 first (its app API also has AV1 and HDR VP9)
+                        SocialMediaUtil.Site.INSTAGRAM ->
+                            formatString = "bv*${SocialMediaUtil.PLAIN_VIDEO_FILTER}+ba/$formatString"
+                        SocialMediaUtil.Site.VK ->
+                            formatString = "bv*[format_id!^=url][format_id!^=cache]+ba/b[format_id!^=url][format_id!^=cache]/$formatString"
+                        else -> {}
+                    }
+                }
                 if (downloadItem.downloadSections.isNotBlank()) {
                     // YTindir: cutting goes through ffmpeg, which often fails on HLS (m3u8) audio,
                     // so an https audio stream is tried first and the chosen one stays as fallback
@@ -1857,5 +1930,11 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
         val ytdlpCache = File(FileUtil.getCacheYTDLPPath(context))
         ytDlRequest.addOption("--cache-dir", ytdlpCache.absolutePath)
         return ytDlRequest
+    }
+
+    companion object {
+        const val INSTAGRAM_APP_API_ARGS = "instagram:app_id=ios"
+        const val INSTAGRAM_IOS_USER_AGENT = "Instagram 361.0.0.35.82 (iPhone14,5; iOS 17_6; en_US; en; " +
+            "scale=3.00; 1170x2532; 674117118) AppleWebKit/420+"
     }
 }

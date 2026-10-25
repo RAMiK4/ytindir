@@ -42,6 +42,7 @@ import com.deniscerri.ytdl.util.FileNameCleaner
 import com.deniscerri.ytdl.util.FileUtil
 import com.deniscerri.ytdl.util.NotificationUtil
 import com.deniscerri.ytdl.util.SocialMediaUtil
+import com.deniscerri.ytdl.util.XheAacConverter
 import com.deniscerri.ytdl.util.WorkerEventBus
 import com.deniscerri.ytdl.util.extractors.ytdlp.YTDLPUtil
 import kotlinx.coroutines.CoroutineScope
@@ -236,7 +237,16 @@ class DownloadWorker(
                             }
                         }
 
-                        val request = ytdlpUtil.buildYTDLRequest(downloadItem, sourceUrl)
+                        var request = ytdlpUtil.buildYTDLRequest(downloadItem, sourceUrl)
+                        // YTindir: the saved video info may have been deleted since the card was opened
+                        // (changing cookies or updating yt-dlp clears them): build it without the file
+                        Regex("""--load-info-json\s+"([^"]+)"""").find(ytdlpUtil.parseYTDLRequestString(request))
+                            ?.groupValues?.get(1)?.let { path ->
+                                if (!File(path).exists()) {
+                                    FileUtil.deleteConfigFiles(request)
+                                    request = ytdlpUtil.buildYTDLRequest(downloadItem, sourceUrl)
+                                }
+                            }
 
                         // DISABLED BECAUSE YT_DLP CONSIDERS DOWNLOAD FAILURE IF -U PART FAILS, ytdlnis #1043
     //                    val updateYTDLP = sharedPreferences.getBoolean("update_ytdlp_while_downloading", false)
@@ -373,6 +383,38 @@ class DownloadWorker(
                                         .toMutableList()
                                 }
 
+                                // YTindir: xHE-AAC audio (Instagram, Facebook) becomes AAC-LC, which every player opens
+                                if (downloadItem.type == DownloadType.video && sharedPreferences.getBoolean("convert_xhe_aac", true)) {
+                                    val mediaFiles = if (writeDirectly) {
+                                        finalPaths.map { p -> File(p) }
+                                    } else {
+                                        tempFileDir.walkTopDown().filter { f -> f.isFile }.toList()
+                                    }
+                                    // Instagram: the app's higher quality audio in place of the website's
+                                    val video = mediaFiles.filter { f -> f.extension.lowercase() in listOf("mp4", "mkv", "mov", "m4v") }
+                                    if (video.size == 1 && ytdlpUtil.canUseInstagramAppAudio(downloadItem.url)) {
+                                        WorkerEventBus.post(WorkerProgress(100, "Getting Instagram's app audio", downloadItem.id, downloadItem.logID))
+                                        val audioDir = File(cacheDir, "app_audio_${downloadItem.id}")
+                                        val note = runCatching {
+                                            val audio = ytdlpUtil.downloadInstagramAppAudio(downloadItem.url, audioDir, "${downloadItem.id}_app_audio")
+                                            if (audio == null) "Audio: Instagram app audio not available, website audio kept"
+                                            else withContext(Dispatchers.IO) { XheAacConverter.replaceAudio(video.first(), audio) }?.note
+                                                ?: "Audio: Instagram app audio isn't xHE-AAC, website audio kept"
+                                        }.getOrElse { e -> "Audio: Instagram app audio failed (${e.message}), website audio kept" }
+                                        audioDir.deleteRecursively()
+                                        logString.append("$note\n")
+                                        if (logDownloads) runCatching { logRepo.update(note, logItem.id) }
+                                    }
+                                    mediaFiles.forEach { f ->
+                                        val result = runCatching {
+                                            withContext(Dispatchers.IO) { XheAacConverter.convertIfNeeded(f) }
+                                        }.getOrNull() ?: return@forEach
+                                        WorkerEventBus.post(WorkerProgress(100, result.note, downloadItem.id, downloadItem.logID))
+                                        logString.append("${result.note}\n")
+                                        if (logDownloads) runCatching { logRepo.update(result.note, logItem.id) }
+                                    }
+                                }
+
                                 // YTindir: no | / , or emojis in file names, nothing Windows can't open
                                 if (cleanFileNames) {
                                     runCatching {
@@ -489,6 +531,16 @@ class DownloadWorker(
                                         }, 100)
                                     } else {
                                         if (finalPaths.isNotEmpty()) {
+                                            // YTindir: a quick download has no title yet: the file's name
+                                            // ("username_postid" and the like) for the history and notification
+                                            if (downloadItem.title.isBlank()) {
+                                                var name = File(finalPaths.first()).nameWithoutExtension
+                                                // a carousel's files are name_1, name_2…: the post's own name
+                                                if (finalPaths.size > 1 && SocialMediaUtil.siteOf(downloadItem.url) != null) {
+                                                    name = name.replace(Regex("""_\d+$"""), "")
+                                                }
+                                                if (downloadItem.playlistTitle.isBlank() || finalPaths.size == 1) downloadItem.title = name
+                                            }
                                             val unixTime = System.currentTimeMillis() / 1000
                                             finalPaths.first().apply {
                                                 val file = File(this)
@@ -561,6 +613,20 @@ class DownloadWorker(
                             }
                             if (this@DownloadWorker.isStopped) return@onFailure
                             if (it is RuntimeManager.CanceledException) return@onFailure
+
+                            // YTindir: the info json the command loads was deleted before yt-dlp read it
+                            // (changing cookies or updating yt-dlp clears them): once more without it
+                            // (yt-dlp's traceback goes to the output, not to the error message)
+                            val failure = it.message.orEmpty() + "\n" + logString
+                            if (failure.contains("No such file or directory") &&
+                                failure.contains(".info.json") &&
+                                infoJsonRetried.add(downloadItem.id)) {
+                                tempFileDir.delete()
+                                if (logDownloads) logRepo.update("\n[YTindir] The saved video info was missing, retrying...\n", logItem.id)
+                                downloadItem.status = DownloadRepository.Status.Queued.toString()
+                                dao.update(downloadItem)
+                                return@onFailure
+                            }
 
                             // YTindir: self-recovery. Most YouTube breakages are fixed by a newer yt-dlp,
                             // so update it once and re-queue the item. Only retries when an update was
@@ -655,6 +721,8 @@ class DownloadWorker(
     companion object {
         // YTindir: items that already got one update-and-retry in this process
         private val recoveryAttempted: MutableSet<Long> = java.util.Collections.synchronizedSet(mutableSetOf())
+        // YTindir: items retried once because their info json had been deleted
+        private val infoJsonRetried: MutableSet<Long> = java.util.Collections.synchronizedSet(mutableSetOf())
         val runningYTDLInstances: MutableList<Long> = mutableListOf()
         const val TAG = "DownloadWorker"
         private val downloadLock = Mutex()
