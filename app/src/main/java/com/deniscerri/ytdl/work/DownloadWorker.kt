@@ -237,7 +237,16 @@ class DownloadWorker(
                             }
                         }
 
-                        val request = ytdlpUtil.buildYTDLRequest(downloadItem, sourceUrl)
+                        var request = ytdlpUtil.buildYTDLRequest(downloadItem, sourceUrl)
+                        // YTindir: the saved video info may have been deleted since the card was opened
+                        // (changing cookies or updating yt-dlp clears them): build it without the file
+                        Regex("""--load-info-json\s+"([^"]+)"""").find(ytdlpUtil.parseYTDLRequestString(request))
+                            ?.groupValues?.get(1)?.let { path ->
+                                if (!File(path).exists()) {
+                                    FileUtil.deleteConfigFiles(request)
+                                    request = ytdlpUtil.buildYTDLRequest(downloadItem, sourceUrl)
+                                }
+                            }
 
                         // DISABLED BECAUSE YT_DLP CONSIDERS DOWNLOAD FAILURE IF -U PART FAILS, ytdlnis #1043
     //                    val updateYTDLP = sharedPreferences.getBoolean("update_ytdlp_while_downloading", false)
@@ -607,8 +616,10 @@ class DownloadWorker(
 
                             // YTindir: the info json the command loads was deleted before yt-dlp read it
                             // (changing cookies or updating yt-dlp clears them): once more without it
-                            if (it.message?.contains("No such file or directory") == true &&
-                                it.message?.contains(".info.json") == true &&
+                            // (yt-dlp's traceback goes to the output, not to the error message)
+                            val failure = it.message.orEmpty() + "\n" + logString
+                            if (failure.contains("No such file or directory") &&
+                                failure.contains(".info.json") &&
                                 infoJsonRetried.add(downloadItem.id)) {
                                 tempFileDir.delete()
                                 if (logDownloads) logRepo.update("\n[YTindir] The saved video info was missing, retrying...\n", logItem.id)
