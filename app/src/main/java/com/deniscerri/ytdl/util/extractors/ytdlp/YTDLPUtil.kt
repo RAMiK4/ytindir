@@ -90,7 +90,7 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
             FileUtil.getCookieFile(context){
                 addOption("--cookies", it)
             }
-            addInstagramAppApi(url)
+            if (useInstagramAppApi(url)) addOption("--extractor-args", INSTAGRAM_APP_API_ARGS)
 
             val useHeader = sharedPreferences.getBoolean("use_header", false)
             val header = sharedPreferences.getString("useragent_header", "")
@@ -132,13 +132,13 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
      * after the download); the website only gives a lower bitrate HE-AAC. When the app API fails for
      * a post, it's read from the website again (see [usesInstagramAppApi]).
      */
-    private fun YTDLRequest.addInstagramAppApi(url: String?) {
-        if (url == null || SocialMediaUtil.siteOf(url) != SocialMediaUtil.Site.INSTAGRAM) return
-        if (!sharedPreferences.getBoolean("instagram_app_api", true)) return
-        if (SocialMediaUtil.isInstagramWebOnly(url)) return
-        FileUtil.getCookieFile(context) {
-            if (SocialMediaUtil.hasInstagramSession(File(it))) addOption("--extractor-args", INSTAGRAM_APP_API_ARGS)
-        }
+    private fun useInstagramAppApi(url: String?): Boolean {
+        if (url == null || SocialMediaUtil.siteOf(url) != SocialMediaUtil.Site.INSTAGRAM) return false
+        if (!sharedPreferences.getBoolean("instagram_app_api", true)) return false
+        if (SocialMediaUtil.isInstagramWebOnly(url)) return false
+        var session = false
+        FileUtil.getCookieFile(context) { session = SocialMediaUtil.hasInstagramSession(File(it)) }
+        return session
     }
 
     private fun YTDLRequest.usesInstagramAppApi() = toString().contains(INSTAGRAM_APP_API_ARGS)
@@ -1155,7 +1155,9 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
             FileUtil.getCookieFile(context){
                 request.addOption("--cookies", it)
             }
-            if (downloadItem.type != DownloadType.command) request.addInstagramAppApi(downloadItem.url)
+            if (downloadItem.type != DownloadType.command && useInstagramAppApi(downloadItem.url)) {
+                request.addOption("--extractor-args", INSTAGRAM_APP_API_ARGS)
+            }
         }
 
         if (sharedPreferences.getBoolean("no_check_certificates", false) && !request.toString().contains("--no-check-certificates")) {
