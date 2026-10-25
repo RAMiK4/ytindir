@@ -605,6 +605,18 @@ class DownloadWorker(
                             if (this@DownloadWorker.isStopped) return@onFailure
                             if (it is RuntimeManager.CanceledException) return@onFailure
 
+                            // YTindir: the info json the command loads was deleted before yt-dlp read it
+                            // (changing cookies or updating yt-dlp clears them): once more without it
+                            if (it.message?.contains("No such file or directory") == true &&
+                                it.message?.contains(".info.json") == true &&
+                                infoJsonRetried.add(downloadItem.id)) {
+                                tempFileDir.delete()
+                                if (logDownloads) logRepo.update("\n[YTindir] The saved video info was missing, retrying...\n", logItem.id)
+                                downloadItem.status = DownloadRepository.Status.Queued.toString()
+                                dao.update(downloadItem)
+                                return@onFailure
+                            }
+
                             // YTindir: self-recovery. Most YouTube breakages are fixed by a newer yt-dlp,
                             // so update it once and re-queue the item. Only retries when an update was
                             // actually installed, and only once per item, so it can never loop.
@@ -698,6 +710,8 @@ class DownloadWorker(
     companion object {
         // YTindir: items that already got one update-and-retry in this process
         private val recoveryAttempted: MutableSet<Long> = java.util.Collections.synchronizedSet(mutableSetOf())
+        // YTindir: items retried once because their info json had been deleted
+        private val infoJsonRetried: MutableSet<Long> = java.util.Collections.synchronizedSet(mutableSetOf())
         val runningYTDLInstances: MutableList<Long> = mutableListOf()
         const val TAG = "DownloadWorker"
         private val downloadLock = Mutex()
