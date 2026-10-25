@@ -394,16 +394,26 @@ object FileUtil {
     }
 
     fun getCachePath(context: Context) : String {
-        val preference = PreferenceManager.getDefaultSharedPreferences(context).getString("cache_path", "")
+        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val preference = preferences.getString("cache_path", "")
+        val base = context.getExternalFilesDir(null) ?: context.cacheDir
         if (!preference.isNullOrBlank()) {
-            return formatPath(preference)
+            // YTindir: the folder settings used to save the default folder as a choice, so the old
+            // ".../ytdlnis_cache" stayed in use; that one isn't a choice: back to the default
+            val path = formatPath(preference).trimEnd('/')
+            val isOldDefault = path.endsWith("/ytdlnis_cache") &&
+                (path.startsWith(base.absolutePath) || path.startsWith(context.cacheDir.absolutePath))
+            if (!isOldDefault) return formatPath(preference)
+            preferences.edit().remove("cache_path").apply()
         }
 
-        val base = context.getExternalFilesDir(null) ?: context.cacheDir
         val cache = File(base, "ytindir_cache")
         // YTindir: the folder used to be "ytdlnis_cache"; move it (with paused downloads) once
         val old = File(base, "ytdlnis_cache")
-        if (old.exists() && !cache.exists()) runCatching { old.renameTo(cache) }
+        if (old.exists()) runCatching {
+            if (cache.exists() && cache.walkTopDown().none { it.isFile }) cache.deleteRecursively()
+            if (!cache.exists()) old.renameTo(cache)
+        }
         return cache.absolutePath + "/"
     }
 

@@ -1247,6 +1247,13 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
             if(downloadItem.title.isNotBlank()){
                 metadataCommands.addOption("--replace-in-metadata", "title", """^.*$""", downloadItem.title.replace("""\""", """\\"""))
                 metadataCommands.addOption("--parse-metadata", "%(title)s:%(meta_title)s")
+            } else {
+                // YTindir: a quick download's embedded title is "username_postid" too, like its file
+                // name, not "Video by …"
+                SocialMediaUtil.outputTitleTemplate(downloadItem.url)?.let {
+                    metadataCommands.addOption("--parse-metadata", "$it:%(title)s")
+                    metadataCommands.addOption("--parse-metadata", "%(title)s:%(meta_title)s")
+                }
             }
 
             val useArtistTags = if (downloadItem.url.isYoutubeURL()) "artists,artist,creators," else ""
