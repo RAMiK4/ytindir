@@ -591,7 +591,7 @@ class DownloadWorker(
                             if (it is RuntimeManager.CanceledException) return@onFailure
 
                             // YTindir: Instagram's app API failed for this post: once more from the website
-                            if (request.toString().contains(YTDLPUtil.INSTAGRAM_APP_API_ARGS) &&
+                            if (commandString.contains(YTDLPUtil.INSTAGRAM_APP_API_ARGS) &&
                                 SocialMediaUtil.markInstagramWebOnly(downloadItem.url)) {
                                 tempFileDir.delete()
                                 val note = "\n[YTindir] ${it.message?.lines()?.lastOrNull { l -> l.isNotBlank() } ?: "Error"}\n" +

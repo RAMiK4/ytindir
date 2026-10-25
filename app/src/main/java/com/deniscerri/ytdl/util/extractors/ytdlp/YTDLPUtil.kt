@@ -90,7 +90,11 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
             FileUtil.getCookieFile(context){
                 addOption("--cookies", it)
             }
-            if (useInstagramAppApi(url)) addOption("--extractor-args", INSTAGRAM_APP_API_ARGS)
+            if (useInstagramAppApi(url)) {
+                addOption("--extractor-args", INSTAGRAM_APP_API_ARGS)
+                // the app API answers anything but its own app with "HTTP Error 400"
+                addOption("--add-headers", "User-Agent:$INSTAGRAM_IOS_USER_AGENT")
+            }
 
             val useHeader = sharedPreferences.getBoolean("use_header", false)
             val header = sharedPreferences.getString("useragent_header", "")
@@ -141,7 +145,8 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
         return session
     }
 
-    private fun YTDLRequest.usesInstagramAppApi() = toString().contains(INSTAGRAM_APP_API_ARGS)
+    private fun YTDLRequest.usesInstagramAppApi() =
+        getArguments("--extractor-args")?.contains(INSTAGRAM_APP_API_ARGS) == true
 
     private fun canApplyFlatPlaylist(url: String) : Boolean {
         var noFlatPlaylist = sharedPreferences.getBoolean("no_flat_playlist", false)
@@ -1157,6 +1162,7 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
             }
             if (downloadItem.type != DownloadType.command && useInstagramAppApi(downloadItem.url)) {
                 request.addOption("--extractor-args", INSTAGRAM_APP_API_ARGS)
+                request.addOption("--add-headers", "User-Agent:$INSTAGRAM_IOS_USER_AGENT")
             }
         }
 
@@ -1912,5 +1918,7 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
 
     companion object {
         const val INSTAGRAM_APP_API_ARGS = "instagram:app_id=ios"
+        const val INSTAGRAM_IOS_USER_AGENT = "Instagram 361.0.0.35.82 (iPhone14,5; iOS 17_6; en_US; en; " +
+            "scale=3.00; 1170x2532; 674117118) AppleWebKit/420+"
     }
 }
