@@ -73,6 +73,12 @@ object FileNameCleaner {
         }
     }
 
+    private val titleField = Regex("""%\(title\)(?:\.\d+B|s)""")
+
+    /** Puts [replacement], a yt-dlp output template of its own, in place of the template's title. */
+    fun replaceTitleField(template: String, replacement: String): String =
+        template.replace(titleField) { replacement }
+
     private fun String.takeBytes(maxBytes: Int): String {
         if (toByteArray(Charsets.UTF_8).size <= maxBytes) return this
         val sb = StringBuilder()

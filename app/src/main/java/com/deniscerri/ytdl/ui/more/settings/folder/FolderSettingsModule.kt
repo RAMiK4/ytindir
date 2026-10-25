@@ -122,13 +122,10 @@ object FolderSettingsModule: SettingModule {
                 }
             }
             "cache_path" -> {
-                if (preferences.getString(pref.key, "")!!.isEmpty()) {
-                    preferences.edit(commit = true) {
-                        putString(pref.key, FileUtil.getCachePath(context))
-                    }
-                }
+                // YTindir: the default folder is only shown, not saved as a choice (a saved default
+                // kept the old "ytdlnis_cache" folder after the rename)
                 pref.apply {
-                    summary = FileUtil.formatPath(preferences.getString(pref.key, FileUtil.getCachePath(context))!!)
+                    summary = FileUtil.formatPath(FileUtil.getCachePath(context))
                     isEnabled = (Build.VERSION.SDK_INT >= 30 && Environment.isExternalStorageManager()) ||
                             Build.VERSION.SDK_INT < 30
                     onPreferenceClickListener =

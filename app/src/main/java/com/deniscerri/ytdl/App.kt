@@ -42,7 +42,17 @@ class App : Application() {
 
         val processName = getProcessNameImpl()
         if (processName.endsWith(":incognito_process") && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            webViewDataSuffix = "incognito_store"
             WebView.setDataDirectorySuffix("incognito_store")
+            return
+        }
+        // YTindir: the cookies browser runs in a process of its own, so its WebView can't put the
+        // app's screens on the system's light/dark mode (it reset the resources' configuration)
+        if (processName.endsWith(":cookies_process")) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                webViewDataSuffix = "cookies_store"
+                WebView.setDataDirectorySuffix("cookies_store")
+            }
             return
         }
 
@@ -140,5 +150,7 @@ class App : Application() {
         private const val TAG = "App"
         private lateinit var applicationScope: CoroutineScope
         lateinit var instance: App
+        /** The WebView data directory suffix of this process, null for the default one. */
+        var webViewDataSuffix: String? = null
     }
 }

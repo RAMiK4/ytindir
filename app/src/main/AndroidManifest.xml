@@ -522,6 +522,7 @@
 
         <activity
             android:name=".ui.more.cookies.WebViewActivity"
+            android:process=":cookies_process"
             android:configChanges="locale"
             android:exported="true"
             android:launchMode="standard"
