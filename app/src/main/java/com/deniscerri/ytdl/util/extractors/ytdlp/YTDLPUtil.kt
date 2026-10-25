@@ -1160,7 +1160,8 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
             FileUtil.getCookieFile(context){
                 request.addOption("--cookies", it)
             }
-            if (downloadItem.type != DownloadType.command && useInstagramAppApi(downloadItem.url)) {
+            // (only for videos: the app API's xHE-AAC audio can't be converted to mp3 by ffmpeg)
+            if (downloadItem.type == DownloadType.video && useInstagramAppApi(downloadItem.url)) {
                 request.addOption("--extractor-args", INSTAGRAM_APP_API_ARGS)
                 request.addOption("--add-headers", "User-Agent:$INSTAGRAM_IOS_USER_AGENT")
             }
@@ -1800,8 +1801,13 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
                 // and VK's best hls or dash stream (not its "url…" mp4 files)
                 if (usingGenericFormat && !downloadItem.videoPreferences.removeAudio) {
                     when (socialSite) {
-                        SocialMediaUtil.Site.FACEBOOK ->
-                            formatString = "bv*[format_note*=DASH]+ba/b[format_note*=DASH]/$formatString"
+                        SocialMediaUtil.Site.FACEBOOK -> {
+                            val plain = SocialMediaUtil.PLAIN_VIDEO_FILTER
+                            formatString = "bv*[format_note*=DASH]$plain+ba/bv*[format_note*=DASH]+ba/b[format_note*=DASH]/$formatString"
+                        }
+                        // Instagram: H.264 / 8-bit VP9 first (its app API also has AV1 and HDR VP9)
+                        SocialMediaUtil.Site.INSTAGRAM ->
+                            formatString = "bv*${SocialMediaUtil.PLAIN_VIDEO_FILTER}+ba/$formatString"
                         SocialMediaUtil.Site.VK ->
                             formatString = "bv*[format_id!^=url][format_id!^=cache]+ba/b[format_id!^=url][format_id!^=cache]/$formatString"
                         else -> {}

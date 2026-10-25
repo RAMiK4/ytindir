@@ -152,6 +152,19 @@ object SocialMediaUtil {
         return handle + id + "%(playlist_index&_{}|)s"
     }
 
+    /**
+     * Instagram's app API (and Facebook) also offer AV1, HEVC and 10-bit VP9 (profile 2, HDR) streams,
+     * whose colours come out wrong in many players: H.264 and 8-bit VP9 come first, as on the website.
+     */
+    fun isPlainVideoCodec(vcodec: String?): Boolean {
+        val v = vcodec.orEmpty().lowercase()
+        if (v.isBlank() || v == "none") return true
+        return listOf("av01", "av1", "vp09.02", "vp09.03", "hvc1", "hev1", "hevc", "h265", "dvh").none { v.startsWith(it) }
+    }
+
+    /** A yt-dlp format filter with the same rule as [isPlainVideoCodec]. */
+    const val PLAIN_VIDEO_FILTER = "[vcodec!^=av01][vcodec!^=vp09.02][vcodec!^=vp09.03][vcodec!^=hvc1][vcodec!^=hev1][vcodec!^=dvh]"
+
     // Instagram posts the app API couldn't read this session: read from the website again
     private val instagramWebOnly: MutableSet<String> = java.util.Collections.synchronizedSet(mutableSetOf())
 

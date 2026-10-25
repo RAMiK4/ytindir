@@ -226,9 +226,12 @@ class FormatUtil(private var context: Context) {
         // Instagram's and Facebook's dash, VK's hls/dash and TikTok's non watermarked files win over any resolution,
         // X's hls only over the http file of the same resolution
         val protocolFirst = site != SocialMediaUtil.Site.X
+        val plainCodecFirst = site == SocialMediaUtil.Site.INSTAGRAM || site == SocialMediaUtil.Site.FACEBOOK
         return formats.sortedWith(
             compareByDescending<Format> { videoFormatIDPreference.contains(it.format_id) }
                 .thenByDescending { SocialMediaUtil.isTikTokOriginal(it.format_id) }
+                // Instagram and Facebook: H.264 / 8-bit VP9 over AV1, HEVC and HDR VP9
+                .thenByDescending { !plainCodecFirst || SocialMediaUtil.isPlainVideoCodec(it.vcodec) }
                 .thenByDescending { protocolFirst && preferredProtocol(it) }
                 .thenByDescending { it.shortSide() }
                 .thenByDescending { preferredProtocol(it) }
