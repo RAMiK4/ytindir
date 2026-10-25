@@ -292,6 +292,14 @@
             android:summary="@string/video_compatible_summary"
             app:title="@string/video_compatible" />
 
+        <SwitchPreferenceCompat
+            android:widgetLayout="@layout/preferece_material_switch"
+            app:defaultValue="true"
+            app:icon="@drawable/ic_music"
+            app:key="convert_xhe_aac"
+            android:summary="@string/convert_xhe_aac_summary"
+            app:title="@string/convert_xhe_aac" />
+
 
         <ListPreference
             android:defaultValue=""

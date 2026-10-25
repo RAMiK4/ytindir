@@ -42,6 +42,7 @@ import com.deniscerri.ytdl.util.FileNameCleaner
 import com.deniscerri.ytdl.util.FileUtil
 import com.deniscerri.ytdl.util.NotificationUtil
 import com.deniscerri.ytdl.util.SocialMediaUtil
+import com.deniscerri.ytdl.util.XheAacConverter
 import com.deniscerri.ytdl.util.WorkerEventBus
 import com.deniscerri.ytdl.util.extractors.ytdlp.YTDLPUtil
 import kotlinx.coroutines.CoroutineScope
@@ -373,6 +374,23 @@ class DownloadWorker(
                                         .toMutableList()
                                 }
 
+                                // YTindir: xHE-AAC audio (Instagram, Facebook) becomes AAC-LC, which every player opens
+                                if (downloadItem.type == DownloadType.video && sharedPreferences.getBoolean("convert_xhe_aac", true)) {
+                                    val mediaFiles = if (writeDirectly) {
+                                        finalPaths.map { p -> File(p) }
+                                    } else {
+                                        tempFileDir.walkTopDown().filter { f -> f.isFile }.toList()
+                                    }
+                                    mediaFiles.forEach { f ->
+                                        val result = runCatching {
+                                            withContext(Dispatchers.IO) { XheAacConverter.convertIfNeeded(f) }
+                                        }.getOrNull() ?: return@forEach
+                                        WorkerEventBus.post(WorkerProgress(100, result.note, downloadItem.id, downloadItem.logID))
+                                        logString.append("${result.note}\n")
+                                        if (logDownloads) runCatching { logRepo.update(result.note, logItem.id) }
+                                    }
+                                }
+
                                 // YTindir: no | / , or emojis in file names, nothing Windows can't open
                                 if (cleanFileNames) {
                                     runCatching {
@@ -489,6 +507,11 @@ class DownloadWorker(
                                         }, 100)
                                     } else {
                                         if (finalPaths.isNotEmpty()) {
+                                            // YTindir: a quick download has no title yet: the file's name
+                                            // ("username_postid" and the like) for the history and notification
+                                            if (downloadItem.title.isBlank() && downloadItem.playlistTitle.isBlank()) {
+                                                downloadItem.title = File(finalPaths.first()).nameWithoutExtension
+                                            }
                                             val unixTime = System.currentTimeMillis() / 1000
                                             finalPaths.first().apply {
                                                 val file = File(this)

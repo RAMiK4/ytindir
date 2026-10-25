@@ -143,7 +143,8 @@ object SocialMediaUtil {
             Site.TIKTOK -> urlId.ifBlank { "%(id)s" }
             else -> urlId.ifBlank { "%(display_id,id)s" }
         }
-        return handle + id
+        // posts with several videos (an Instagram carousel, a tweet with two videos) get _1, _2…
+        return handle + id + "%(playlist_index&_{}|)s"
     }
 
     private val client by lazy {

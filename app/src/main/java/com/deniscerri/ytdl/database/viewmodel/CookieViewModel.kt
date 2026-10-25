@@ -100,7 +100,13 @@ class CookieViewModel(private val application: Application) : AndroidViewModel(a
         CookieManager.getInstance().flush()
 
         val targetHost = Uri.parse(url).host ?: throw Exception("Invalid URL or domain!")
-        val dbPath = File("/data/data/${BuildConfig.APPLICATION_ID}/").walkTopDown().find { it.name == "Cookies" }
+        // YTindir: the cookies of this process's WebView (the cookies browser and its incognito
+        // version each keep their own data directory), not the first "Cookies" file found
+        val dataDir = File(application.applicationInfo.dataDir)
+        val suffix = com.deniscerri.ytdl.App.webViewDataSuffix
+        val webViewDir = File(dataDir, if (suffix.isNullOrBlank()) "app_webview" else "app_webview_$suffix")
+        val dbPath = webViewDir.takeIf { it.isDirectory }?.walkTopDown()?.find { it.name == "Cookies" }
+            ?: File("/data/data/${BuildConfig.APPLICATION_ID}/").walkTopDown().find { it.name == "Cookies" }
             ?: throw Exception("Cookies File not found!")
 
         val db = SQLiteDatabase.openDatabase(
