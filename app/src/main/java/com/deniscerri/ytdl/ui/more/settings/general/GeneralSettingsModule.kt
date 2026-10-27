@@ -66,12 +66,10 @@ object GeneralSettingsModule : SettingModule {
                     val supported = LocaleUtil.supportedLocales(context)
                     summary = LocaleUtil.displayName(LocaleUtil.currentLocale(), supported)
 
+                    // YTindir: always our own list, inside the app (Android's per-app language screen
+                    // opens elsewhere in the system settings and leaves the app); the system screen
+                    // (App info > Language) keeps working and stays in sync with it
                     setOnPreferenceClickListener {
-                        if (LocaleUtil.systemPickerAvailable()) {
-                            runCatching { context.startActivity(LocaleUtil.systemPickerIntent(context)) }
-                            return@setOnPreferenceClickListener true
-                        }
-
                         val locales = supported
                             .map { it to LocaleUtil.displayName(it, supported) }
                             .sortedBy { it.second.lowercase() }

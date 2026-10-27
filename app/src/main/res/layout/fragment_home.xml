@@ -220,6 +220,62 @@
 
         </HorizontalScrollView>
 
+        <!-- YTindir: sorting the search results (relevance, newest, most viewed, oldest) -->
+        <HorizontalScrollView
+            android:id="@+id/result_sort_scrollview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"
+            android:visibility="gone"
+            app:layout_scrollFlags="scroll|enterAlways">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/result_sort_chips"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="20dp"
+                app:chipSpacingHorizontal="8dp"
+                app:selectionRequired="true"
+                app:singleLine="true"
+                app:singleSelection="true">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/sort_relevance"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:tag="relevance"
+                    android:text="@string/sort_relevance" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/sort_newest"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:tag="newest"
+                    android:text="@string/sort_newest" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/sort_views"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:tag="views"
+                    android:text="@string/sort_most_viewed" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/sort_oldest"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:tag="oldest"
+                    android:text="@string/sort_oldest" />
+
+            </com.google.android.material.chip.ChipGroup>
+
+        </HorizontalScrollView>
+
     </com.google.android.material.appbar.AppBarLayout>
 
 

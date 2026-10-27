@@ -111,6 +111,8 @@ class UpdateUtil(var context: Context) {
             if (conn.responseCode < 300) {
                 val myType = object : TypeToken<List<GithubRelease>>() {}.type
                 json = Gson().fromJson(InputStreamReader(conn.inputStream), myType)
+                // YTindir: the notes in the app's language when the release has them
+                json.forEach { r -> r.body = ReleaseNotesLocalizer.localize(r.body.orEmpty()) }
             }
             conn.disconnect()
         } catch (e: Exception) {

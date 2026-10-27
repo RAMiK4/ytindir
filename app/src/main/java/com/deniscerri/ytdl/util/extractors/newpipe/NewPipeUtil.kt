@@ -320,6 +320,9 @@ class NewPipeUtil(context: Context) {
                 "",
                 ArrayList()
             )
+            // YTindir: views and upload time for the results list and its sorting
+            video.viewCount = stream.viewCount.takeIf { it >= 0 }
+            video.uploadDate = runCatching { stream.uploadDate?.offsetDateTime()?.toEpochSecond() }.getOrNull()
 
         } catch (e: Exception) {
             Log.e("NewPipeUtil", e.toString())

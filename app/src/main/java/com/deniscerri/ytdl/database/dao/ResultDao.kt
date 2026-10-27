@@ -18,8 +18,17 @@ interface ResultDao {
     @Query("SELECT * FROM results")
     fun getResultsFlow() : Flow<List<ResultItem>>
 
-    @Query("SELECT * FROM results WHERE playlistTitle LIKE '%' || :playlistT || '%' ORDER BY creationTime, id")
-    fun getPaginatedFilteredFlow(playlistT: String): PagingSource<Int, ResultItem>
+    /** YTindir: [sort] is "relevance" (the site's own order), "newest", "oldest" or "views" */
+    @Query("""SELECT * FROM results WHERE playlistTitle LIKE '%' || :playlistT || '%' ORDER BY
+        CASE WHEN :sort = 'newest' THEN uploadDate END DESC,
+        CASE WHEN :sort = 'oldest' THEN uploadDate IS NULL END ASC,
+        CASE WHEN :sort = 'oldest' THEN uploadDate END ASC,
+        CASE WHEN :sort = 'views' THEN viewCount END DESC,
+        creationTime, id""")
+    fun getPaginatedFilteredFlow(playlistT: String, sort: String): PagingSource<Int, ResultItem>
+
+    @Query("SELECT COUNT(id) FROM results WHERE viewCount IS NOT NULL OR uploadDate IS NOT NULL")
+    fun getSortableCount(): Flow<Int>
 
     @Query("SELECT id FROM results WHERE playlistTitle LIKE '%' || :playlistT || '%' ORDER BY creationTime, id")
     fun getFilteredListIds(playlistT: String): List<Long>

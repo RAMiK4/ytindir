@@ -186,8 +186,11 @@
     <string name="clean_filenames_summary">Remove characters some file managers and Windows don\'t accept (| / : , …) and emojis from file names, without leaving double spaces</string>
     <string name="convert_xhe_aac">Compatible audio (AAC)</string>
     <string name="convert_xhe_aac_summary">Convert xHE-AAC audio (Instagram, Facebook) to AAC-LC 192 kbps on the device, so it plays in every player and app</string>
+    <string name="social_h264">Convert social videos to H.264</string>
+    <string name="social_h264_summary">Instagram, X, TikTok, Facebook and VK: the best quality is still downloaded, and a VP9, AV1 or HEVC video is converted to H.264 on the device before it\'s saved, with the phone\'s hardware encoder at a quality close to the original</string>
+    <string name="converting_to_h264">Converting to H.264 · %1$d%%</string>
     <string name="instagram_app_api">Instagram app quality</string>
-    <string name="instagram_app_api_summary">With an Instagram account in the cookies, video downloads get the higher quality audio the Instagram app plays; the video stays the website\'s</string>
+    <string name="instagram_app_api_summary">With an Instagram account in the cookies, video and mp3 downloads get the higher quality audio the Instagram app plays; the video stays the website\'s</string>
     <string name="original_source_quality">Original (source)</string>
     <string name="use_current_position">Use current position</string>
     <string name="invalid_time">Invalid time</string>
@@ -502,7 +505,7 @@
     <string name="no_keep_subs">Delete subtitle files after embedding</string>
     <string name="no_keep_subs_summary">When using both Embed Subtitles and Write Subtitles, don\'t keep the subtitle files after embedding</string>
     <string name="video_compatible">Compatible Video</string>
-    <string name="video_compatible_summary">Recodes the video making it compatible with other apps</string>
+    <string name="video_compatible_summary">Every download as mp4 with H.264 video and AAC audio: picks H.264 streams where the site has them (up to 1080p on YouTube) and converts the rest</string>
     <string name="no_free_space_warning">There is no free space for this configuration.</string>
     <string name="preferred_format_size">Preferred Format Size</string>
     <string name="preferred_format_size_audio">Preferred Audio Format Size</string>
@@ -617,6 +620,8 @@
     <string name="open_file">Open File</string>
     <string name="duration">Duration</string>
 
+    <string name="update_status_up_to_date">Up to date</string>
+    <string name="update_status_installed">Installed version</string>
     <string name="update_available">Update available</string>
     <string name="update_check_failed">Couldn\'t check for updates</string>
     <string name="checking_for_updates">Checking for updates…</string>
@@ -705,4 +710,24 @@
     <string name="ytindr_tone" translatable="false">YTindir</string>
     <string name="based_on_ytdlnis">Based on YTDLnis</string>
     <string name="crop_unsupported">Cropping is not available for this item</string>
+    <string name="hint_instagram_stories_login">Instagram shows stories only to logged-in accounts. Log in to Instagram in More → Cookies and turn Cookies on.</string>
+    <string name="hint_instagram_logged_out">Instagram didn\'t give the post. The Instagram account saved in Cookies may have been logged out: log in again in More → Cookies, or try once more.</string>
+    <string name="hint_youtube_bot">YouTube wants to make sure you\'re not a bot. Add your YouTube account in More → Cookies and turn Cookies on, or try again a bit later.</string>
+    <string name="hint_age_restricted">This video is age-restricted. Add an account that can watch it in More → Cookies and turn Cookies on.</string>
+    <string name="hint_private">This video or account is private. It can only be downloaded with an account that can see it, added in More → Cookies.</string>
+    <string name="hint_login_required">This content needs an account. Log in to the site in More → Cookies and turn Cookies on.</string>
+    <string name="hint_geo_blocked">This video isn\'t available in your country. A VPN (or a proxy in Settings → Advanced) can help.</string>
+    <string name="hint_unavailable">This video was removed or isn\'t available any more. Check that the link still opens in the app or browser.</string>
+    <string name="hint_rate_limited">The site got too many requests and is pausing them. Wait a few minutes, or add your account in More → Cookies.</string>
+    <string name="hint_forbidden">The site refused the download. Try again; if it keeps happening, update yt-dlp in Settings → Updates → yt-dlp, or turn Cookies on.</string>
+    <string name="hint_unsupported">This link isn\'t supported. Share the post\'s own link (not a profile or search page) and try again.</string>
+    <string name="hint_format_unavailable">The chosen quality isn\'t available for this video. Open the download card again and pick another one.</string>
+    <string name="hint_no_space">The phone is out of storage. Free some space and try again.</string>
+    <string name="hint_network">The connection failed. Check your internet connection (and the proxy, if one is set) and try again.</string>
+    <string name="hint_extractor_broken">The site changed something and yt-dlp can\'t read it right now. Update yt-dlp in Settings → Updates → yt-dlp (Nightly gets fixes first) and try again.</string>
+    <string name="sort_relevance">Relevance</string>
+    <string name="sort_newest">Newest</string>
+    <string name="sort_most_viewed">Most viewed</string>
+    <string name="sort_oldest">Oldest</string>
+    <plurals name="result_views"><item quantity="one">%s view</item><item quantity="other">%s views</item></plurals>
 </resources>

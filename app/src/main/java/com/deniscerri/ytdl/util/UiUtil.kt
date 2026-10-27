@@ -2215,7 +2215,8 @@ object UiUtil {
     fun handleNoResults(context: Activity, message: String, url: String? = null, continueAnyway: Boolean = false, continued: () -> Unit, closed: () -> Unit, cookieFetch: () -> Unit) {
         val errDialog = MaterialAlertDialogBuilder(context)
             .setTitle(R.string.no_results)
-            .setMessage(message)
+            // YTindir: what the error means and what to do, above the error itself
+            .setMessage(ErrorHints.withHint(context, message, url))
 
         errDialog.setPositiveButton(R.string.copy_log) { d:DialogInterface?, _:Int ->
             val clipboard: ClipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
@@ -2248,7 +2249,7 @@ object UiUtil {
 
         val errDialog = MaterialAlertDialogBuilder(context)
             .setTitle(title)
-            .setMessage(it)
+            .setMessage(ErrorHints.withHint(context, it))
             .setPositiveButton(android.R.string.copy) { d:DialogInterface?, _:Int ->
                 val clipboard: ClipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                 clipboard.setText(it)

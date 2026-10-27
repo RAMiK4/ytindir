@@ -302,6 +302,14 @@
 
         <SwitchPreferenceCompat
             android:widgetLayout="@layout/preferece_material_switch"
+            app:defaultValue="false"
+            app:icon="@drawable/baseline_video_metadata"
+            app:key="social_h264"
+            android:summary="@string/social_h264_summary"
+            app:title="@string/social_h264" />
+
+        <SwitchPreferenceCompat
+            android:widgetLayout="@layout/preferece_material_switch"
             app:defaultValue="true"
             app:icon="@drawable/ic_music"
             app:key="instagram_app_api"

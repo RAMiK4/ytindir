@@ -619,6 +619,8 @@
     <string name="history_quick_action_summary">Действие, выполняемое при нажатии кнопки быстрого действия на карточке истории</string>
     <string name="open_file">Открыть файл</string>
     <string name="duration">Продолжительность</string>
+    <string name="update_status_up_to_date">Актуальная версия</string>
+    <string name="update_status_installed">Установленная версия</string>
     <string name="update_available">Доступно обновление</string>
     <string name="update_check_failed">Не удалось проверить наличие обновлений</string>
     <string name="checking_for_updates">Проверка наличия обновлений…</string>
@@ -724,4 +726,25 @@
     <string name="update_checked_ago">Проверено %1$s</string>
     <string name="update_checked_just_now">Проверено только что</string>
     <string name="update_not_checked_yet">Ещё не проверено</string>
+    <string name="converting_to_h264">Преобразование в H.264 · %1$d%%</string>
+    <string name="hint_instagram_stories_login">Instagram показывает истории только вошедшим в аккаунт. Войдите в Instagram в разделе Больше → Cookies и включите cookies.</string>
+    <string name="hint_instagram_logged_out">Instagram не отдал публикацию. Возможно, сохранённый в Cookies аккаунт Instagram вышел из системы: войдите снова в Больше → Cookies или попробуйте ещё раз.</string>
+    <string name="hint_youtube_bot">YouTube просит подтвердить, что вы не бот. Добавьте аккаунт YouTube в Больше → Cookies и включите cookies или повторите попытку позже.</string>
+    <string name="hint_age_restricted">У этого видео возрастное ограничение. Добавьте аккаунт, которому оно доступно, в Больше → Cookies и включите cookies.</string>
+    <string name="hint_private">Это видео или аккаунт закрыты. Скачать можно только с аккаунтом, которому они доступны, добавленным в Больше → Cookies.</string>
+    <string name="hint_login_required">Для этого контента нужен аккаунт. Войдите на сайт в Больше → Cookies и включите cookies.</string>
+    <string name="hint_geo_blocked">Это видео недоступно в вашей стране. Поможет VPN (или прокси в Настройки → Дополнительно).</string>
+    <string name="hint_unavailable">Это видео удалено или больше недоступно. Проверьте, открывается ли ссылка в приложении или браузере.</string>
+    <string name="hint_rate_limited">Сайт получил слишком много запросов и временно их ограничил. Подождите несколько минут или добавьте аккаунт в Больше → Cookies.</string>
+    <string name="hint_forbidden">Сайт отказал в загрузке. Повторите попытку; если ошибка повторяется, обновите yt-dlp в Настройки → Обновления → yt-dlp или включите cookies.</string>
+    <string name="hint_unsupported">Эта ссылка не поддерживается. Поделитесь ссылкой на саму публикацию (не на профиль или поиск) и попробуйте снова.</string>
+    <string name="hint_format_unavailable">Выбранное качество для этого видео недоступно. Откройте карточку загрузки снова и выберите другое.</string>
+    <string name="hint_no_space">В памяти телефона не осталось места. Освободите место и попробуйте снова.</string>
+    <string name="hint_network">Не удалось подключиться. Проверьте интернет (и прокси, если он задан) и попробуйте снова.</string>
+    <string name="hint_extractor_broken">Сайт что-то изменил, и yt-dlp сейчас не может его прочитать. Обновите yt-dlp в Настройки → Обновления → yt-dlp (исправления сначала приходят в Nightly) и попробуйте снова.</string>
+    <string name="sort_relevance">По релевантности</string>
+    <string name="sort_newest">Новые</string>
+    <string name="sort_most_viewed">Популярные</string>
+    <string name="sort_oldest">Старые</string>
+    <plurals name="result_views"><item quantity="one">%s просмотр</item><item quantity="few">%s просмотра</item><item quantity="many">%s просмотров</item><item quantity="other">%s просмотра</item></plurals>
 </resources>
