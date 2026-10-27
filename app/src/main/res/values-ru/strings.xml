@@ -619,6 +619,8 @@
     <string name="history_quick_action_summary">Действие, выполняемое при нажатии кнопки быстрого действия на карточке истории</string>
     <string name="open_file">Открыть файл</string>
     <string name="duration">Продолжительность</string>
+    <string name="update_status_up_to_date">Актуальная версия</string>
+    <string name="update_status_installed">Установленная версия</string>
     <string name="update_available">Доступно обновление</string>
     <string name="update_check_failed">Не удалось проверить наличие обновлений</string>
     <string name="checking_for_updates">Проверка наличия обновлений…</string>

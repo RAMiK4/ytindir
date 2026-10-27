@@ -179,6 +179,8 @@
     <string name="clean_filenames_summary">Bazı dosya yöneticilerinin ve Windows\'un kabul etmediği karakterleri (| / : , …) ve emojileri dosya adlarından kaldır, çift boşluk bırakmadan</string>
     <string name="convert_xhe_aac">Uyumlu ses (AAC)</string>
     <string name="convert_xhe_aac_summary">xHE-AAC sesi (Instagram, Facebook) cihazda AAC-LC 192 kbps\'a dönüştür; her oynatıcıda ve uygulamada çalışsın</string>
+    <string name="social_h264">Sosyal medya videolarını H.264\'e dönüştür</string>
+    <string name="social_h264_summary">Instagram, X, TikTok, Facebook ve VK: yine en iyi kalite indirilir; VP9, AV1 ya da HEVC video kaydedilmeden önce cihazda orijinale yakın kalitede H.264\'e dönüştürülür. Biraz daha uzun sürer</string>
     <string name="instagram_app_api">Instagram uygulama kalitesi</string>
     <string name="instagram_app_api_summary">Çerezlerde bir Instagram hesabı varsa video indirmeleri Instagram uygulamasının çaldığı daha kaliteli sesi alır; video web sitesindeki gibi kalır</string>
     <string name="original_source_quality">Orijinal (kaynak)</string>
@@ -489,7 +491,7 @@
     <string name="no_keep_subs">Gömme işleminden sonra altyazı dosyalarını sil</string>
     <string name="no_keep_subs_summary">Altyazı Gömme ve Altyazı Yazma özelliklerini birlikte kullanırken, altyazı dosyalarını gömdükten sonra saklama</string>
     <string name="video_compatible">Uyumlu Video</string>
-    <string name="video_compatible_summary">Videoyu yeniden kodlayarak diğer uygulamalarla uyumlu hale getirir</string>
+    <string name="video_compatible_summary">Tüm indirmeler H.264 video ve AAC sesli mp4 olur: sitede H.264 akışı varsa onu seçer (YouTube\'da 1080p\'ye kadar), olmayanı dönüştürür</string>
     <string name="preferred_format_size">Tercih Edilen Format Boyutu</string>
     <string name="smallest">En küçük</string>
     <string name="largest">En büyük</string>
@@ -614,6 +616,12 @@
     <string name="clear_info_json">Infojsons\'ları temizle</string>
     <string name="burn_subs">Altyazıları açın</string>
     <string name="based_on_ytdlnis">YTDLnis tabanlı</string>
+    <string name="update_status_up_to_date">Güncel</string>
+    <string name="update_status_installed">Kurulu sürüm</string>
+    <string name="version_update_available">%1$s → %2$s</string>
+    <string name="update_checked_ago">%1$s kontrol edildi</string>
+    <string name="update_checked_just_now">Az önce kontrol edildi</string>
+    <string name="update_not_checked_yet">Henüz kontrol edilmedi</string>
     <string name="update_available">Güncelleme var</string>
     <string name="update_check_failed">Güncellemeler kontrol edilemedi</string>
     <string name="checking_for_updates">Güncellemeler kontrol ediliyor…</string>

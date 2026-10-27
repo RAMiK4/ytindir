@@ -51,9 +51,13 @@ class CompatibleRecoderPP(FFmpegPostProcessor):
         'png',
     }
 
-    def __init__(self, downloader=None, preset=None):
+    def __init__(self, downloader=None, preset=None, crf=None, audio_bitrate=None):
         super().__init__(downloader)
         self.preset = str(preset).strip() if preset and str(preset).strip() else None
+        # YTindir: a constant quality close to the source (CRF 18) instead of x264's default 23,
+        # and AAC at a fixed bitrate instead of FFmpeg's default
+        self.crf = str(crf).strip() if crf and str(crf).strip() else None
+        self.audio_bitrate = str(audio_bitrate).strip() if audio_bitrate and str(audio_bitrate).strip() else None
 
     def _stream_codec(self, stream):
         """Return the codec name and codec tag as lowercase strings."""
@@ -249,6 +253,16 @@ class CompatibleRecoderPP(FFmpegPostProcessor):
                         self.preset,
                     ]
 
+                # YTindir: quality kept close to the source, 8-bit 4:2:0 High profile,
+                # which every phone and player decodes in hardware
+                if codec == 'libx264':
+                    if self.crf:
+                        options += [f'-crf:v:{video_index}', self.crf]
+                    options += [
+                        f'-profile:v:{video_index}', 'high',
+                        f'-pix_fmt:v:{video_index}', 'yuv420p',
+                    ]
+
                 # Preserve an already embedded thumbnail as cover art.
                 if item['attached_pic']:
                     options += [
@@ -263,6 +277,8 @@ class CompatibleRecoderPP(FFmpegPostProcessor):
                     f'-c:a:{audio_index}',
                     item['codec'],
                 ]
+                if item['codec'] == 'aac' and self.audio_bitrate:
+                    options += [f'-b:a:{audio_index}', self.audio_bitrate]
                 audio_index += 1
 
             elif stream_type == 'subtitle':
@@ -284,6 +300,8 @@ class CompatibleRecoderPP(FFmpegPostProcessor):
         options += [
             '-dn',
             '-ignore_unknown',
+            '-movflags',
+            '+faststart',
             '-f',
             'mp4',
         ]

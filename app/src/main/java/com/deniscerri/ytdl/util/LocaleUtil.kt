@@ -1,10 +1,6 @@
 package com.deniscerri.ytdl.util
 
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import android.os.Build
-import android.provider.Settings
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import com.deniscerri.ytdl.R
@@ -54,16 +50,5 @@ object LocaleUtil {
         val hasVariants = supported.count { it.language == locale.language } > 1
         val name = if (hasVariants) locale.getDisplayName(locale) else locale.getDisplayLanguage(locale)
         return name.replaceFirstChar { it.titlecase(locale) }
-    }
-
-    /** Android 13+ has a system screen for per-app languages */
-    fun systemPickerAvailable(): Boolean {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
-    }
-
-    fun systemPickerIntent(context: Context): Intent {
-        return Intent(Settings.ACTION_APP_LOCALE_SETTINGS).apply {
-            data = Uri.fromParts("package", context.packageName, null)
-        }
     }
 }

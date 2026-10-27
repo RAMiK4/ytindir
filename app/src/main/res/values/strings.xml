@@ -186,6 +186,8 @@
     <string name="clean_filenames_summary">Remove characters some file managers and Windows don\'t accept (| / : , …) and emojis from file names, without leaving double spaces</string>
     <string name="convert_xhe_aac">Compatible audio (AAC)</string>
     <string name="convert_xhe_aac_summary">Convert xHE-AAC audio (Instagram, Facebook) to AAC-LC 192 kbps on the device, so it plays in every player and app</string>
+    <string name="social_h264">Convert social videos to H.264</string>
+    <string name="social_h264_summary">Instagram, X, TikTok, Facebook and VK: the best quality is still downloaded, and a VP9, AV1 or HEVC video is converted to H.264 on the device before it\'s saved, at a quality close to the original. Takes a little longer</string>
     <string name="instagram_app_api">Instagram app quality</string>
     <string name="instagram_app_api_summary">With an Instagram account in the cookies, video downloads get the higher quality audio the Instagram app plays; the video stays the website\'s</string>
     <string name="original_source_quality">Original (source)</string>
@@ -502,7 +504,7 @@
     <string name="no_keep_subs">Delete subtitle files after embedding</string>
     <string name="no_keep_subs_summary">When using both Embed Subtitles and Write Subtitles, don\'t keep the subtitle files after embedding</string>
     <string name="video_compatible">Compatible Video</string>
-    <string name="video_compatible_summary">Recodes the video making it compatible with other apps</string>
+    <string name="video_compatible_summary">Every download as mp4 with H.264 video and AAC audio: picks H.264 streams where the site has them (up to 1080p on YouTube) and converts the rest</string>
     <string name="no_free_space_warning">There is no free space for this configuration.</string>
     <string name="preferred_format_size">Preferred Format Size</string>
     <string name="preferred_format_size_audio">Preferred Audio Format Size</string>
@@ -617,6 +619,8 @@
     <string name="open_file">Open File</string>
     <string name="duration">Duration</string>
 
+    <string name="update_status_up_to_date">Up to date</string>
+    <string name="update_status_installed">Installed version</string>
     <string name="update_available">Update available</string>
     <string name="update_check_failed">Couldn\'t check for updates</string>
     <string name="checking_for_updates">Checking for updates…</string>

@@ -175,6 +175,44 @@ object SocialMediaUtil {
         }
     }.getOrDefault(false)
 
+    private fun instagramSessionId(cookieFile: java.io.File): String? = runCatching {
+        cookieFile.useLines { lines ->
+            lines.map { it.split('\t') }
+                .firstOrNull { p -> p.size >= 7 && p[0].contains("instagram.com") && p[5] == "sessionid" && p[6].isNotBlank() }
+                ?.get(6)
+        }
+    }.getOrNull()
+
+    /*
+     * YTindir: an Instagram account logged out (on the phone, the website or by Instagram itself)
+     * leaves its sessionid in the saved cookies. Instagram then answers yt-dlp with its login page
+     * and every post fails with "Failed to parse JSON". Such a session is marked here once a post
+     * works without the cookies, so Instagram posts are read as a logged-out visitor (the website
+     * version) until the session changes (a new login) or a few hours pass.
+     */
+    private const val STALE_SESSION_PREF = "instagram_stale_session"
+    private const val STALE_SESSION_HOURS = 12L
+
+    private fun sessionKey(sessionId: String) = sessionId.hashCode().toString(16)
+
+    /** Whether Instagram posts should skip the cookies because their session no longer works. */
+    fun isInstagramSessionStale(prefs: android.content.SharedPreferences, cookieFile: java.io.File): Boolean {
+        val saved = prefs.getString(STALE_SESSION_PREF, null)?.split('|') ?: return false
+        if (saved.size != 2) return false
+        val sessionId = instagramSessionId(cookieFile) ?: return false
+        val fresh = System.currentTimeMillis() - (saved[1].toLongOrNull() ?: 0L) < TimeUnit.HOURS.toMillis(STALE_SESSION_HOURS)
+        return fresh && saved[0] == sessionKey(sessionId)
+    }
+
+    fun setInstagramSessionStale(prefs: android.content.SharedPreferences, cookieFile: java.io.File, stale: Boolean) {
+        val sessionId = instagramSessionId(cookieFile)
+        if (!stale || sessionId == null) {
+            prefs.edit().remove(STALE_SESSION_PREF).apply()
+            return
+        }
+        prefs.edit().putString(STALE_SESSION_PREF, "${sessionKey(sessionId)}|${System.currentTimeMillis()}").apply()
+    }
+
     private val client by lazy {
         OkHttpClient.Builder()
             .connectTimeout(20, TimeUnit.SECONDS)

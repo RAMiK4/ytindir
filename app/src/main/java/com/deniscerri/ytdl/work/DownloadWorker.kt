@@ -628,6 +628,31 @@ class DownloadWorker(
                                 return@onFailure
                             }
 
+                            // YTindir: an Instagram account logged out while its cookies are still saved
+                            // makes every post fail ("Failed to parse JSON"): once more as a logged-out
+                            // visitor (the website version); the session stays marked only if that works
+                            val cookieFile = File(context.cacheDir, "cookies.txt")
+                            if (SocialMediaUtil.siteOf(downloadItem.url) == SocialMediaUtil.Site.INSTAGRAM &&
+                                commandString.contains("--cookies") &&
+                                SocialMediaUtil.hasInstagramSession(cookieFile) &&
+                                instagramCookieRetried.add(downloadItem.id)) {
+                                SocialMediaUtil.setInstagramSessionStale(sharedPreferences, cookieFile, true)
+                                runCatching {
+                                    val infoJsonName = MessageDigest.getInstance("MD5")
+                                        .digest(downloadItem.url.toByteArray()).toHexString()
+                                    FileUtil.deleteFile("${FileUtil.getInfoJsonPath(context)}/${infoJsonName}.info.json")
+                                }
+                                tempFileDir.delete()
+                                if (logDownloads) logRepo.update("\n[YTindir] Instagram rejected the saved login, retrying without it...\n", logItem.id)
+                                downloadItem.status = DownloadRepository.Status.Queued.toString()
+                                dao.update(downloadItem)
+                                return@onFailure
+                            }
+                            // the post failed without the login too: the session wasn't the problem
+                            if (instagramCookieRetried.contains(downloadItem.id) && !commandString.contains("--cookies")) {
+                                SocialMediaUtil.setInstagramSessionStale(sharedPreferences, cookieFile, false)
+                            }
+
                             // YTindir: self-recovery. Most YouTube breakages are fixed by a newer yt-dlp,
                             // so update it once and re-queue the item. Only retries when an update was
                             // actually installed, and only once per item, so it can never loop.
@@ -723,6 +748,8 @@ class DownloadWorker(
         private val recoveryAttempted: MutableSet<Long> = java.util.Collections.synchronizedSet(mutableSetOf())
         // YTindir: items retried once because their info json had been deleted
         private val infoJsonRetried: MutableSet<Long> = java.util.Collections.synchronizedSet(mutableSetOf())
+        // YTindir: Instagram items retried once without the saved (logged-out) login
+        private val instagramCookieRetried: MutableSet<Long> = java.util.Collections.synchronizedSet(mutableSetOf())
         val runningYTDLInstances: MutableList<Long> = mutableListOf()
         const val TAG = "DownloadWorker"
         private val downloadLock = Mutex()

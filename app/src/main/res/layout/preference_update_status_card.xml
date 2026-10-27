@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- YTindir: status on top, the version on one full-width line (shrinks to fit long nightly
+     versions), channel and last check under it, the button below instead of beside it -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -12,82 +14,90 @@
         style="@style/Widget.Material3.CardView.Filled"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="24dp">
+        app:cardCornerRadius="28dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:minHeight="88dp"
-            android:orientation="horizontal"
-            android:paddingVertical="16dp"
-            android:paddingStart="20dp"
-            android:paddingEnd="16dp">
-
-            <FrameLayout
-                android:layout_width="36dp"
-                android:layout_height="36dp">
-
-                <ImageView
-                    android:id="@+id/status_icon"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:importantForAccessibility="no"
-                    android:src="@drawable/ic_info" />
-
-                <com.google.android.material.progressindicator.CircularProgressIndicator
-                    android:id="@+id/status_progress"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:indeterminate="true"
-                    android:visibility="gone"
-                    app:indicatorSize="28dp"
-                    app:trackThickness="3dp" />
-
-            </FrameLayout>
+            android:orientation="vertical"
+            android:padding="20dp">
 
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="12dp"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <FrameLayout
+                    android:id="@+id/status_icon_bg"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="@drawable/bg_update_status_icon">
+
+                    <ImageView
+                        android:id="@+id/status_icon"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_info" />
+
+                    <com.google.android.material.progressindicator.CircularProgressIndicator
+                        android:id="@+id/status_progress"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:indeterminate="true"
+                        android:visibility="gone"
+                        app:indicatorSize="22dp"
+                        app:trackThickness="2.5dp" />
+
+                </FrameLayout>
 
                 <TextView
-                    android:id="@+id/status_version"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/status_title"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?attr/textAppearanceHeadlineSmall"
-                    android:textIsSelectable="true"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:textAppearance="?attr/textAppearanceTitleSmall"
                     android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/status_subtitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:textAppearance="?attr/textAppearanceBodyMedium"
-                    android:visibility="gone" />
-
-                <TextView
-                    android:id="@+id/status_detail"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:alpha="0.8"
-                    android:textAppearance="?attr/textAppearanceBodySmall"
-                    android:visibility="gone" />
 
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/status_version"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="14dp"
+                android:gravity="center_vertical"
+                android:maxLines="1"
+                android:textAppearance="?attr/textAppearanceHeadlineMedium"
+                android:textIsSelectable="true"
+                android:textStyle="bold"
+                app:autoSizeMaxTextSize="30sp"
+                app:autoSizeMinTextSize="14sp"
+                app:autoSizeStepGranularity="1sp"
+                app:autoSizeTextType="uniform" />
+
+            <TextView
+                android:id="@+id/status_subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:alpha="0.85"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:visibility="gone" />
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/status_button"
-                style="@style/Widget.Material3.Button.TonalButton"
-                android:layout_width="wrap_content"
+                style="@style/Widget.Material3.Button"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/check_now" />
+                android:layout_marginTop="16dp"
+                android:text="@string/check_now"
+                app:icon="@drawable/ic_refresh"
+                app:iconGravity="textStart" />
 
         </LinearLayout>
 
