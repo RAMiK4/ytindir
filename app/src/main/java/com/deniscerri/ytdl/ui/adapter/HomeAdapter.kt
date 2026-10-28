@@ -21,6 +21,7 @@ import com.deniscerri.ytdl.database.enums.DownloadType
 import com.deniscerri.ytdl.database.models.ResultItem
 import com.deniscerri.ytdl.util.Extensions.loadThumbnail
 import com.deniscerri.ytdl.util.Extensions.popup
+import com.deniscerri.ytdl.util.ResultMetaFormatter
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.progressindicator.LinearProgressIndicator
@@ -79,7 +80,12 @@ class HomeAdapter(onItemClickListener: OnItemClickListener, activity: Activity) 
 
         // Bottom Info ----------------------------------
         val author = card.findViewById<TextView>(R.id.author)
-        author.text = video.author
+        // YTindir: "Channel · 1.2M views · 3 years ago" when the site says them
+        author.text = listOfNotNull(
+            video.author.ifBlank { null },
+            video.viewCount?.let { ResultMetaFormatter.views(activity, it) },
+            video.uploadDate?.let { ResultMetaFormatter.age(it) }
+        ).joinToString(" · ")
         val duration = card.findViewById<TextView>(R.id.duration)
         duration.text = if (video.duration.isNotEmpty() && video.duration != "-1") video.duration else ""
         duration.visibility = if (duration.text.isNullOrBlank()) View.GONE else View.VISIBLE

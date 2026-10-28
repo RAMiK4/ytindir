@@ -84,6 +84,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.Lifecycle
 import androidx.paging.LoadState
@@ -225,6 +226,28 @@ class HomeFragment : Fragment(), HomeAdapter.OnItemClickListener, SearchSuggesti
             resultViewModel.paginatedItems.collectLatest {
                 homeAdapter.submitData(it)
             }
+        }
+
+        // YTindir: sorting chips, shown when the results know their views or upload dates
+        val sortScroll = view.findViewById<HorizontalScrollView>(R.id.result_sort_scrollview)
+        val sortChips = view.findViewById<ChipGroup>(R.id.result_sort_chips)
+        sortChips.children.forEach { c ->
+            val chip = c as Chip
+            chip.isChecked = chip.tag == resultViewModel.sortOrder.value
+            chip.setOnClickListener {
+                resultViewModel.setSortOrder(chip.tag as String)
+                recyclerView?.scrollToPosition(0)
+            }
+        }
+        lifecycleScope.launch {
+            combine(resultViewModel.sortableCount, resultViewModel.totalCount) { sortable, total -> sortable > 1 && total > 1 }
+                .collectLatest { show ->
+                    sortScroll.isVisible = show
+                    if (!show && resultViewModel.sortOrder.value != "relevance") {
+                        resultViewModel.setSortOrder("relevance")
+                        (sortChips.findViewWithTag<Chip>("relevance"))?.isChecked = true
+                    }
+                }
         }
 
         homeAdapter.addLoadStateListener { loadStates ->

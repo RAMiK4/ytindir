@@ -6,6 +6,7 @@ import android.text.format.DateUtils
 import android.util.AttributeSet
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.graphics.ColorUtils
 import androidx.core.view.isVisible
 import androidx.preference.Preference
 import androidx.preference.PreferenceViewHolder
@@ -80,11 +81,12 @@ class UpdateStatusCardPreference @JvmOverloads constructor(
         holder.isDividerAllowedBelow = false
 
         val card = holder.findViewById(R.id.status_card) as MaterialCardView
+        val iconBg = holder.findViewById(R.id.status_icon_bg)
         val icon = holder.findViewById(R.id.status_icon) as ImageView
         val progress = holder.findViewById(R.id.status_progress) as CircularProgressIndicator
+        val titleText = holder.findViewById(R.id.status_title) as TextView
         val versionText = holder.findViewById(R.id.status_version) as TextView
         val subtitleText = holder.findViewById(R.id.status_subtitle) as TextView
-        val detailText = holder.findViewById(R.id.status_detail) as TextView
         val button = holder.findViewById(R.id.status_button) as MaterialButton
 
         val (containerColor, onContainerColor) = when (status) {
@@ -107,10 +109,11 @@ class UpdateStatusCardPreference @JvmOverloads constructor(
         }
 
         card.setCardBackgroundColor(containerColor)
-        subtitleText.setTextColor(onContainerColor)
+        titleText.setTextColor(onContainerColor)
         versionText.setTextColor(onContainerColor)
-        detailText.setTextColor(onContainerColor)
+        subtitleText.setTextColor(onContainerColor)
         icon.imageTintList = ColorStateList.valueOf(onContainerColor)
+        iconBg?.backgroundTintList = ColorStateList.valueOf(ColorUtils.setAlphaComponent(onContainerColor, 0x26))
         progress.setIndicatorColor(onContainerColor)
 
         val isChecking = status == Status.CHECKING
@@ -120,9 +123,18 @@ class UpdateStatusCardPreference @JvmOverloads constructor(
             when (status) {
                 Status.UP_TO_DATE -> R.drawable.ic_check
                 Status.UPDATE_AVAILABLE -> R.drawable.ic_update
+                Status.UNKNOWN -> R.drawable.ic_info
                 else -> R.drawable.baseline_error_24
             }
         )
+
+        titleText.text = when (status) {
+            Status.CHECKING -> context.getString(R.string.checking_for_updates)
+            Status.ERROR -> context.getString(R.string.update_check_failed)
+            Status.UPDATE_AVAILABLE -> context.getString(R.string.update_available)
+            Status.UP_TO_DATE -> context.getString(R.string.update_status_up_to_date)
+            Status.UNKNOWN -> context.getString(R.string.update_status_installed)
+        }
 
         val v = version
         val latest = latestVersion
@@ -132,17 +144,13 @@ class UpdateStatusCardPreference @JvmOverloads constructor(
             else -> v
         }
 
-        subtitleText.text = subtitle
-        subtitleText.isVisible = !subtitle.isNullOrBlank()
-
-        val statusLine = when (status) {
-            Status.CHECKING -> context.getString(R.string.checking_for_updates)
-            Status.ERROR -> context.getString(R.string.update_check_failed)
-            Status.UPDATE_AVAILABLE -> context.getString(R.string.update_available)
-            else -> detail
-        }
-        detailText.text = statusLine
-        detailText.isVisible = !statusLine.isNullOrBlank()
+        // channel and last check on one line: "arm64 · Stable · Checked just now"
+        val meta = listOfNotNull(
+            subtitle?.takeIf { it.isNotBlank() },
+            detail?.takeIf { it.isNotBlank() && status != Status.CHECKING && status != Status.ERROR }
+        ).joinToString(" · ")
+        subtitleText.text = meta
+        subtitleText.isVisible = meta.isNotBlank()
 
         button.isVisible = showButton
         button.isEnabled = !isChecking
@@ -150,6 +158,7 @@ class UpdateStatusCardPreference @JvmOverloads constructor(
         button.text = buttonText ?: context.getString(R.string.check_now)
         button.backgroundTintList = ColorStateList.valueOf(onContainerColor)
         button.setTextColor(containerColor)
+        button.iconTint = ColorStateList.valueOf(containerColor)
         button.setOnClickListener { onButtonClick?.invoke() }
     }
 }

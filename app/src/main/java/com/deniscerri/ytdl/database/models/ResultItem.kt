@@ -28,5 +28,9 @@ data class ResultItem(
     var playlistIndex: Int? = null,
     var creationTime: Long = System.currentTimeMillis() / 1000,
     @ColumnInfo(defaultValue = "[]")
-    var availableSubtitles: List<String> = listOf()
+    var availableSubtitles: List<String> = listOf(),
+    /** YTindir: shown in the results and used to sort them; null when the site doesn't say */
+    var viewCount: Long? = null,
+    /** YTindir: upload time in epoch seconds; null when unknown */
+    var uploadDate: Long? = null
 ) : Parcelable

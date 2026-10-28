@@ -388,7 +388,9 @@ class NotificationUtil(var context: Context) {
 
         notificationBuilder
             .setContentTitle("${res.getString(R.string.failed_download)}: $title")
-            .setContentText(error)
+            // YTindir: what the error means first, the error itself when expanded
+            .setContentText(ErrorHints.hintFor(context, error) ?: error)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(error?.let { ErrorHints.withHint(context, it) }))
             .setSmallIcon(R.drawable.baseline_error_24)
             .setLargeIcon(
                 BitmapFactory.decodeResource(

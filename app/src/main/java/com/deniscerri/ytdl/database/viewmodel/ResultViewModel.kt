@@ -66,6 +66,9 @@ class ResultViewModel(private val application: Application) : AndroidViewModel(a
     val repository : ResultRepository
     private val searchHistoryRepository : SearchHistoryRepository
     val playlistFilter = MutableStateFlow("")
+    // YTindir: how the results are sorted ("relevance", "newest", "oldest", "views")
+    val sortOrder = MutableStateFlow("relevance")
+    val sortableCount by lazy { dao.getSortableCount() }
 
     var paginatedItems : Flow<PagingData<ResultItem>>
     var totalCount = MutableStateFlow(0)
@@ -173,13 +176,14 @@ class ResultViewModel(private val application: Application) : AndroidViewModel(a
                 initialValue = emptyList()
             )
 
-        val filters = listOf(dao.getResultsFlow(), playlistFilter)
+        val filters = listOf(dao.getResultsFlow(), playlistFilter, sortOrder)
         paginatedItems = combine(filters) { f ->
             val playlistF = f[1] as String
+            val sort = f[2] as String
             var pager = Pager(
                 config = PagingConfig(pageSize = 20, initialLoadSize = 20, prefetchDistance = 1),
                 pagingSourceFactory = {
-                    dao.getPaginatedFilteredFlow(playlistF)
+                    dao.getPaginatedFilteredFlow(playlistF, sort)
                 }
             ).flow
 
@@ -193,6 +197,10 @@ class ResultViewModel(private val application: Application) : AndroidViewModel(a
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(application)
         notificationUtil = NotificationUtil(application)
+    }
+
+    fun setSortOrder(s: String) {
+        sortOrder.value = s
     }
 
     fun setPlaylistFilter(p: String){

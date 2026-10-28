@@ -78,15 +78,16 @@ jobs:
               --target "${{ github.sha }}" --latest
             gh release upload "$TAG" "out/YTindir-x-universal.apk"
           else
-            # Test builds of other branches: a pre-release with "beta" in its tag, which the
-            # app's updater skips unless beta updates are turned on, so nobody gets it by accident
+            # Test builds of other branches: a draft release with "beta" in its tag. Drafts are only
+            # visible to the repository's owner and collaborators (signed in), not to visitors or
+            # the app's updater, so nobody gets a test build by accident
             TAG="v${VERSION}-beta-build${{ github.run_number }}"
             cp $DIR/*arm64-v8a*.apk "out/YTindir-v${VERSION}-test_arm64.apk"
             gh release create "$TAG" "out/YTindir-v${VERSION}-test_arm64.apk" \
               --title "YTindir $VERSION test (${{ github.ref_name }}, build ${{ github.run_number }})" \
               --notes-file notes.md \
-              --target "${{ github.sha }}" --prerelease --latest=false
-            # Only the newest test build is kept: older "-beta-build" pre-releases and their tags go
+              --target "${{ github.sha }}" --draft
+            # Only the newest test build is kept: older "-beta-build" drafts / pre-releases and their tags go
             # (normal releases are never touched)
             gh release list --limit 200 --json tagName -q '.[].tagName' | grep -E -- '-beta-build[0-9]+$' | while read -r OLD; do
               if [ "$OLD" != "$TAG" ]; then

@@ -86,7 +86,7 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
             addOption("-4")
         }
 
-        if (sharedPreferences.getBoolean("use_cookies", false)){
+        if (useCookiesFor(url)){
             FileUtil.getCookieFile(context){
                 addOption("--cookies", it)
             }
@@ -103,6 +103,8 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
             addOption("--proxy", proxy)
         }
         addOption("-P", FileUtil.getCachePath(context) + "/tmp")
+        // YTindir: our extractor plugins (Instagram stories) also read the post, not only download it
+        addOption("--plugin-dirs", FileUtil.getBundledYTDLPPluginsPath(context))
 
         if (sharedPreferences.getBoolean("no_check_certificates", false)) {
             addOption("--no-check-certificates")
@@ -133,7 +135,7 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
      */
     fun canUseInstagramAppAudio(url: String): Boolean {
         if (SocialMediaUtil.siteOf(url) != SocialMediaUtil.Site.INSTAGRAM) return false
-        if (!sharedPreferences.getBoolean("use_cookies", false)) return false
+        if (!useCookiesFor(url)) return false
         if (!sharedPreferences.getBoolean("instagram_app_api", true)) return false
         var session = false
         FileUtil.getCookieFile(context) { session = SocialMediaUtil.hasInstagramSession(File(it)) }
@@ -146,6 +148,8 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
         dir.mkdirs()
         val request = YTDLRequest(url)
         FileUtil.getCookieFile(context) { request.addOption("--cookies", it) }
+        // our Instagram story plugin too (stories get the app's audio the same way)
+        request.addOption("--plugin-dirs", FileUtil.getBundledYTDLPPluginsPath(context))
         request.addOption("--extractor-args", INSTAGRAM_APP_API_ARGS)
         // the app API answers anything but its own app with "HTTP Error 400"
         request.addOption("--add-headers", "User-Agent:$INSTAGRAM_IOS_USER_AGENT")
@@ -162,6 +166,41 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
             }
             dir.listFiles()?.firstOrNull { it.isFile && it.name.startsWith("app_audio.") && !it.name.endsWith(".part") }
         }.getOrNull()
+    }
+
+    /**
+     * YTindir: whether yt-dlp gets the cookies for [url]: not for Instagram posts while the saved
+     * Instagram session is known to be logged out (see SocialMediaUtil.isInstagramSessionStale).
+     */
+    fun useCookiesFor(url: String?): Boolean {
+        if (!sharedPreferences.getBoolean("use_cookies", false)) return false
+        if (SocialMediaUtil.siteOf(url) != SocialMediaUtil.Site.INSTAGRAM) return true
+        var stale = false
+        FileUtil.getCookieFile(context) { stale = SocialMediaUtil.isInstagramSessionStale(sharedPreferences, File(it)) }
+        return !stale
+    }
+
+    /**
+     * YTindir: an Instagram post that failed with the cookies gets one more try as a logged-out
+     * visitor; the session is marked stale meanwhile and stays so only when that try works.
+     * Returns null when no such try applies (not Instagram, no cookies, or already without them).
+     */
+    private suspend fun <T> retryInstagramWithoutCookies(url: String?, attempt: suspend () -> T, worked: (T) -> Boolean): T? {
+        if (SocialMediaUtil.siteOf(url) != SocialMediaUtil.Site.INSTAGRAM || !useCookiesFor(url)) return null
+        var cookieFile: File? = null
+        FileUtil.getCookieFile(context) { cookieFile = File(it) }
+        val file = cookieFile ?: return null
+        if (!SocialMediaUtil.hasInstagramSession(file)) return null
+        // still logged in: the failure is something else, the cookies stay
+        val session = withContext(Dispatchers.IO) { SocialMediaUtil.checkInstagramSession(file) }
+        if (session == true) return null
+        SocialMediaUtil.setInstagramSessionStale(sharedPreferences, file, true)
+        val result = runCatching { attempt() }
+        val ok = result.getOrNull()?.let(worked) == true
+        // kept only when Instagram said the login is gone and the post works without it; when
+        // Instagram couldn't be asked, this one post was read without the cookies and that's all
+        if (!ok || session == null) SocialMediaUtil.setInstagramSessionStale(sharedPreferences, file, false)
+        return result.getOrThrow()
     }
 
     private fun canApplyFlatPlaylist(url: String) : Boolean {
@@ -251,6 +290,11 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
         }
         } catch (e: Exception) {
             if (e is CancellationException) throw e
+            // YTindir: a logged-out Instagram session in the cookies: read the post as a visitor
+            if (finalResults.isEmpty()) {
+                retryInstagramWithoutCookies(query, { getFromYTDL(query, singleItem, resultsGenerated) }, { it.isNotEmpty() })
+                    ?.let { return it }
+            }
             // YTindir: TikTok sometimes answers yt-dlp with "HTTP Error 403"; tikwm.com still knows
             // the post, and its original is what gets downloaded anyway
             val fallback = if (finalResults.isEmpty() && SocialMediaUtil.siteOf(query) == SocialMediaUtil.Site.TIKTOK) {
@@ -420,6 +464,15 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
                 playlistIndex = playlistIndex,
                 availableSubtitles = availableSubtitles
             )
+            // YTindir: views and upload time for the results list and its sorting
+            res.viewCount = jsonObject.optLong("view_count", -1).takeIf { it >= 0 }
+            res.uploadDate = jsonObject.optLong("timestamp", -1).takeIf { it > 0 }
+                ?: jsonObject.optString("upload_date").takeIf { it.length == 8 }?.let { d ->
+                    runCatching {
+                        java.time.LocalDate.parse(d, java.time.format.DateTimeFormatter.BASIC_ISO_DATE)
+                            .atStartOfDay(java.time.ZoneOffset.UTC).toEpochSecond()
+                    }.getOrNull()
+                }
 
             items.add(res)
         }
@@ -646,6 +699,10 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
             runCatching {
                 getInfoJsonFile(url)?.apply { this.delete() }
             }
+            // YTindir: a logged-out Instagram session in the cookies: read the post as a visitor
+            runCatching {
+                retryInstagramWithoutCookies(url, { getFormats(url, true) }, { it.isNotEmpty() })
+            }.onFailure { if (it is CancellationException) throw it }.getOrNull()?.let { return it }
         }
 
         SocialMediaUtil.siteOf(url)?.let { addSourceFormats(it, formats) }
@@ -1164,7 +1221,7 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
         if (sharedPreferences.getBoolean("force_ipv4", false)){
             request.addOption("-4")
         }
-        if (sharedPreferences.getBoolean("use_cookies", false)){
+        if (useCookiesFor(downloadItem.url)){
             FileUtil.getCookieFile(context){
                 request.addOption("--cookies", it)
             }
@@ -1615,10 +1672,13 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
                 val vCodecPrefIndex = context.getStringArray(R.array.video_codec_values).indexOf(preferredCodec)
                 var vCodecPref = context.getStringArray(R.array.video_codec_values_ytdlp)[vCodecPrefIndex]
 
+                // YTindir: H.264 re-encodes keep a quality close to the source (CRF 18) at a speed a
+                // phone can manage (veryfast unless another preset is chosen), AAC at 192 kbps
+                val recoderArgs = "CompatibleRecoder:preset=${internalPluginFFmpegPreset!!.ifBlank { "veryfast" }};crf=18;audio_bitrate=192k"
                 if (downloadItem.videoPreferences.compatibilityMode) {
                     request.addOption("--merge-output-format", "mp4")
                     request.addOption("--remux-video", "mp4")
-                    request.addOption("--use-postprocessor", "CompatibleRecoder:preset=$internalPluginFFmpegPreset")
+                    request.addOption("--use-postprocessor", recoderArgs)
                     vCodecPref = "h264"
                     aCodecPref = "aac"
                 }

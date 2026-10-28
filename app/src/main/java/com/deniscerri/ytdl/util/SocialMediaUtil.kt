@@ -175,6 +175,94 @@ object SocialMediaUtil {
         }
     }.getOrDefault(false)
 
+    private fun instagramSessionId(cookieFile: java.io.File): String? = runCatching {
+        cookieFile.useLines { lines ->
+            lines.map { it.split('\t') }
+                .firstOrNull { p -> p.size >= 7 && p[0].contains("instagram.com") && p[5] == "sessionid" && p[6].isNotBlank() }
+                ?.get(6)
+        }
+    }.getOrNull()
+
+    /*
+     * YTindir: an Instagram account logged out (on the phone, the website or by Instagram itself)
+     * leaves its sessionid in the saved cookies. Instagram then answers yt-dlp with its login page
+     * and every post fails with "Failed to parse JSON". Such a session is marked here once a post
+     * works without the cookies, so Instagram posts are read as a logged-out visitor (the website
+     * version) until the session changes (a new login) or a few hours pass.
+     */
+    private const val STALE_SESSION_PREF = "instagram_stale_session_v2"
+    private const val STALE_SESSION_HOURS = 12L
+
+    private fun sessionKey(sessionId: String) = sessionId.hashCode().toString(16)
+
+    /** Whether Instagram posts should skip the cookies because their session no longer works. */
+    fun isInstagramSessionStale(prefs: android.content.SharedPreferences, cookieFile: java.io.File): Boolean {
+        val saved = prefs.getString(STALE_SESSION_PREF, null)?.split('|') ?: return false
+        if (saved.size != 2) return false
+        val sessionId = instagramSessionId(cookieFile) ?: return false
+        val fresh = System.currentTimeMillis() - (saved[1].toLongOrNull() ?: 0L) < TimeUnit.HOURS.toMillis(STALE_SESSION_HOURS)
+        return fresh && saved[0] == sessionKey(sessionId)
+    }
+
+    /**
+     * Asks Instagram whether the saved session is still logged in: true when it is, false when
+     * Instagram says it needs a login, null when that couldn't be found out (no network, etc.).
+     * Only a definite "logged out" lets posts skip the cookies, so one failed post never does.
+     */
+    fun checkInstagramSession(cookieFile: java.io.File): Boolean? = runCatching {
+        val cookies = cookieFile.useLines { lines ->
+            lines.map { it.split('\t') }
+                .filter { p -> p.size >= 7 && p[0].contains("instagram.com") && p[5].isNotBlank() }
+                .associate { p -> p[5] to p[6] }
+        }
+        if (cookies["sessionid"].isNullOrBlank()) return@runCatching false
+        val cookieHeader = cookies.entries.joinToString("; ") { "${it.key}=${it.value}" }
+        val noRedirects = client.newBuilder().followRedirects(false).followSslRedirects(false).build()
+        fun ask(request: Request): Boolean? = runCatching {
+            noRedirects.newCall(request).execute().use { r ->
+                val body = r.body?.string().orEmpty()
+                val location = r.header("Location").orEmpty()
+                when {
+                    body.contains("login_required") || location.contains("/accounts/login") ||
+                        location.contains("/challenge") || r.code == 401 || r.code == 403 -> false
+                    r.code == 200 && (body.contains("\"form_data\"") || body.contains("\"user\"")) -> true
+                    // the login page instead of an answer
+                    r.code == 200 && body.trimStart().startsWith("<") -> false
+                    r.isRedirect -> false
+                    else -> null
+                }
+            }
+        }.getOrNull()
+        // the website's own account API, as a browser with these cookies, then the app's
+        ask(Request.Builder()
+            .url("https://www.instagram.com/api/v1/accounts/edit/web_form_data/")
+            .header("User-Agent", "Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Mobile Safari/537.36")
+            .header("X-IG-App-ID", "936619743392459")
+            .header("X-Requested-With", "XMLHttpRequest")
+            .header("Accept", "*/*")
+            .header("Referer", "https://www.instagram.com/")
+            .header("Cookie", cookieHeader)
+            .build())
+            ?: ask(Request.Builder()
+                .url("https://i.instagram.com/api/v1/accounts/current_user/?edit=true")
+                .header("User-Agent", INSTAGRAM_IOS_USER_AGENT)
+                .header("X-IG-App-ID", "124024574287414")
+                .header("Accept", "*/*")
+                .header("Cookie", cookieHeader)
+                .build())
+    }.getOrNull()
+
+    private const val INSTAGRAM_IOS_USER_AGENT = "Instagram 361.0.0.35.82 (iPhone14,5; iOS 17_6; en_US; en; scale=3.00; 1170x2532; 674117118)"
+
+    fun setInstagramSessionStale(prefs: android.content.SharedPreferences, cookieFile: java.io.File, stale: Boolean) {
+        val sessionId = instagramSessionId(cookieFile)
+        if (!stale || sessionId == null) {
+            prefs.edit().remove(STALE_SESSION_PREF).apply()
+            return
+        }
+        prefs.edit().putString(STALE_SESSION_PREF, "${sessionKey(sessionId)}|${System.currentTimeMillis()}").apply()
+    }
+
     private val client by lazy {
         OkHttpClient.Builder()
             .connectTimeout(20, TimeUnit.SECONDS)
@@ -218,10 +306,42 @@ object SocialMediaUtil {
      */
     suspend fun getTikTokOriginal(videoUrl: String): TikTokSource {
         val original = getTikTokSourceUrl(videoUrl)
-        if (original.first != null) return TikTokSource(original.first, "TikTok: original file from tikwm.com")
-        val hd = getTikTokHdUrl(videoUrl)
-        if (hd != null) return TikTokSource(hd, "TikTok: original not available (${original.second}), tikwm.com HD file instead")
-        return TikTokSource(null, "TikTok: tikwm.com failed (${original.second}), downloading with yt-dlp")
+        val source = if (original.first != null) {
+            TikTokSource(original.first, "TikTok: original file from tikwm.com")
+        } else {
+            val hd = getTikTokHdUrl(videoUrl)
+                ?: return TikTokSource(null, "TikTok: tikwm.com failed (${original.second}), downloading with yt-dlp")
+            TikTokSource(hd, "TikTok: original not available (${original.second}), tikwm.com HD file instead")
+        }
+        // older posts: TikTok no longer keeps their upload, and tikwm gets a 576p file with 32 kbps
+        // audio while TikTok itself still plays them in 720p / 1080p; then TikTok's best format instead
+        val size = probeVideoSize(source.url!!)
+        if (size != null && minOf(size.first, size.second) in 1 until 720) {
+            return TikTokSource(null, "TikTok: tikwm.com file is only ${size.first}x${size.second}, TikTok's own best format instead")
+        }
+        return source
+    }
+
+    /** Width and height of a remote video, read from its header only; null when it can't be read in time. */
+    private fun probeVideoSize(url: String): Pair<Int, Int>? {
+        val executor = java.util.concurrent.Executors.newSingleThreadExecutor()
+        return try {
+            executor.submit<Pair<Int, Int>?> {
+                val retriever = android.media.MediaMetadataRetriever()
+                try {
+                    retriever.setDataSource(url, mapOf("User-Agent" to "Mozilla/5.0 (Android 14; Mobile; rv:141.0) Gecko/141.0 Firefox/141.0"))
+                    val w = retriever.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)?.toIntOrNull()
+                    val h = retriever.extractMetadata(android.media.MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)?.toIntOrNull()
+                    if (w != null && h != null) w to h else null
+                } finally {
+                    runCatching { retriever.release() }
+                }
+            }.get(20, TimeUnit.SECONDS)
+        } catch (e: Exception) {
+            null
+        } finally {
+            executor.shutdownNow()
+        }
     }
 
     /** What tikwm.com knows about a TikTok post, for when yt-dlp can't read it (TikTok's HTTP 403). */

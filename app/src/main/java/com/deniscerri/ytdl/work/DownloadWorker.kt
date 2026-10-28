@@ -41,6 +41,7 @@ import com.deniscerri.ytdl.util.Extensions.tryConvertToTimestamp
 import com.deniscerri.ytdl.util.FileNameCleaner
 import com.deniscerri.ytdl.util.FileUtil
 import com.deniscerri.ytdl.util.NotificationUtil
+import com.deniscerri.ytdl.util.H264Converter
 import com.deniscerri.ytdl.util.SocialMediaUtil
 import com.deniscerri.ytdl.util.XheAacConverter
 import com.deniscerri.ytdl.util.WorkerEventBus
@@ -346,6 +347,9 @@ class DownloadWorker(
                             }
                         }.onSuccess {
                             notificationUtil.clearNotificationThrottleState(downloadItem.id.toInt())
+                            if (instagramCookieRetryOnce.remove(downloadItem.id)) {
+                                SocialMediaUtil.setInstagramSessionStale(sharedPreferences, File(context.cacheDir, "cookies.txt"), false)
+                            }
                             resultRepo.updateDownloadItem(downloadItem)?.apply {
                                 dao.updateWithoutUpsert(this)
                             }
@@ -381,6 +385,61 @@ class DownloadWorker(
                                         .filter { o -> o.isNotBlank() }
                                         .distinct()
                                         .toMutableList()
+                                }
+
+                                // YTindir: VP9 / AV1 / HEVC social videos become H.264 with the phone's hardware encoder
+                                if (downloadItem.type == DownloadType.video &&
+                                    !downloadItem.videoPreferences.compatibilityMode &&
+                                    SocialMediaUtil.siteOf(downloadItem.url) != null &&
+                                    sharedPreferences.getBoolean("social_h264", false)) {
+                                    val mediaFiles = if (writeDirectly) {
+                                        finalPaths.map { p -> File(p) }
+                                    } else {
+                                        tempFileDir.walkTopDown().filter { f -> f.isFile }.toList()
+                                    }
+                                    val title = downloadItem.title.ifEmpty { downloadItem.url }
+                                    mediaFiles.forEach { f ->
+                                        if (!H264Converter.needsConversion(f)) return@forEach
+                                        val result = H264Converter.convertIfNeeded(context, f) { p ->
+                                            val text = context.getString(R.string.converting_to_h264, p)
+                                            notificationUtil.updateDownloadNotification(
+                                                downloadItem.id.toInt(), text, p, 0, title,
+                                                NotificationUtil.Companion.DOWNLOAD_SERVICE_CHANNEL_ID
+                                            )
+                                            WorkerEventBus.post(WorkerProgress(p, text, downloadItem.id, downloadItem.logID))
+                                        } ?: return@forEach
+                                        logString.append("${result.note}\n")
+                                        if (logDownloads) runCatching { logRepo.update(result.note, logItem.id) }
+                                    }
+                                }
+
+                                // YTindir: Instagram audio downloads (mp3) made from the app's higher quality audio
+                                if (downloadItem.type == DownloadType.audio &&
+                                    downloadItem.downloadSections.isBlank() &&
+                                    sharedPreferences.getBoolean("instagram_app_api", true) &&
+                                    ytdlpUtil.canUseInstagramAppAudio(downloadItem.url)) {
+                                    val mediaFiles = if (writeDirectly) {
+                                        finalPaths.map { p -> File(p) }
+                                    } else {
+                                        tempFileDir.walkTopDown().filter { f -> f.isFile }.toList()
+                                    }
+                                    val mp3 = mediaFiles.filter { f -> f.extension.equals("mp3", ignoreCase = true) }
+                                    if (mp3.size == 1) {
+                                        WorkerEventBus.post(WorkerProgress(100, "Getting Instagram's app audio", downloadItem.id, downloadItem.logID))
+                                        val bitrate = downloadItem.audioPreferences.bitrate.takeIf { b -> b.matches(Regex("""\d{2,3}k""")) }
+                                            ?: sharedPreferences.getString("audio_bitrate", "")!!.takeIf { b -> b.matches(Regex("""\d{2,3}k""")) }
+                                            ?: "192k"
+                                        val audioDir = File(cacheDir, "app_audio_${downloadItem.id}")
+                                        val note = runCatching {
+                                            val audio = ytdlpUtil.downloadInstagramAppAudio(downloadItem.url, audioDir, "${downloadItem.id}_app_audio")
+                                            if (audio == null) "Audio: Instagram app audio not available, website audio kept"
+                                            else withContext(Dispatchers.IO) { XheAacConverter.replaceMp3Audio(mp3.first(), audio, bitrate) }?.note
+                                                ?: "Audio: Instagram app audio isn't xHE-AAC, website audio kept"
+                                        }.getOrElse { e -> "Audio: Instagram app audio failed (${e.message}), website audio kept" }
+                                        audioDir.deleteRecursively()
+                                        logString.append("$note\n")
+                                        if (logDownloads) runCatching { logRepo.update(note, logItem.id) }
+                                    }
                                 }
 
                                 // YTindir: xHE-AAC audio (Instagram, Facebook) becomes AAC-LC, which every player opens
@@ -628,6 +687,36 @@ class DownloadWorker(
                                 return@onFailure
                             }
 
+                            // YTindir: an Instagram account logged out while its cookies are still saved
+                            // makes every post fail ("Failed to parse JSON"): once more as a logged-out
+                            // visitor (the website version); the session stays marked only if that works
+                            val cookieFile = File(context.cacheDir, "cookies.txt")
+                            if (SocialMediaUtil.siteOf(downloadItem.url) == SocialMediaUtil.Site.INSTAGRAM &&
+                                commandString.contains("--cookies") &&
+                                SocialMediaUtil.hasInstagramSession(cookieFile) &&
+                                !instagramCookieRetried.contains(downloadItem.id) &&
+                                // still logged in: the failure is something else, the cookies stay
+                                withContext(Dispatchers.IO) { SocialMediaUtil.checkInstagramSession(cookieFile) }
+                                    .also { if (it == null) instagramCookieRetryOnce.add(downloadItem.id) } != true &&
+                                instagramCookieRetried.add(downloadItem.id)) {
+                                SocialMediaUtil.setInstagramSessionStale(sharedPreferences, cookieFile, true)
+                                runCatching {
+                                    val infoJsonName = MessageDigest.getInstance("MD5")
+                                        .digest(downloadItem.url.toByteArray()).toHexString()
+                                    FileUtil.deleteFile("${FileUtil.getInfoJsonPath(context)}/${infoJsonName}.info.json")
+                                }
+                                tempFileDir.delete()
+                                if (logDownloads) logRepo.update("\n[YTindir] Instagram rejected the saved login, retrying without it...\n", logItem.id)
+                                downloadItem.status = DownloadRepository.Status.Queued.toString()
+                                dao.update(downloadItem)
+                                return@onFailure
+                            }
+                            // the post failed without the login too: the session wasn't the problem
+                            if (instagramCookieRetried.contains(downloadItem.id) && !commandString.contains("--cookies")) {
+                                instagramCookieRetryOnce.remove(downloadItem.id)
+                                SocialMediaUtil.setInstagramSessionStale(sharedPreferences, cookieFile, false)
+                            }
+
                             // YTindir: self-recovery. Most YouTube breakages are fixed by a newer yt-dlp,
                             // so update it once and re-queue the item. Only retries when an update was
                             // actually installed, and only once per item, so it can never loop.
@@ -723,6 +812,10 @@ class DownloadWorker(
         private val recoveryAttempted: MutableSet<Long> = java.util.Collections.synchronizedSet(mutableSetOf())
         // YTindir: items retried once because their info json had been deleted
         private val infoJsonRetried: MutableSet<Long> = java.util.Collections.synchronizedSet(mutableSetOf())
+        // YTindir: Instagram items retried once without the saved (logged-out) login
+        private val instagramCookieRetried: MutableSet<Long> = java.util.Collections.synchronizedSet(mutableSetOf())
+        // YTindir: of those, the ones whose login couldn't be checked: read without it this once only
+        private val instagramCookieRetryOnce: MutableSet<Long> = java.util.Collections.synchronizedSet(mutableSetOf())
         val runningYTDLInstances: MutableList<Long> = mutableListOf()
         const val TAG = "DownloadWorker"
         private val downloadLock = Mutex()

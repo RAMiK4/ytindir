@@ -90,6 +90,129 @@ object XheAacConverter {
         return convert(video, audioSource, trackIndex, trackFormat, "Instagram app audio (xHE-AAC) converted to AAC-LC")
     }
 
+    /**
+     * YTindir: audio downloads (mp3) of Instagram posts made from the app's higher quality xHE-AAC
+     * audio instead of the website's HE-AAC: Android decodes it (normalised the same way), ffmpeg
+     * encodes the mp3 at [bitrate] and copies the original mp3's tags, lyrics and cover. Null when
+     * [appAudio] has no AAC track or doesn't match [mp3].
+     */
+    fun replaceMp3Audio(mp3: File, appAudio: File, bitrate: String): Result? {
+        if (!mp3.isFile || mp3.extension.lowercase() != "mp3") return null
+        val (trackIndex, trackFormat) = findXheTrack(appAudio) ?: return null
+        val mp3Length = durationUs(mp3)
+        val audioLength = durationUs(appAudio)
+        if (mp3Length > 0 && audioLength > 0 && kotlin.math.abs(mp3Length - audioLength) > 1_500_000L) {
+            return Result(false, "Audio: Instagram app audio skipped (length doesn't match)")
+        }
+        if (!RuntimeManager.ffmpegLocation.isAvailable) return Result(false, "Audio: website audio kept (ffmpeg not available)")
+        val wav = File(mp3.parentFile, "${mp3.nameWithoutExtension}.app.tmp.wav")
+        val output = File(mp3.parentFile, "${mp3.nameWithoutExtension}.app.tmp.mp3")
+        return try {
+            decodeToWav(appAudio, trackIndex, trackFormat, wav)
+            val command = listOf(
+                RuntimeManager.ffmpegLocation.executable.absolutePath,
+                "-hide_banner", "-loglevel", "error", "-y",
+                "-i", wav.absolutePath,
+                "-i", mp3.absolutePath,
+                "-map", "0:a:0", "-map", "1:v?",
+                "-map_metadata", "1",
+                "-c:a", "libmp3lame", "-b:a", bitrate,
+                "-c:v", "copy",
+                "-id3v2_version", "3",
+                output.absolutePath
+            )
+            RuntimeManager.executeImpl(command)
+            if (!output.isFile || output.length() == 0L) error("ffmpeg wrote no file")
+            if (!mp3.delete() || !output.renameTo(mp3)) error("couldn't replace the file")
+            Result(true, "Audio: mp3 made from Instagram's app audio (xHE-AAC, $bitrate)")
+        } catch (e: Throwable) {
+            output.delete()
+            Result(false, "Audio: website audio kept, app audio failed (${e.message ?: e.javaClass.simpleName})")
+        } finally {
+            wav.delete()
+        }
+    }
+
+    /** Decodes the xHE-AAC track to a 16-bit PCM WAV file, normalised like [transcode]. */
+    private fun decodeToWav(src: File, trackIndex: Int, inputFormat: MediaFormat, out: File) {
+        val startTime = System.currentTimeMillis()
+        val extractor = MediaExtractor()
+        var decoder: MediaCodec? = null
+        val raf = java.io.RandomAccessFile(out, "rw")
+        try {
+            raf.setLength(0)
+            raf.write(ByteArray(44)) // header, written at the end
+            extractor.setDataSource(src.absolutePath)
+            extractor.selectTrack(trackIndex)
+            inputFormat.setInteger("aac-target-ref-level", 64)
+            inputFormat.setInteger("aac-drc-effect-type", 0)
+            decoder = MediaCodec.createDecoderByType(MediaFormat.MIMETYPE_AUDIO_AAC)
+            decoder.configure(inputFormat, null, null, 0)
+            decoder.start()
+
+            val info = MediaCodec.BufferInfo()
+            var sampleRate = 0
+            var channels = 0
+            var dataBytes = 0L
+            var inputDone = false
+            var outputDone = false
+            while (!outputDone) {
+                if (System.currentTimeMillis() - startTime > MAX_RUNTIME_MS) error("took too long")
+                if (!inputDone) {
+                    val i = decoder.dequeueInputBuffer(TIMEOUT_US)
+                    if (i >= 0) {
+                        val buffer = decoder.getInputBuffer(i)!!
+                        val size = extractor.readSampleData(buffer, 0)
+                        if (size < 0) {
+                            decoder.queueInputBuffer(i, 0, 0, 0, MediaCodec.BUFFER_FLAG_END_OF_STREAM)
+                            inputDone = true
+                        } else {
+                            decoder.queueInputBuffer(i, 0, size, extractor.sampleTime, 0)
+                            extractor.advance()
+                        }
+                    }
+                }
+                val o = decoder.dequeueOutputBuffer(info, TIMEOUT_US)
+                if (o == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
+                    val format = decoder.outputFormat
+                    if (format.containsKey(MediaFormat.KEY_PCM_ENCODING) &&
+                        format.getInteger(MediaFormat.KEY_PCM_ENCODING) != AudioFormat.ENCODING_PCM_16BIT) {
+                        error("unexpected PCM encoding")
+                    }
+                    sampleRate = format.getInteger(MediaFormat.KEY_SAMPLE_RATE)
+                    channels = format.getInteger(MediaFormat.KEY_CHANNEL_COUNT)
+                } else if (o >= 0) {
+                    if (info.size > 0) {
+                        val buffer = decoder.getOutputBuffer(o)!!
+                        buffer.position(info.offset)
+                        buffer.limit(info.offset + info.size)
+                        val bytes = ByteArray(info.size).also { buffer.get(it) }
+                        raf.write(bytes)
+                        dataBytes += bytes.size
+                    }
+                    decoder.releaseOutputBuffer(o, false)
+                    if ((info.flags and MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0) outputDone = true
+                }
+            }
+            if (dataBytes == 0L || sampleRate == 0 || channels == 0) error("the decoder gave no audio")
+
+            // RIFF/WAVE header for 16-bit PCM
+            val header = ByteBuffer.allocate(44).order(java.nio.ByteOrder.LITTLE_ENDIAN).apply {
+                put("RIFF".toByteArray()); putInt((36 + dataBytes).toInt()); put("WAVE".toByteArray())
+                put("fmt ".toByteArray()); putInt(16); putShort(1); putShort(channels.toShort())
+                putInt(sampleRate); putInt(sampleRate * channels * 2); putShort((channels * 2).toShort()); putShort(16)
+                put("data".toByteArray()); putInt(dataBytes.toInt())
+            }
+            raf.seek(0)
+            raf.write(header.array())
+        } finally {
+            runCatching { raf.close() }
+            runCatching { extractor.release() }
+            runCatching { decoder?.stop() }
+            runCatching { decoder?.release() }
+        }
+    }
+
     /** Converts [file]'s xHE-AAC audio to AAC-LC in place. Returns null when there's nothing to do. */
     fun convertIfNeeded(file: File): Result? {
         if (!file.isFile || file.extension.lowercase() !in supportedExtensions) return null
