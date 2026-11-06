@@ -43,6 +43,11 @@ class FormatViewModel(private val application: Application) : AndroidViewModel(a
     var sortBy = FormatSorting.valueOf(sharedPreferences.getString("format_order", "filesize")!!)
     var filterBy = MutableStateFlow(FormatCategory.valueOf(sharedPreferences.getString("format_filter", "ALL")!!))
 
+    // YTindir: a choice from the quick download card's list, picked up by the audio or video tab
+    val quickPick = MutableStateFlow<Format?>(null)
+    // ...and the tab the card switches to for it
+    val quickTabSwitch = MutableSharedFlow<DownloadType>(extraBufferCapacity = 1)
+
     private val _noFreeSpace = MutableSharedFlow<String?>()
     val noFreeSpace = _noFreeSpace.asSharedFlow()
 

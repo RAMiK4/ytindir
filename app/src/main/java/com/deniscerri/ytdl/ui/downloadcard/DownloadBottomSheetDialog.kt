@@ -38,6 +38,7 @@ import com.deniscerri.ytdl.database.repository.DownloadRepository
 import com.deniscerri.ytdl.database.viewmodel.CommandTemplateViewModel
 import com.deniscerri.ytdl.database.viewmodel.DownloadCardViewModel
 import com.deniscerri.ytdl.database.viewmodel.DownloadViewModel
+import com.deniscerri.ytdl.database.viewmodel.FormatViewModel
 import com.deniscerri.ytdl.database.viewmodel.HistoryViewModel
 import com.deniscerri.ytdl.database.viewmodel.ResultViewModel
 import com.deniscerri.ytdl.receiver.ShareActivity
@@ -314,6 +315,18 @@ class DownloadBottomSheetDialog : BottomSheetDialogFragment() {
         })
 
         viewPager2.setPageTransformer(BackgroundToForegroundPageTransformer())
+
+        // YTindir: a choice in the quick format list opens the tab it belongs to (audio or video)
+        val formatViewModel = ViewModelProvider(requireActivity())[FormatViewModel::class.java]
+        formatViewModel.quickPick.value = null
+        lifecycleScope.launch {
+            formatViewModel.quickTabSwitch.collect { pickedType ->
+                val position = if (pickedType == DownloadType.audio) 0 else 1
+                if (viewPager2.currentItem != position) {
+                    tabLayout.getTabAt(position)?.select()
+                }
+            }
+        }
 
         val shownFields = sharedPreferences.getStringSet("modify_download_card", requireContext().resources.getStringArray(R.array.modify_download_card_values).toSet())!!.toList()
 

@@ -37,6 +37,7 @@ import com.deniscerri.ytdl.util.Extensions.applyFilenameTemplateForCuts
 import com.deniscerri.ytdl.util.Extensions.createBadge
 import com.deniscerri.ytdl.util.FileUtil
 import com.deniscerri.ytdl.util.FormatUtil
+import com.deniscerri.ytdl.util.QuickFormats
 import com.deniscerri.ytdl.util.UiUtil
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.chip.Chip
@@ -266,11 +267,24 @@ class DownloadAudioFragment(private var resultItem: ResultItem? = null, private 
                         formatViewModel.checkFreeSpace(filesize, downloadItem.downloadPath)
                     }
                 }
-                formatCard.setOnClickListener{
+                fun showFormatSheet() {
                     if (parentFragmentManager.findFragmentByTag("formatSheet") == null){
                         formatViewModel.setItem(downloadItem, !nonSpecific)
                         val bottomSheet = FormatSelectionBottomSheetDialog(listener)
                         bottomSheet.show(parentFragmentManager, "formatSheet")
+                    }
+                }
+                formatCard.setOnClickListener{
+                    // YTindir: no formats read yet: the quick card's list (video, audio only, thumbnail)
+                    if (!nonSpecific && QuickFormats.hasNoRealFormats(downloadItem)) {
+                        if (parentFragmentManager.findFragmentByTag("quickFormatSheet") == null) {
+                            QuickFormatBottomSheetDialog().apply {
+                                item = downloadItem
+                                onAllFormats = { showFormatSheet() }
+                            }.show(parentFragmentManager, "quickFormatSheet")
+                        }
+                    } else {
+                        showFormatSheet()
                     }
                 }
                 formatCard.setOnLongClickListener {
@@ -293,7 +307,7 @@ class DownloadAudioFragment(private var resultItem: ResultItem? = null, private 
                 }
                 containerAutoCompleteTextView.setText(downloadItem.container.ifEmpty { getString(R.string.defaultValue) }, false)
 
-                (container!!.editText as AutoCompleteTextView?)!!.onItemClickListener =
+                val containerClickListener =
                     AdapterView.OnItemClickListener { _: AdapterView<*>?, _: View?, index: Int, _: Long ->
                         downloadItem.container = containers[index]
                         if (containers[index] == getString(R.string.defaultValue)) downloadItem.container = ""
@@ -319,6 +333,22 @@ class DownloadAudioFragment(private var resultItem: ResultItem? = null, private 
                             selectedThumbnailPrefs = null
                         }
                     }
+                (container!!.editText as AutoCompleteTextView?)!!.onItemClickListener = containerClickListener
+
+                // YTindir: an audio choice from the quick list (Opus, M4A, MP3), made here or in the video
+                // tab: its codec, and its file type in the container field
+                launch {
+                    formatViewModel.quickPick.collect { picked ->
+                        if (picked == null || !QuickFormats.isQuickAudio(picked)) return@collect
+                        formatViewModel.quickPick.value = null
+                        val index = containers.indexOf(picked.container)
+                        if (index >= 0) {
+                            containerClickListener.onItemClick(null, null, index, 0)
+                            containerAutoCompleteTextView.setText(containers[index], false)
+                        }
+                        listener.onFormatClick(FormatTuple(picked, null))
+                    }
+                }
 
 
                 view.findViewById<LinearLayout>(R.id.adjust).apply {

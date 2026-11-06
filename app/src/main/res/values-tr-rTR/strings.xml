@@ -720,4 +720,14 @@
     <string name="sort_most_viewed">En çok izlenen</string>
     <string name="sort_oldest">En eski</string>
     <plurals name="result_views"><item quantity="one">%s görüntüleme</item><item quantity="other">%s görüntüleme</item></plurals>
+    <string name="quick_download_quality">İndirme kalitesi</string>
+    <string name="quick_audio_only">Yalnızca ses</string>
+    <string name="quick_thumbnail">Küçük resim</string>
+    <string name="quick_best_quality">En iyi kalite</string>
+    <string name="quick_plays_everywhere">Her yerde oynar</string>
+    <string name="quick_ogg_file">Ogg dosyası</string>
+    <string name="quick_thumbnail_summary">Orijinal boyut, %s klasörüne kaydedilir</string>
+    <string name="quick_thumbnail_downloading">Küçük resim indiriliyor</string>
+    <string name="quick_all_formats">Tüm formatlar</string>
+    <string name="quick_all_formats_summary">Bağlantının formatlarını dosya boyutlarıyla getirir</string>
 </resources>

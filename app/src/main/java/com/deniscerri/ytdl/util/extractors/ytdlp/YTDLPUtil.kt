@@ -36,6 +36,7 @@ import com.deniscerri.ytdl.util.Extensions.toStringDuration
 import com.deniscerri.ytdl.util.FileNameCleaner
 import com.deniscerri.ytdl.util.FileUtil
 import com.deniscerri.ytdl.util.FormatUtil
+import com.deniscerri.ytdl.util.QuickFormats
 import com.deniscerri.ytdl.util.SocialMediaUtil
 import com.google.gson.Gson
 import com.google.gson.Strictness
@@ -1394,6 +1395,11 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
                 var abrSort = ""
 
                 var audioQualityId : String = downloadItem.format.format_id
+                // YTindir: the quick card's Opus / M4A / MP3: the best audio, as that codec where it can be
+                if (QuickFormats.isQuickAudio(downloadItem.format)) {
+                    QuickFormats.ytdlpAudioCodec(downloadItem.format).takeIf { it.isNotBlank() }?.let { aCodecPref = it }
+                    audioQualityId = "ba"
+                }
                 if (audioQualityId.isBlank() || listOf("0", context.getString(R.string.best_quality), "ba", "best", "", context.getString(
                         R.string.worst_quality), "wa", "worst").contains(audioQualityId)){
                     audioQualityId = "ba/b"
@@ -1459,6 +1465,15 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
                                 }
                             }
                         }
+                    }
+                }
+
+                // YTindir: a quick audio choice always gets its codec first and its file type
+                if (QuickFormats.isQuickAudio(downloadItem.format)) {
+                    formatSorting.removeAll { it.startsWith("acodec:") }
+                    if (aCodecPref.isNotBlank()) formatSorting.add(0, "acodec:$aCodecPref")
+                    if (ext.isNotBlank() && supportedContainers.contains(ext) && !request.toString().contains("--audio-format")) {
+                        request.addOption("--audio-format", ext)
                     }
                 }
 
@@ -1842,6 +1857,16 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
                     formatSorting.removeAll { it.startsWith("res:") || it.startsWith("vcodec:") || it.startsWith("vext:") || it == "fps" }
                 }
 
+                // YTindir: the quick card's choices: the resolution first, then the frame rate, then the
+                // codec they stand for (H.264, or AV1 before VP9 for 2K and 4K), whatever the order setting says
+                val quickVideoCodec = if (usingGenericFormat && socialSite == null && hasGenericResulutionFormat.isNotBlank()) {
+                    QuickFormats.ytdlpVideoCodec(downloadItem.format)
+                } else null
+                if (quickVideoCodec != null) {
+                    formatSorting.removeAll { it.startsWith("res:") || it.startsWith("vcodec:") || it == "fps" }
+                    formatSorting.addAll(0, listOf("res:$hasGenericResulutionFormat", "fps", "vcodec:$quickVideoCodec"))
+                }
+
                 if (downloadItem.format.format_id == context.resources.getString(R.string.worst_quality) || downloadItem.format.format_id == "worst") {
                     formatSorting.remove("+size")
                     formatSorting.remove("size")
@@ -1881,6 +1906,17 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
                         SocialMediaUtil.Site.VK ->
                             formatString = "bv*[format_id!^=url][format_id!^=cache]+ba/b[format_id!^=url][format_id!^=cache]/$formatString"
                         else -> {}
+                    }
+                }
+                // YTindir: a quick choice looks for its codec first; the usual order stays as fallback
+                if (quickVideoCodec != null) {
+                    QuickFormats.videoCodecFilter(downloadItem.format)?.let { filter ->
+                        formatString = when {
+                            downloadItem.videoPreferences.removeAudio -> "bv$filter/$formatString"
+                            preferredAudioLanguage.isNotBlank() ->
+                                "bv*$filter+ba[language^=$preferredAudioLanguage]/bv*$filter+ba/$formatString"
+                            else -> "bv*$filter+ba/$formatString"
+                        }
                     }
                 }
                 if (downloadItem.downloadSections.isNotBlank()) {
@@ -1959,6 +1995,11 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
             DownloadType.command -> {
                 if (!writtenPath) {
                     request.addOption("-P", downDir.absolutePath)
+                }
+
+                // YTindir: the quick card's thumbnail download reads YouTube like the other downloads
+                if (downloadItem.format.format_id == QuickFormats.THUMBNAIL && downloadItem.url.isYoutubeURL()) {
+                    ytDlRequest.setYoutubeExtractorArgs(downloadItem.url)
                 }
 
                 request.addOption(downloadItem.format.format_note)

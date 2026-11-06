@@ -133,7 +133,14 @@ object UiUtil {
         if (container == "Default" || container.isBlank()) container = context.getString(R.string.defaultValue)
 
         formatCard.findViewById<TextView>(R.id.container).text = container.uppercase()
+        // YTindir: the quick card's video choices are "2160p" (not "~2160p") with a 4K / 2K / HD badge
+        if (QuickFormats.isQuickVideo(chosenFormat)) formatNote = chosenFormat.format_note
         formatCard.findViewById<TextView>(R.id.format_note).text = formatNote.uppercase()
+        formatCard.findViewById<TextView>(R.id.quality_badge)?.apply {
+            val badge = QuickFormats.badge(QuickFormats.heightOf(chosenFormat))
+            text = badge
+            isVisible = badge != null
+        }
 
         formatCard.findViewById<TextView>(R.id.audio_formats).apply {
             if (!audioFormats.isNullOrEmpty()){
@@ -153,6 +160,7 @@ object UiUtil {
         formatCard.findViewById<TextView>(R.id.format_id).apply {
             // YTindir: placeholder formats (shown before the real formats load) have no real id
             val placeholder = chosenFormat.format_id.contains("ytdlnisgeneric") ||
+                QuickFormats.isQuickAudio(chosenFormat) ||
                 chosenFormat.format_id in listOf("best", "worst", "ba", "wa", "bv", "")
             visibility = if (placeholder) View.GONE else View.VISIBLE
             text = "id: ${chosenFormat.format_id}"
