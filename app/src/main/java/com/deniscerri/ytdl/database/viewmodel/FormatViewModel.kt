@@ -18,6 +18,7 @@ import com.deniscerri.ytdl.ui.downloadcard.MultipleItemFormatTuple
 import com.deniscerri.ytdl.util.Extensions.isYoutubeURL
 import com.deniscerri.ytdl.util.FileUtil
 import com.deniscerri.ytdl.util.FormatUtil
+import com.deniscerri.ytdl.util.QuickPick
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,7 +45,7 @@ class FormatViewModel(private val application: Application) : AndroidViewModel(a
     var filterBy = MutableStateFlow(FormatCategory.valueOf(sharedPreferences.getString("format_filter", "ALL")!!))
 
     // YTindir: a choice from the quick download card's list, picked up by the audio or video tab
-    val quickPick = MutableStateFlow<Format?>(null)
+    val quickPick = MutableStateFlow<QuickPick?>(null)
     // ...and the tab the card switches to for it
     val quickTabSwitch = MutableSharedFlow<DownloadType>(extraBufferCapacity = 1)
 

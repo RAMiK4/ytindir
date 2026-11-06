@@ -321,8 +321,8 @@ class DownloadVideoFragment(private var resultItem: ResultItem? = null, private 
                     }
                 }
                 formatCard.setOnClickListener{
-                    // YTindir: no formats read yet: the quick card's list (video, audio only, thumbnail)
-                    if (!nonSpecific && QuickFormats.hasNoRealFormats(downloadItem)) {
+                    // YTindir: the list like YouTube's download menu (video qualities, audio only, thumbnail)
+                    if (!nonSpecific) {
                         if (parentFragmentManager.findFragmentByTag("quickFormatSheet") == null) {
                             QuickFormatBottomSheetDialog().apply {
                                 item = downloadItem
@@ -337,9 +337,12 @@ class DownloadVideoFragment(private var resultItem: ResultItem? = null, private 
                 // YTindir: a video choice from the quick list, made here or in the audio tab
                 launch {
                     formatViewModel.quickPick.collect { picked ->
-                        if (picked == null || !QuickFormats.isQuickVideo(picked)) return@collect
+                        if (picked == null || picked.type != DownloadType.video) return@collect
                         formatViewModel.quickPick.value = null
-                        listener.onFormatClick(FormatTuple(picked.copy(container = downloadItem.container.ifEmpty { picked.container }), null))
+                        val format = if (QuickFormats.isQuickVideo(picked.format)) {
+                            picked.format.copy(container = downloadItem.container.ifEmpty { picked.format.container })
+                        } else picked.format
+                        listener.onFormatClick(FormatTuple(format, picked.audioFormats))
                     }
                 }
 

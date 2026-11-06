@@ -275,8 +275,8 @@ class DownloadAudioFragment(private var resultItem: ResultItem? = null, private 
                     }
                 }
                 formatCard.setOnClickListener{
-                    // YTindir: no formats read yet: the quick card's list (video, audio only, thumbnail)
-                    if (!nonSpecific && QuickFormats.hasNoRealFormats(downloadItem)) {
+                    // YTindir: the list like YouTube's download menu (video qualities, audio only, thumbnail)
+                    if (!nonSpecific) {
                         if (parentFragmentManager.findFragmentByTag("quickFormatSheet") == null) {
                             QuickFormatBottomSheetDialog().apply {
                                 item = downloadItem
@@ -339,14 +339,14 @@ class DownloadAudioFragment(private var resultItem: ResultItem? = null, private 
                 // tab: its codec, and its file type in the container field
                 launch {
                     formatViewModel.quickPick.collect { picked ->
-                        if (picked == null || !QuickFormats.isQuickAudio(picked)) return@collect
+                        if (picked == null || picked.type != DownloadType.audio) return@collect
                         formatViewModel.quickPick.value = null
-                        val index = containers.indexOf(picked.container)
+                        val index = containers.indexOf(picked.audioContainer ?: picked.format.container)
                         if (index >= 0) {
                             containerClickListener.onItemClick(null, null, index, 0)
                             containerAutoCompleteTextView.setText(containers[index], false)
                         }
-                        listener.onFormatClick(FormatTuple(picked, null))
+                        listener.onFormatClick(FormatTuple(picked.format, null))
                     }
                 }
 

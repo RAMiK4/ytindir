@@ -1,5 +1,6 @@
 package com.deniscerri.ytdl.util
 
+import com.deniscerri.ytdl.database.enums.DownloadType
 import com.deniscerri.ytdl.database.models.DownloadItem
 import com.deniscerri.ytdl.database.models.Format
 
@@ -12,6 +13,17 @@ import com.deniscerri.ytdl.database.models.Format
  * AV1 and VP9 (YouTube has no H.264 above 1080p). Audio choices extract the stream as Opus, M4A
  * or MP3, and the thumbnail is a download of its own.
  */
+/**
+ * A choice from the quick list for the card's audio or video tab: the format (a quick placeholder or one
+ * of the link's real formats), the audio streams of a video choice and the file type of an audio choice.
+ */
+data class QuickPick(
+    val type: DownloadType,
+    val format: Format,
+    val audioFormats: List<Format>? = null,
+    val audioContainer: String? = null
+)
+
 object QuickFormats {
     const val CODEC_H264 = "H.264"
     const val CODEC_AV1_VP9 = "AV1/VP9"
@@ -111,4 +123,63 @@ object QuickFormats {
         return "--skip-download --ignore-no-formats-error --write-thumbnail --convert-thumbnails $convert " +
             "-o \"thumbnail:$THUMBNAIL_FOLDER/%(title).150B [%(id)s].%(ext)s\""
     }
+
+    // ---- the link's real formats, once they are read ----
+
+    private val REAL_HEIGHTS = listOf(4320, 2160, 1440, 1080, 720, 480)
+
+    private fun Format.isVideo() = vcodec.isNotBlank() && vcodec != "none"
+    private fun Format.isAudio() = !isVideo() && acodec.isNotBlank() && acodec != "none"
+    private fun Format.fpsValue() = fps?.toFloatOrNull() ?: 0f
+    private fun Format.tbrValue() = tbr?.toFloatOrNull() ?: 0f
+    private fun Format.isH264() = vcodec.startsWith("avc") || vcodec.startsWith("h264")
+    private fun Format.isAv1() = vcodec.startsWith("av01")
+    private fun Format.isVp9() = vcodec.startsWith("vp9") || vcodec.startsWith("vp09")
+    // HDR / 10 bit streams look washed out on most screens: VP9 profile 2, 10 bit AV1
+    private fun Format.isHdr() = vcodec.startsWith("vp09.02") || (isAv1() && vcodec.split(".").getOrNull(3) == "10")
+
+    /**
+     * One real format per quality, like the quick list: 1080p and below in H.264 (another codec only
+     * when the link has no H.264 there), 2K and above in AV1, else VP9; SDR, highest frame rate first.
+     */
+    fun realVideoChoices(formats: List<Format>): List<Format> {
+        val videos = formats.filter { it.isVideo() && !it.format_id.contains("ytdlnisgeneric") }
+        return REAL_HEIGHTS.mapNotNull { height ->
+            val candidates = videos.filter { heightOf(it) == height }
+            if (candidates.isEmpty()) return@mapNotNull null
+            val codecRank: (Format) -> Int = if (height <= 1080) {
+                { f -> if (f.isH264()) 0 else if (f.isAv1()) 1 else if (f.isVp9()) 2 else 3 }
+            } else {
+                { f -> if (f.isAv1()) 0 else if (f.isVp9()) 1 else if (f.isH264()) 2 else 3 }
+            }
+            candidates.sortedWith(
+                compareBy<Format> { codecRank(it) }
+                    .thenBy { if (it.isHdr()) 1 else 0 }
+                    .thenByDescending { it.fpsValue() }
+                    .thenBy { if (it.filesize > 0) 0 else 1 }
+                    .thenByDescending { it.tbrValue() }
+            ).first()
+        }
+    }
+
+    /** the link's best Opus and AAC (M4A) audio streams, in that order where they exist */
+    fun realAudioChoices(formats: List<Format>, sort: (List<Format>) -> List<Format>): List<Pair<String, Format>> {
+        val audio = formats.filter { it.isAudio() && !it.format_id.endsWith("-drc") }
+        val opus = sort(audio.filter { it.acodec.startsWith("opus") }).firstOrNull()
+        val aac = sort(audio.filter { it.acodec.startsWith("mp4a") || it.acodec.startsWith("aac") }).firstOrNull()
+        return listOfNotNull(opus?.let { "opus" to it }, aac?.let { "m4a" to it })
+    }
+
+    fun codecLabel(format: Format): String = when {
+        format.vcodec == CODEC_H264 || format.isH264() -> "H.264"
+        format.vcodec == CODEC_AV1_VP9 -> "AV1 / VP9"
+        format.isAv1() -> "AV1"
+        format.isVp9() -> "VP9"
+        format.vcodec.startsWith("hev") || format.vcodec.startsWith("hvc") -> "HEVC"
+        else -> format.vcodec.substringBefore(".").uppercase()
+    }
+
+    fun fpsLabel(format: Format): String? = format.fpsValue().takeIf { it > 31 }?.let { "${it.toInt()} fps" }
+
+    fun kbpsLabel(format: Format): String? = format.tbrValue().takeIf { it > 0 }?.let { "${it.toInt()} kbps" }
 }
