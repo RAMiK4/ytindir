@@ -726,7 +726,7 @@
     <string name="quick_thumbnail_downloading">Küçük resim indiriliyor</string>
     <string name="quick_all_formats">Tüm formatlar</string>
     <string name="quick_all_formats_summary">Bağlantının formatlarını dosya boyutlarıyla getirir</string>
-    <string name="quick_hint_larger_file">Daha büyük dosya</string>
+    <string name="quick_hint_best_quality">En iyi kalite</string>
     <string name="quick_hint_better_quality">Daha iyi kalite</string>
     <string name="quick_hint_recommended">Önerilen</string>
     <string name="quick_hint_smaller_file">Daha küçük dosya</string>

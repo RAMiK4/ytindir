@@ -48,6 +48,26 @@ object YoutubeThumbnail {
         return saved
     }
 
+    /** Bytes of the JPG [save] would download, 0 if unknown. Network request: call off the main thread. */
+    fun fetchSize(url: String): Long {
+        val id = url.getIDFromYoutubeURL() ?: return 0
+        for (size in SIZES) {
+            var connection: HttpURLConnection? = null
+            try {
+                connection = URL("https://i.ytimg.com/vi/$id/$size.jpg").openConnection() as HttpURLConnection
+                connection.requestMethod = "HEAD"
+                connection.connectTimeout = 10_000
+                connection.readTimeout = 10_000
+                if (connection.responseCode == HttpURLConnection.HTTP_OK) return connection.contentLengthLong.coerceAtLeast(0)
+            } catch (e: Exception) {
+                return 0
+            } finally {
+                connection?.disconnect()
+            }
+        }
+        return 0
+    }
+
     private fun fetch(url: String): ByteArray? {
         var connection: HttpURLConnection? = null
         return try {

@@ -753,7 +753,7 @@
     <string name="quick_thumbnail_downloading">Скачивание обложки</string>
     <string name="quick_all_formats">Все форматы</string>
     <string name="quick_all_formats_summary">Загружает форматы ссылки с размерами файлов</string>
-    <string name="quick_hint_larger_file">Файл больше</string>
+    <string name="quick_hint_best_quality">Лучшее качество</string>
     <string name="quick_hint_better_quality">Качество выше</string>
     <string name="quick_hint_recommended">Рекомендуется</string>
     <string name="quick_hint_smaller_file">Файл меньше</string>

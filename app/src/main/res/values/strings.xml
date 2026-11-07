@@ -736,7 +736,7 @@
     <string name="quick_thumbnail_downloading">Downloading the thumbnail</string>
     <string name="quick_all_formats">All formats</string>
     <string name="quick_all_formats_summary">Reads the formats of the link, with file sizes</string>
-    <string name="quick_hint_larger_file">Larger file</string>
+    <string name="quick_hint_best_quality">Best quality</string>
     <string name="quick_hint_better_quality">Better quality</string>
     <string name="quick_hint_recommended">Recommended</string>
     <string name="quick_hint_smaller_file">Smaller file</string>

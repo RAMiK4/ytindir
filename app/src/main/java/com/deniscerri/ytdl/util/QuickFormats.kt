@@ -209,7 +209,7 @@ object QuickFormats {
 
     /** What a quality is good for, next to FHD, the recommended one */
     fun hint(height: Int): Int = when {
-        height >= 2160 -> R.string.quick_hint_larger_file
+        height >= 2160 -> R.string.quick_hint_best_quality
         height >= 1440 -> R.string.quick_hint_better_quality
         height >= 1080 -> R.string.quick_hint_recommended
         else -> R.string.quick_hint_smaller_file

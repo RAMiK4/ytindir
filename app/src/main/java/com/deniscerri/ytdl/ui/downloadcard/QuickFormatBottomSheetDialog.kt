@@ -17,6 +17,7 @@ import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import com.deniscerri.ytdl.R
 import com.deniscerri.ytdl.database.enums.DownloadType
@@ -131,7 +132,9 @@ class QuickFormatBottomSheetDialog : BottomSheetDialogFragment() {
         val aac = realAudio.firstOrNull { it.first == "m4a" }?.second
         val m4a = QuickFormats.audioFormats().first { it.format_id == QuickFormats.AUDIO_M4A }
         val m4aFormat = aac ?: m4a
-        addRow(list, m4a.format_note, "≈${aac?.let { QuickFormats.kbps(it) } ?: QuickFormats.USUAL_AAC_KBPS} kbps",
+        // the stream's real bitrate, else YouTube's usual one (approximate)
+        val m4aKbps = aac?.let { QuickFormats.kbps(it) }
+        addRow(list, m4a.format_note, if (m4aKbps != null) "$m4aKbps kbps" else "≈${QuickFormats.USUAL_AAC_KBPS} kbps",
             "AAC · ${getString(R.string.quick_source_audio)}",
             aac?.filesize?.takeIf { it > 0 }?.let { FileUtil.convertFileSize(it) },
             isAudioSelected(m4aFormat, m4a.container)) {
@@ -141,7 +144,8 @@ class QuickFormatBottomSheetDialog : BottomSheetDialogFragment() {
         val mp3Size = QuickFormats.mp3SizeEstimate(aac, item.duration)
         addRow(list, mp3.format_note, "${QuickFormats.MP3_KBPS} kbps",
             "Opus → MP3 · ${getString(R.string.quick_hint_recommended)}",
-            mp3Size?.let { "≈" + FileUtil.convertFileSize(it) },
+            // a constant bitrate MP3 of the link's length
+            mp3Size?.let { FileUtil.convertFileSize(it) },
             isAudioSelected(mp3, mp3.container)) {
             pick(QuickPick(DownloadType.audio, mp3, audioContainer = mp3.container))
         }
@@ -150,10 +154,17 @@ class QuickFormatBottomSheetDialog : BottomSheetDialogFragment() {
         addDivider(list)
         val videoPath = if (item.type == DownloadType.video) item.downloadPath
             else preferences.getString("video_path", FileUtil.getDefaultVideoPath())!!
-        addRow(list, getString(R.string.quick_thumbnail), "JPG", getString(R.string.quick_original_size),
+        val thumbnailRow = addRow(list, getString(R.string.quick_thumbnail), "JPG", getString(R.string.quick_original_size),
             "≈" + FileUtil.convertFileSize(YoutubeThumbnail.USUAL_SIZE_BYTES), false) {
             saveThumbnail(item, videoPath)
             dismiss()
+        }
+        if (item.url.isYoutubeURL()) {
+            // the real size of YouTube's JPG, without the approximate sign
+            viewLifecycleOwner.lifecycleScope.launch {
+                val bytes = withContext(Dispatchers.IO) { YoutubeThumbnail.fetchSize(item.url) }
+                if (bytes > 0) thumbnailRow.findViewById<TextView>(R.id.quick_size).text = FileUtil.convertFileSize(bytes)
+            }
         }
 
         onAllFormats?.let { openAll ->
@@ -191,7 +202,7 @@ class QuickFormatBottomSheetDialog : BottomSheetDialogFragment() {
         })
     }
 
-    private fun addRow(list: LinearLayout, title: CharSequence, badge: String?, subtitle: String, size: String?, selected: Boolean, onClick: () -> Unit) {
+    private fun addRow(list: LinearLayout, title: CharSequence, badge: String?, subtitle: String, size: String?, selected: Boolean, onClick: () -> Unit): View {
         val row = layoutInflater.inflate(R.layout.quick_format_row, list, false)
         row.findViewById<TextView>(R.id.quick_title).text = title
         row.findViewById<TextView>(R.id.quick_badge).apply {
@@ -207,6 +218,7 @@ class QuickFormatBottomSheetDialog : BottomSheetDialogFragment() {
         row.isSelected = selected
         row.setOnClickListener { onClick() }
         list.addView(row)
+        return row
     }
 
     /**
