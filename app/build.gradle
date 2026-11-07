@@ -61,13 +61,20 @@ android {
     }
 
     // GitHub Actions run number keeps each build's versionCode higher than the last.
-    def ciBuildNumber = (System.getenv("GITHUB_RUN_NUMBER") ?: "0").toInteger() % 1000
+    def ciRunNumber = (System.getenv("GITHUB_RUN_NUMBER") ?: "0").toInteger()
+    def ciBuildNumber = ciRunNumber % 1000
+    // The APKs' versionCode is 100 * this + the ABI code (see applicationVariants below) and must stay
+    // below 2147483647 (a 32 bit int): "major * 10000000 + minor * 100000 + ..." passed it at 2.15.0
+    // (2150007604 wrapped round to a negative number, so Android saw an older app and refused to
+    // update). It now grows with the run number only, from above every earlier build (2.14.0 builds
+    // were 2140xxxxxx): 2141000000 + run * 100 + ABI, which lasts until run 64836.
+    def appVersionCode = 21410000 + ciRunNumber
 
     defaultConfig {
         applicationId "com.rl.ytindr"
         minSdk 24
         targetSdk 36
-        versionCode versionMajor * 10000000 + versionMinor * 100000 + versionPatch * 1000 + ciBuildNumber
+        versionCode appVersionCode
         versionName "${versionMajor}.${versionMinor}.${versionPatch}${versionExt}"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         // YTindir: ship the 12 main languages only (smaller APK)
