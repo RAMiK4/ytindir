@@ -16,7 +16,6 @@ import com.deniscerri.ytdl.R
 import com.deniscerri.ytdl.database.enums.DownloadType
 import com.deniscerri.ytdl.database.models.DownloadItem
 import com.deniscerri.ytdl.database.models.Format
-import com.deniscerri.ytdl.database.repository.DownloadRepository
 import com.deniscerri.ytdl.database.viewmodel.DownloadViewModel
 import com.deniscerri.ytdl.database.viewmodel.FormatViewModel
 import com.deniscerri.ytdl.util.FileUtil
@@ -26,7 +25,7 @@ import com.deniscerri.ytdl.util.QuickPick
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.gson.Gson
+import com.google.android.material.color.MaterialColors
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -146,7 +145,7 @@ class QuickFormatBottomSheetDialog : BottomSheetDialogFragment() {
         }
 
         // thumbnail
-        addHeader(list, R.string.quick_thumbnail)
+        addDivider(list)
         val videoPath = if (item.type == DownloadType.video) item.downloadPath
             else preferences.getString("video_path", FileUtil.getDefaultVideoPath())!!
         val folder = FileUtil.formatPath(videoPath)
@@ -169,6 +168,15 @@ class QuickFormatBottomSheetDialog : BottomSheetDialogFragment() {
         val header = layoutInflater.inflate(R.layout.quick_format_header, list, false) as TextView
         header.setText(title)
         list.addView(header)
+    }
+
+    private fun addDivider(list: LinearLayout) {
+        val divider = View(requireContext())
+        divider.setBackgroundColor(MaterialColors.getColor(list, com.google.android.material.R.attr.colorOutlineVariant))
+        val density = resources.displayMetrics.density
+        list.addView(divider, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, maxOf(1, density.toInt())).apply {
+            setMargins((24 * density).toInt(), (6 * density).toInt(), (24 * density).toInt(), (4 * density).toInt())
+        })
     }
 
     private fun addRow(list: LinearLayout, title: String, badge: String?, subtitle: String, size: Long?, selected: Boolean, onClick: () -> Unit) {
@@ -195,24 +203,7 @@ class QuickFormatBottomSheetDialog : BottomSheetDialogFragment() {
         val app = requireActivity().application
         val preferences = PreferenceManager.getDefaultSharedPreferences(app)
         val downloadViewModel = ViewModelProvider(requireActivity())[DownloadViewModel::class.java]
-        val thumbnailItem = Gson().fromJson(Gson().toJson(item), DownloadItem::class.java).apply {
-            id = 0
-            type = DownloadType.command
-            format = Format(
-                format_id = QuickFormats.THUMBNAIL,
-                format_note = QuickFormats.thumbnailCommand(preferences.getString("thumbnail_format", "jpg").orEmpty())
-            )
-            container = ""
-            downloadSections = ""
-            extraCommands = ""
-            customFileNameTemplate = ""
-            SaveThumb = false
-            allFormats = mutableListOf()
-            downloadPath = videoPath
-            status = DownloadRepository.Status.Queued.toString()
-            downloadStartTime = 0
-            logID = null
-        }
+        val thumbnailItem = QuickFormats.thumbnailItem(item, videoPath, preferences.getString("thumbnail_format", "jpg").orEmpty())
         Toast.makeText(app, app.getString(R.string.quick_thumbnail_downloading), Toast.LENGTH_SHORT).show()
         // its own scope: the list (and maybe the card) closes right away
         CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {

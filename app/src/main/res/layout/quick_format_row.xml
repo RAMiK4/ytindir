@@ -7,10 +7,10 @@
     android:clickable="true"
     android:focusable="true"
     android:gravity="center_vertical"
-    android:minHeight="64dp"
+    android:minHeight="52dp"
     android:orientation="horizontal"
     android:paddingHorizontal="24dp"
-    android:paddingVertical="10dp">
+    android:paddingVertical="5dp">
 
     <LinearLayout
         android:layout_width="0dp"
@@ -30,19 +30,19 @@
                 android:layout_height="wrap_content"
                 android:maxLines="1"
                 android:textColor="?attr/colorOnSurface"
-                android:textSize="20sp" />
+                android:textSize="17sp" />
 
             <TextView
                 android:id="@+id/quick_badge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
+                android:layout_marginStart="8dp"
                 android:background="@drawable/rounded_corner"
                 android:backgroundTint="?attr/colorSecondaryContainer"
                 android:paddingHorizontal="6dp"
                 android:paddingVertical="1dp"
                 android:textColor="?attr/colorOnSecondaryContainer"
-                android:textSize="13sp"
+                android:textSize="11sp"
                 android:textStyle="bold"
                 android:visibility="gone" />
 
@@ -52,9 +52,11 @@
             android:id="@+id/quick_subtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
+            android:layout_marginTop="1dp"
+            android:maxLines="1"
+            android:ellipsize="end"
             android:textColor="?attr/colorOnSurfaceVariant"
-            android:textSize="15sp" />
+            android:textSize="13sp" />
 
     </LinearLayout>
 
@@ -65,7 +67,7 @@
         android:layout_marginStart="12dp"
         android:maxLines="1"
         android:textColor="?attr/colorOnSurface"
-        android:textSize="18sp"
+        android:textSize="15sp"
         android:visibility="gone" />
 
     <ImageView

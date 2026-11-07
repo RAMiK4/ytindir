@@ -1857,14 +1857,15 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
                     formatSorting.removeAll { it.startsWith("res:") || it.startsWith("vcodec:") || it.startsWith("vext:") || it == "fps" }
                 }
 
-                // YTindir: the quick card's choices: the resolution first, then the frame rate, then the
-                // codec they stand for (H.264, or AV1 before VP9 for 2K and 4K), whatever the order setting says
+                // YTindir: the quick card's choices: the resolution first, then the frame rate, SDR (HDR files look
+                // washed out on most screens), then the codec they stand for (H.264, or AV1 before VP9 for 2K and 4K),
+                // whatever the order setting says
                 val quickVideoCodec = if (usingGenericFormat && socialSite == null && hasGenericResulutionFormat.isNotBlank()) {
                     QuickFormats.ytdlpVideoCodec(downloadItem.format)
                 } else null
                 if (quickVideoCodec != null) {
                     formatSorting.removeAll { it.startsWith("res:") || it.startsWith("vcodec:") || it == "fps" }
-                    formatSorting.addAll(0, listOf("res:$hasGenericResulutionFormat", "fps", "vcodec:$quickVideoCodec"))
+                    formatSorting.addAll(0, listOf("res:$hasGenericResulutionFormat", "fps", "hdr:SDR", "vcodec:$quickVideoCodec"))
                 }
 
                 if (downloadItem.format.format_id == context.resources.getString(R.string.worst_quality) || downloadItem.format.format_id == "worst") {

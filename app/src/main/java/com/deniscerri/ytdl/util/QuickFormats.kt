@@ -36,16 +36,17 @@ object QuickFormats {
     /** sub folder of the video folder the thumbnails go to */
     const val THUMBNAIL_FOLDER = "Thumbnails"
 
-    private val VIDEO_HEIGHTS = listOf(2160, 1440, 1080, 720, 480)
+    private val VIDEO_HEIGHTS = listOf(2160, 1440, 1080, 720)
     private val GENERIC_HEIGHT = Regex("^(\\d+)p_ytdlnisgeneric$")
     private val NOTE_HEIGHT = Regex("(\\d{3,4})p")
 
     fun videoFormats(container: String): List<Format> = VIDEO_HEIGHTS.map { videoFormat(it, container) }
 
-    private fun videoFormat(height: Int, container: String) = Format(
+    /** [codec]: [CODEC_H264] or [CODEC_AV1_VP9], null for the usual one of the height */
+    fun videoFormat(height: Int, container: String, codec: String? = null) = Format(
         format_id = "${height}p_ytdlnisgeneric",
         container = container,
-        vcodec = if (height > 1080) CODEC_AV1_VP9 else CODEC_H264,
+        vcodec = codec ?: if (height > 1080) CODEC_AV1_VP9 else CODEC_H264,
         acodec = "",
         format_note = "${height}p"
     )
@@ -107,15 +108,37 @@ object QuickFormats {
         return NOTE_HEIGHT.find(format.format_note)?.groupValues?.get(1)?.toIntOrNull()
     }
 
-    /** "4K", "2K", "HD"... for a video height, null below 720p */
+    /** "4K", "2K", "FHD", "HD"... for a video height, null below 720p */
     fun badge(height: Int?): String? = when {
         height == null -> null
         height >= 4320 -> "8K"
         height >= 2160 -> "4K"
         height >= 1440 -> "2K"
+        height >= 1080 -> "FHD"
         height >= 720 -> "HD"
         else -> null
     }
+
+    /**
+     * A thumbnail-only download of [item]'s link: a command download (yt-dlp options in the format note),
+     * saved to [THUMBNAIL_FOLDER] in [videoPath].
+     */
+    fun thumbnailItem(item: DownloadItem, videoPath: String, thumbnailFormat: String): DownloadItem =
+        com.google.gson.Gson().let { gson -> gson.fromJson(gson.toJson(item), DownloadItem::class.java) }.apply {
+            id = 0
+            type = DownloadType.command
+            format = Format(format_id = THUMBNAIL, format_note = thumbnailCommand(thumbnailFormat))
+            container = ""
+            downloadSections = ""
+            extraCommands = ""
+            customFileNameTemplate = ""
+            SaveThumb = false
+            allFormats = mutableListOf()
+            downloadPath = videoPath
+            status = com.deniscerri.ytdl.database.repository.DownloadRepository.Status.Queued.toString()
+            downloadStartTime = 0
+            logID = null
+        }
 
     /** The yt-dlp options of a thumbnail-only download, saved to [THUMBNAIL_FOLDER] in the video folder */
     fun thumbnailCommand(thumbnailFormat: String): String {
@@ -126,7 +149,7 @@ object QuickFormats {
 
     // ---- the link's real formats, once they are read ----
 
-    private val REAL_HEIGHTS = listOf(4320, 2160, 1440, 1080, 720, 480)
+    private val REAL_HEIGHTS = listOf(4320, 2160, 1440, 1080, 720)
 
     private fun Format.isVideo() = vcodec.isNotBlank() && vcodec != "none"
     private fun Format.isAudio() = !isVideo() && acodec.isNotBlank() && acodec != "none"

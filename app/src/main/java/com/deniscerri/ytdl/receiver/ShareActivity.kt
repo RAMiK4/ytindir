@@ -38,6 +38,7 @@ import com.deniscerri.ytdl.database.viewmodel.ResultViewModel
 import com.deniscerri.ytdl.ui.BaseActivity
 import com.deniscerri.ytdl.util.Extensions.extractURL
 import com.deniscerri.ytdl.util.FormatUtil
+import com.deniscerri.ytdl.util.QuickFormats
 import com.deniscerri.ytdl.util.ThemeUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -229,38 +230,67 @@ class ShareActivity : BaseActivity() {
         if (intent?.action != Intent.ACTION_SEND || !intent.getBooleanExtra("BACKGROUND", false)) return false
         val text = intent.getStringExtra(Intent.EXTRA_TEXT) ?: return false
         val url = text.extractURL()
-        val requestedType = intent.getStringExtra("TYPE")?.let { type ->
+        // YTindir: TYPE=thumbnail saves only the thumbnail (the quick download menu of YouTube)
+        val isThumbnail = intent.getStringExtra("TYPE") == "thumbnail"
+        val requestedType = if (isThumbnail) DownloadType.video else intent.getStringExtra("TYPE")?.let { type ->
             runCatching { DownloadType.valueOf(type) }.getOrNull()
         }
         // optional caps from the caller, e.g. 1080 (p) and 192 (kbps); codec and container stay the user's defaults
         val videoHeight = intent.getIntExtra("VIDEO_QUALITY", 0)
         val audioKbps = intent.getIntExtra("AUDIO_BITRATE", 0)
+        // optional: the codec of the video (h264, or av1 for the better of AV1 and VP9) and the audio file type
+        // (opus, m4a or mp3), as in the quick list of the download card
+        val videoCodec = when (intent.getStringExtra("VIDEO_CODEC")?.lowercase()) {
+            "h264", "avc" -> QuickFormats.CODEC_H264
+            "av1", "vp9", "av1_vp9" -> QuickFormats.CODEC_AV1_VP9
+            else -> null
+        }
+        val audioFormat = intent.getStringExtra("AUDIO_FORMAT")?.lowercase()?.let { container ->
+            QuickFormats.audioFormats().firstOrNull { it.container == container }
+        }
 
         val app = application
         val viewModel = ViewModelProvider(this)[DownloadViewModel::class.java]
         val downloadType = viewModel.getDownloadType(requestedType, url)
-        val typeLabel = getString(if (downloadType == DownloadType.audio) R.string.audio else R.string.video)
+        val typeLabel = getString(when {
+            isThumbnail -> R.string.quick_thumbnail
+            downloadType == DownloadType.audio -> R.string.audio
+            else -> R.string.video
+        })
         Toast.makeText(app, "${getString(R.string.downloading)} · $typeLabel", Toast.LENGTH_SHORT).show()
 
         // runs in its own scope: this invisible activity finishes right away
         CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
             runCatching {
-                val item = viewModel.createDownloadItemFromResult(
+                var item = viewModel.createDownloadItemFromResult(
                     result = viewModel.createEmptyResultItem(url),
                     givenType = downloadType
                 )
                 val formatUtil = FormatUtil(app)
-                if (downloadType == DownloadType.video && videoHeight > 0) {
-                    formatUtil.getGenericVideoFormats(app.resources)
+                if (isThumbnail) {
+                    val thumbnailFormat = PreferenceManager.getDefaultSharedPreferences(app).getString("thumbnail_format", "jpg").orEmpty()
+                    item = QuickFormats.thumbnailItem(item, item.downloadPath, thumbnailFormat)
+                } else if (downloadType == DownloadType.video && videoHeight > 0) {
+                    val genericFormat = formatUtil.getGenericVideoFormats(app.resources)
                         .firstOrNull { it.format_id == "${videoHeight}p_ytdlnisgeneric" }
-                        ?.let { item.format = it }
+                    if (genericFormat != null) {
+                        item.format = if (videoCodec != null) {
+                            QuickFormats.videoFormat(videoHeight, genericFormat.container, videoCodec)
+                        } else genericFormat
+                    }
                 }
-                if (downloadType == DownloadType.audio && audioKbps > 0) {
-                    // the bitrate is the output (e.g. mp3) bitrate; the source stream follows the
-                    // audio codec setting (Opus by default, YouTube's best audio)
-                    item.audioPreferences.bitrate = "${audioKbps}k"
+                if (!isThumbnail && downloadType == DownloadType.audio) {
+                    audioFormat?.let {
+                        item.format = it
+                        item.container = it.container
+                    }
+                    if (audioKbps > 0) {
+                        // the bitrate is the output (e.g. mp3) bitrate; the source stream follows the
+                        // audio codec setting (Opus by default, YouTube's best audio)
+                        item.audioPreferences.bitrate = "${audioKbps}k"
+                    }
                 }
-                viewModel.queueDownloads(listOf(item))
+                viewModel.queueDownloads(listOf(item), ignoreDuplicates = isThumbnail)
             }.onSuccess { result ->
                 if (result.duplicateDownloadIDs.isNotEmpty()) withContext(Dispatchers.Main) {
                     Toast.makeText(app, app.getString(R.string.download_already_exists), Toast.LENGTH_SHORT).show()
