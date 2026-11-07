@@ -17,6 +17,7 @@ YTindir is a personal download app powered by [yt-dlp](https://github.com/yt-dlp
 ## ✨ Features
 
 - 🎵 **Audio and video downloads** with format and quality selection
+- ⚡ **Quick download list for YouTube** in YouTube's style: 4K, 2K, 1080p and 720p with file sizes, M4A or MP3 audio, and the thumbnail; also straight from YouTube's own quick download menu in new versions of YouTube Morphe
 - ⭐ **Best quality from Instagram, X and TikTok** by default (TikTok in source quality when available), saved with short names like `username_postid`
 - ✂️ **Trimming and cropping**: download only part of a video, or crop it (for example to a square); the cut screen plays the video from the time you type, and cut files are saved as `Title_1`, `Title_2`…
 - 🧹 **Clean file names**: no characters that Windows or file managers refuse, no emojis or commas
@@ -33,7 +34,7 @@ YTindir is a personal download app powered by [yt-dlp](https://github.com/yt-dlp
 
 ## 🙈 Hidden features
 
-To keep the app simple, these are hidden: terminal, command templates, source watching, scheduled downloads, SponsorBlock, subtitles, extra yt-dlp commands and advanced yt-dlp settings. The code is still there, so they can be brought back later if needed.
+To keep the app simple, these are hidden: terminal, command templates, source watching, scheduled downloads, subtitles, extra yt-dlp commands and advanced yt-dlp settings. The code is still there, so they can be brought back later if needed.
 
 ## 📥 Installation
 

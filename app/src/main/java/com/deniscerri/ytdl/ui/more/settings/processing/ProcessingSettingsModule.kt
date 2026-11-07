@@ -34,10 +34,10 @@ object ProcessingSettingsModule : SettingModule {
                 }
             }
             "sponsorblock_filters" -> {
-                pref.isEnabled = prefs.getBoolean("use_sponsorblock", true)
+                pref.isEnabled = prefs.getBoolean("use_sponsorblock", false)
             }
             "sponsorblock_url" -> {
-                pref.isEnabled = prefs.getBoolean("use_sponsorblock", true)
+                pref.isEnabled = prefs.getBoolean("use_sponsorblock", false)
             }
             "format_id" -> {
                 (pref as EditTextPreference).apply {

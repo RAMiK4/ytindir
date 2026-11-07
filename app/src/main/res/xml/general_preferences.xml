@@ -219,12 +219,22 @@
             android:key="show_terminal"
             app:title="@string/show_terminal" />
 
+        <!-- YTindir: hidden, the share menu's quick download (last used choice, in the background) is gone -->
         <SwitchPreferenceCompat
+            app:isPreferenceVisible="false"
             android:widgetLayout="@layout/preferece_material_switch"
             app:defaultValue="false"
             android:icon="@drawable/baseline_share2_24"
             android:key="show_quick_download_share"
             app:title="@string/show_quick_download_share_menu" />
+
+        <SwitchPreferenceCompat
+            android:widgetLayout="@layout/preferece_material_switch"
+            app:defaultValue="true"
+            android:icon="@drawable/baseline_share2_24"
+            android:key="youtube_quick_format_list"
+            app:title="@string/youtube_quick_format_list"
+            app:summary="@string/youtube_quick_format_list_summary" />
 
         <SwitchPreferenceCompat
             android:widgetLayout="@layout/preferece_material_switch"

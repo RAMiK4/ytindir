@@ -747,4 +747,21 @@
     <string name="sort_most_viewed">Популярные</string>
     <string name="sort_oldest">Старые</string>
     <plurals name="result_views"><item quantity="one">%s просмотр</item><item quantity="few">%s просмотра</item><item quantity="many">%s просмотров</item><item quantity="other">%s просмотра</item></plurals>
+    <string name="quick_download_quality">Качество загрузки</string>
+    <string name="quick_audio_only">Только аудио</string>
+    <string name="quick_thumbnail">Обложка</string>
+    <string name="quick_thumbnail_downloading">Скачивание обложки</string>
+    <string name="quick_all_formats">Все форматы</string>
+    <string name="quick_all_formats_summary">Загружает форматы ссылки с размерами файлов</string>
+    <string name="format_group_original">%1$s • Оригинальная озвучка</string>
+    <string name="format_group_dubbed">%1$s • Озвучка / дубляж (%2$d)</string>
+    <string name="youtube_quick_format_list">Быстрый список качества YouTube</string>
+    <string name="youtube_quick_format_list_summary">Нажатие на качество в карточке загрузки открывает короткий список, как меню загрузки YouTube. Если выключено, открывается список всех форматов</string>
+    <string name="quick_hint_best_quality">Лучшее качество</string>
+    <string name="quick_hint_better_quality">Качество выше</string>
+    <string name="quick_hint_recommended">Рекомендуется</string>
+    <string name="quick_hint_smaller_file">Файл меньше</string>
+    <string name="quick_source_audio">Исходный звук</string>
+    <string name="quick_original_size">Исходный размер</string>
+    <string name="quick_thumbnail_saved">Обложка сохранена</string>
 </resources>

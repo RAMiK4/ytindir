@@ -18,6 +18,8 @@ import com.deniscerri.ytdl.ui.downloadcard.MultipleItemFormatTuple
 import com.deniscerri.ytdl.util.Extensions.isYoutubeURL
 import com.deniscerri.ytdl.util.FileUtil
 import com.deniscerri.ytdl.util.FormatUtil
+import com.deniscerri.ytdl.util.QuickFormats
+import com.deniscerri.ytdl.util.QuickPick
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,14 +43,27 @@ class FormatViewModel(private val application: Application) : AndroidViewModel(a
     private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(application)
 
     var sortBy = FormatSorting.valueOf(sharedPreferences.getString("format_order", "filesize")!!)
-    var filterBy = MutableStateFlow(FormatCategory.valueOf(sharedPreferences.getString("format_filter", "ALL")!!))
+    // YTindir: the filter is gone from the format list, so always every format
+    var filterBy = MutableStateFlow(FormatCategory.ALL)
+
+    // YTindir: a choice from the quick download card's list, picked up by the audio or video tab
+    val quickPick = MutableStateFlow<QuickPick?>(null)
+    // ...and the tab the card switches to for it (kept until the card has switched)
+    val quickTabSwitch = MutableStateFlow<DownloadType?>(null)
+
+    // YTindir: the open groups of dubbed formats in the format list (closed when the list opens)
+    val openFormatGroups = MutableStateFlow(setOf<String>())
+
+    fun toggleFormatGroup(group: String) {
+        openFormatGroups.value = openFormatGroups.value.let { if (group in it) it - group else it + group }
+    }
 
     private val _noFreeSpace = MutableSharedFlow<String?>()
     val noFreeSpace = _noFreeSpace.asSharedFlow()
 
     init {
         downloadRepository = DownloadRepository(DBManager.getInstance(application).downloadDao)
-        formats = combine(listOf(selectedItemsSharedFlow, filterBy)) { f ->
+        formats = combine(listOf(selectedItemsSharedFlow, filterBy, openFormatGroups)) { f ->
             val items = selectedItems.value
 
             if (items.isEmpty()) {
@@ -80,6 +95,7 @@ class FormatViewModel(private val application: Application) : AndroidViewModel(a
                             DownloadType.audio -> chosenFormats.filter { it.format_note.contains("audio", ignoreCase = true) }
                             else -> chosenFormats
                         }
+                        chosenFormats = QuickFormats.withoutLowQualities(chosenFormats)
                         chosenFormats.forEach {
                             it.filesize = items.map { itm -> itm.allFormats }.flatten().filter { f -> f.format_id == it.format_id }.sumOf { itt -> itt.filesize }
                         }
@@ -87,7 +103,8 @@ class FormatViewModel(private val application: Application) : AndroidViewModel(a
                         chosenFormats = formats
                     }
                 }else{
-                    chosenFormats = formats
+                    // YTindir: no low quality audio or videos below 480p (when the link has better ones)
+                    chosenFormats = QuickFormats.withoutLowQualities(formats)
                     if(!isMissingFormats.value){
                         if(items.first().type == DownloadType.audio){
                             chosenFormats = chosenFormats.filter { it.format_note.contains("audio", ignoreCase = true) }
@@ -180,13 +197,39 @@ class FormatViewModel(private val application: Application) : AndroidViewModel(a
 
 
                 val results = mutableListOf<FormatRecyclerView>()
+                // YTindir: formats with dubbed audio (YouTube's other languages) in a group of their own,
+                // closed until its label is tapped, so the original formats come first
+                val originals = QuickFormats.originalLanguages(finalFormats)
+                fun addSection(title: String, sectionFormats: List<Format>, withLabel: Boolean, dubbedFilter: (Format) -> Boolean = { true }) {
+                    if (originals == null) {
+                        if (withLabel) results.add(FormatRecyclerView(label = title))
+                        results.addAll(sectionFormats.map { FormatRecyclerView(null, it) })
+                        return
+                    }
+                    val (allDubbed, original) = sectionFormats.partition { QuickFormats.isDubbed(it, originals) }
+                    val dubbed = allDubbed.filter(dubbedFilter)
+                    if (original.isNotEmpty()) {
+                        results.add(FormatRecyclerView(label = application.getString(R.string.format_group_original, title)))
+                        results.addAll(original.map { FormatRecyclerView(null, it) })
+                    }
+                    if (dubbed.isNotEmpty()) {
+                        val group = title
+                        val open = group in openFormatGroups.value
+                        val label = application.getString(R.string.format_group_dubbed, title, dubbed.size)
+                        results.add(FormatRecyclerView(label = (if (open) "▾  " else "▸  ") + label, group = group))
+                        if (open) results.addAll(dubbed.map { FormatRecyclerView(null, it) })
+                    }
+                }
+                val isVideoFormat: (Format) -> Boolean = { it.vcodec.isNotBlank() && it.vcodec != "none" }
                 if (canMultiSelectAudio.value) {
-                    results.add(FormatRecyclerView(label = application.getString(R.string.video)))
-                    results.addAll(finalFormats.filter { it.vcodec.isNotBlank() && it.vcodec != "none" }.map { FormatRecyclerView(null, it) })
-                    results.add(FormatRecyclerView(label = application.getString(R.string.audio)))
-                    results.addAll(finalFormats.filter { it.vcodec.isBlank() || it.vcodec == "none" }.map { FormatRecyclerView(null, it) })
+                    // dubbed videos: only 1080p for now (dozens of languages times every quality otherwise)
+                    addSection(application.getString(R.string.video), finalFormats.filter(isVideoFormat), true) {
+                        QuickFormats.qualityHeight(it) == 1080
+                    }
+                    addSection(application.getString(R.string.audio), finalFormats.filterNot(isVideoFormat), true)
                 }else{
-                    results.addAll(finalFormats.map { FormatRecyclerView(null, it) })
+                    val title = application.getString(if (items.first().type == DownloadType.audio) R.string.audio else R.string.video)
+                    addSection(title, finalFormats, false) { !isVideoFormat(it) || QuickFormats.qualityHeight(it) == 1080 }
                 }
 
                 results

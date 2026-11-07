@@ -78,26 +78,46 @@
 
             <TextView
                 android:id="@+id/format_note"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textDirection="locale"
                 android:ellipsize="end"
                 android:gravity="start"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:paddingHorizontal="10dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="6dp"
                 android:textSize="17sp"
                 android:textStyle="bold"
                 app:layout_constrainedWidth="true"
-                app:layout_constraintEnd_toStartOf="@+id/format_id"
+                app:layout_constraintEnd_toStartOf="@+id/quality_badge"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <!-- YTindir: 4K, 2K, HD -->
+            <TextView
+                android:id="@+id/quality_badge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_corner"
+                android:backgroundTint="?attr/colorSecondaryContainer"
+                android:textColor="?attr/colorOnSecondaryContainer"
+                android:paddingHorizontal="6dp"
+                android:paddingVertical="1dp"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:visibility="gone"
+                app:layout_constraintStart_toEndOf="@id/format_note"
+                app:layout_constraintEnd_toStartOf="@id/format_id"
+                app:layout_constraintTop_toTopOf="@id/format_note"
+                app:layout_constraintBottom_toBottomOf="@id/format_note" />
+
             <TextView
                 android:id="@+id/format_id"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:minWidth="40dp"
                 android:layout_height="wrap_content"
                 android:textSize="12sp"
@@ -107,7 +127,7 @@
                 android:gravity="end"
                 android:maxLines="1"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/format_note"
+                app:layout_constraintStart_toEndOf="@id/quality_badge"
                 app:layout_constraintTop_toTopOf="@id/format_note"
                 app:layout_constraintBottom_toBottomOf="@id/format_note"
                 app:layout_constraintVertical_bias="0.0" />

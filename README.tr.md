@@ -21,6 +21,7 @@ YTindir, [yt-dlp](https://github.com/yt-dlp/yt-dlp) kullanan kişisel bir indirm
 ## ✨ Özellikler
 
 - 🎵 **Ses ve video indirme**, format ve kalite seçimiyle, 1000'den fazla siteden
+- ⚡ **YouTube için hızlı indirme listesi**, YouTube stilinde: dosya boyutlarıyla 4K, 2K, 1080p ve 720p, M4A ya da MP3 ses ve küçük resim; YouTube Morphe'nin yeni sürümlerinde YouTube'un kendi hızlı indirme menüsünden de
 - ⭐ **Instagram, X ve TikTok'tan en iyi kalite** varsayılan olarak (TikTok'ta mümkünse kaynak kalite), `kullanıcıadı_gönderiid` gibi kısa adlarla
 - ✂️ **Kesme ve kırpma**: videonun sadece bir bölümünü indirme ya da görüntüyü kırpma (örneğin kare); kesme ekranı yazdığınız süreden oynatır, kesilen dosyalar `Başlık_1`, `Başlık_2`… olarak kaydedilir
 - 🧹 **Temiz dosya adları**: Windows'un ve dosya yöneticilerinin kabul etmediği karakterler, emojiler ve virgüller olmadan
@@ -37,7 +38,7 @@ YTindir, [yt-dlp](https://github.com/yt-dlp/yt-dlp) kullanan kişisel bir indirm
 
 ## 🙈 Gizlenen özellikler
 
-Arayüzü sade tutmak için şunlar gizlendi: terminal, komut şablonları, kaynak izleme, zamanlanmış indirme, SponsorBlock, altyazı, ekstra yt-dlp komutları ve gelişmiş yt-dlp ayarları. Kod içinde duruyorlar; ileride gerekirse tekrar açılabilirler.
+Arayüzü sade tutmak için şunlar gizlendi: terminal, komut şablonları, kaynak izleme, zamanlanmış indirme, altyazı, ekstra yt-dlp komutları ve gelişmiş yt-dlp ayarları. Kod içinde duruyorlar; ileride gerekirse tekrar açılabilirler.
 
 ## 📥 Kurulum
 

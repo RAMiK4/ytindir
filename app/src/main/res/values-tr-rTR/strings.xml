@@ -720,4 +720,21 @@
     <string name="sort_most_viewed">En çok izlenen</string>
     <string name="sort_oldest">En eski</string>
     <plurals name="result_views"><item quantity="one">%s görüntüleme</item><item quantity="other">%s görüntüleme</item></plurals>
+    <string name="quick_download_quality">İndirme kalitesi</string>
+    <string name="quick_audio_only">Yalnızca ses</string>
+    <string name="quick_thumbnail">Küçük resim</string>
+    <string name="quick_thumbnail_downloading">Küçük resim indiriliyor</string>
+    <string name="quick_all_formats">Tüm formatlar</string>
+    <string name="quick_all_formats_summary">Bağlantının formatlarını dosya boyutlarıyla getirir</string>
+    <string name="format_group_original">%1$s • Orijinal ses</string>
+    <string name="format_group_dubbed">%1$s • Seslendirme / dublaj (%2$d)</string>
+    <string name="youtube_quick_format_list">YouTube hızlı kalite listesi</string>
+    <string name="youtube_quick_format_list_summary">İndirme kartında kaliteye dokununca YouTube\'un indirme menüsü gibi kısa bir liste açılır. Kapalıyken tüm formatlar listesi açılır</string>
+    <string name="quick_hint_best_quality">En iyi kalite</string>
+    <string name="quick_hint_better_quality">Daha iyi kalite</string>
+    <string name="quick_hint_recommended">Önerilen</string>
+    <string name="quick_hint_smaller_file">Daha küçük dosya</string>
+    <string name="quick_source_audio">Kaynak ses</string>
+    <string name="quick_original_size">Orijinal boyut</string>
+    <string name="quick_thumbnail_saved">Küçük resim kaydedildi</string>
 </resources>

@@ -36,8 +36,10 @@ import com.deniscerri.ytdl.database.viewmodel.YTDLPViewModel
 import com.deniscerri.ytdl.ui.downloadcard.crop.CropVideoBottomSheetDialog
 import com.deniscerri.ytdl.util.Extensions.applyFilenameTemplateForCuts
 import com.deniscerri.ytdl.util.Extensions.createBadge
+import com.deniscerri.ytdl.util.Extensions.isYoutubeURL
 import com.deniscerri.ytdl.util.FileUtil
 import com.deniscerri.ytdl.util.FormatUtil
+import com.deniscerri.ytdl.util.QuickFormats
 import com.deniscerri.ytdl.util.UiUtil
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.chip.Chip
@@ -253,6 +255,12 @@ class DownloadVideoFragment(private var resultItem: ResultItem? = null, private 
 
                 val formatCard = view.findViewById<MaterialCardView>(R.id.format_card_constraintLayout)
 
+                // YTindir: without the formats (quick download), the generic quality is the quick card's choice
+                // for it: "1080p HD, H.264" instead of "~1080p" in the codec setting
+                if (currentDownloadItem == null && QuickFormats.hasNoRealFormats(downloadItem)) {
+                    QuickFormats.toQuickVideo(downloadItem.format, downloadItem.format.container)?.let { downloadItem.format = it }
+                }
+
                 val chosenFormat = downloadItem.format
                 val chosenAudioFormats = downloadItem.allFormats.filter { downloadItem.videoPreferences.audioFormatIDs.contains(it.format_id) }
                 val filesize = UiUtil.populateFormatCard(
@@ -306,11 +314,39 @@ class DownloadVideoFragment(private var resultItem: ResultItem? = null, private 
                     }
 
                 }
-                formatCard.setOnClickListener{
+                fun showFormatSheet() {
                     if (parentFragmentManager.findFragmentByTag("formatSheet") == null){
                         formatViewModel.setItem(downloadItem, !nonSpecific)
                         val bottomSheet = FormatSelectionBottomSheetDialog(listener)
                         bottomSheet.show(parentFragmentManager, "formatSheet")
+                    }
+                }
+                formatCard.setOnClickListener{
+                    // YTindir: the list like YouTube's download menu (video qualities, audio only, thumbnail),
+                    // for YouTube links for now (unless turned off in the settings); other sites keep the full list
+                    val quickList = PreferenceManager.getDefaultSharedPreferences(requireContext())
+                        .getBoolean("youtube_quick_format_list", true)
+                    if (!nonSpecific && quickList && downloadItem.url.isYoutubeURL()) {
+                        if (parentFragmentManager.findFragmentByTag("quickFormatSheet") == null) {
+                            QuickFormatBottomSheetDialog().apply {
+                                item = downloadItem
+                                onAllFormats = { showFormatSheet() }
+                            }.show(parentFragmentManager, "quickFormatSheet")
+                        }
+                    } else {
+                        showFormatSheet()
+                    }
+                }
+
+                // YTindir: a video choice from the quick list, made here or in the audio tab
+                launch {
+                    formatViewModel.quickPick.collect { picked ->
+                        if (picked == null || picked.type != DownloadType.video) return@collect
+                        formatViewModel.quickPick.value = null
+                        val format = if (QuickFormats.isQuickVideo(picked.format)) {
+                            picked.format.copy(container = downloadItem.container.ifEmpty { picked.format.container })
+                        } else picked.format
+                        listener.onFormatClick(FormatTuple(format, picked.audioFormats))
                     }
                 }
 
