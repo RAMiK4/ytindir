@@ -79,6 +79,10 @@ class FormatAdapter(onItemClickListener: OnItemClickListener, activity: Activity
         if (viewType == 0) {
             val button = holder.label
             button?.text = itm.label
+            // YTindir: the label of a group of dubbed formats opens and closes it
+            val group = itm.group
+            button?.isClickable = group != null
+            button?.setOnClickListener(if (group != null) View.OnClickListener { onItemClickListener.onGroupToggle(group) } else null)
             return
         }
 
@@ -123,12 +127,13 @@ class FormatAdapter(onItemClickListener: OnItemClickListener, activity: Activity
 
     interface OnItemClickListener {
         fun onItemSelect(item: Format, audioFormats: List<Format>?)
+        fun onGroupToggle(group: String) {}
     }
 
     companion object {
         private val DIFF_CALLBACK: DiffUtil.ItemCallback<FormatRecyclerView> = object : DiffUtil.ItemCallback<FormatRecyclerView>() {
             override fun areItemsTheSame(oldItem: FormatRecyclerView, newItem: FormatRecyclerView): Boolean {
-                return oldItem.label == newItem.label && oldItem.format?.format_id == newItem.format?.format_id && oldItem.format?.format_note == newItem.format?.format_note
+                return oldItem.group == newItem.group && (oldItem.group != null || oldItem.label == newItem.label) && oldItem.format?.format_id == newItem.format?.format_id && oldItem.format?.format_note == newItem.format?.format_note
             }
 
             override fun areContentsTheSame(oldItem: FormatRecyclerView, newItem: FormatRecyclerView): Boolean {

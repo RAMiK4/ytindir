@@ -4,15 +4,13 @@
 
     <PreferenceCategory android:title="@string/general">
         <SwitchPreferenceCompat
-        app:isPreferenceVisible="false"
             android:widgetLayout="@layout/preferece_material_switch"
-            app:defaultValue="true"
+            app:defaultValue="false"
             app:icon="@drawable/ic_money"
             app:key="use_sponsorblock"
             app:title="@string/use_sponsorblock" />
 
         <MultiSelectListPreference
-        app:isPreferenceVisible="false"
             app:icon="@drawable/ic_money"
             app:dialogTitle="@string/select_sponsorblock_filtering"
             app:entries="@array/sponsorblock_settings_entries"
@@ -22,7 +20,6 @@
             app:title="SponsorBlock" />
 
         <EditTextPreference
-        app:isPreferenceVisible="false"
             app:icon="@drawable/ic_money"
             app:key="sponsorblock_url"
             app:useSimpleSummaryProvider="true"

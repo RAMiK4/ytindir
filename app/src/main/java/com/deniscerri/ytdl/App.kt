@@ -32,12 +32,41 @@ import kotlinx.coroutines.launch
 
 class App : Application() {
 
+    /**
+     * YTindir: the share menu's "Quick download" entry downloaded the last used choice in the background,
+     * with nothing telling what it would be: turned off for those who had it on.
+     */
+    private fun disableQuickDownloadShare() {
+        runCatching {
+            val alias = android.content.ComponentName(this, "com.deniscerri.ytdl.quickDownloadShareAlias")
+            if (packageManager.getComponentEnabledSetting(alias) == android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED) {
+                packageManager.setComponentEnabledSetting(alias,
+                    android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_DISABLED, android.content.pm.PackageManager.DONT_KILL_APP)
+            }
+            PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean("show_quick_download_share", false).apply()
+        }
+    }
+
     override fun onCreate() {
         super.onCreate()
         instance = this
 
         val sharedPreferences =  PreferenceManager.getDefaultSharedPreferences(this@App)
         setDefaultValues()
+        disableQuickDownloadShare()
+        // YTindir: the format list's filter and its NewPipe format source are gone: back to every format, from yt-dlp
+        PreferenceManager.getDefaultSharedPreferences(this).let { sp ->
+            if (!sp.getBoolean("format_filter_reset", false)) {
+                sp.edit().putString("format_filter", "ALL").putString("formats_source", "yt-dlp")
+                    .putBoolean("format_filter_reset", true).apply()
+            }
+        }
+        // YTindir: SponsorBlock was a hidden setting stored as on; it comes back off, for the user to turn on
+        PreferenceManager.getDefaultSharedPreferences(this).let { sp ->
+            if (!sp.getBoolean("sponsorblock_reset", false)) {
+                sp.edit().putBoolean("use_sponsorblock", false).putBoolean("sponsorblock_reset", true).apply()
+            }
+        }
         ThemeUtil.init(this)
 
         val processName = getProcessNameImpl()

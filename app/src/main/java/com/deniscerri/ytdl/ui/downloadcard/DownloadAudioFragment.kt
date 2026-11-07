@@ -35,8 +35,10 @@ import com.deniscerri.ytdl.database.viewmodel.ResultViewModel
 import com.deniscerri.ytdl.database.viewmodel.YTDLPViewModel
 import com.deniscerri.ytdl.util.Extensions.applyFilenameTemplateForCuts
 import com.deniscerri.ytdl.util.Extensions.createBadge
+import com.deniscerri.ytdl.util.Extensions.isYoutubeURL
 import com.deniscerri.ytdl.util.FileUtil
 import com.deniscerri.ytdl.util.FormatUtil
+import com.deniscerri.ytdl.util.QuickFormats
 import com.deniscerri.ytdl.util.UiUtil
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.chip.Chip
@@ -266,11 +268,27 @@ class DownloadAudioFragment(private var resultItem: ResultItem? = null, private 
                         formatViewModel.checkFreeSpace(filesize, downloadItem.downloadPath)
                     }
                 }
-                formatCard.setOnClickListener{
+                fun showFormatSheet() {
                     if (parentFragmentManager.findFragmentByTag("formatSheet") == null){
                         formatViewModel.setItem(downloadItem, !nonSpecific)
                         val bottomSheet = FormatSelectionBottomSheetDialog(listener)
                         bottomSheet.show(parentFragmentManager, "formatSheet")
+                    }
+                }
+                formatCard.setOnClickListener{
+                    // YTindir: the list like YouTube's download menu (video qualities, audio only, thumbnail),
+                    // for YouTube links for now (unless turned off in the settings); other sites keep the full list
+                    val quickList = PreferenceManager.getDefaultSharedPreferences(requireContext())
+                        .getBoolean("youtube_quick_format_list", true)
+                    if (!nonSpecific && quickList && downloadItem.url.isYoutubeURL()) {
+                        if (parentFragmentManager.findFragmentByTag("quickFormatSheet") == null) {
+                            QuickFormatBottomSheetDialog().apply {
+                                item = downloadItem
+                                onAllFormats = { showFormatSheet() }
+                            }.show(parentFragmentManager, "quickFormatSheet")
+                        }
+                    } else {
+                        showFormatSheet()
                     }
                 }
                 formatCard.setOnLongClickListener {
@@ -293,7 +311,7 @@ class DownloadAudioFragment(private var resultItem: ResultItem? = null, private 
                 }
                 containerAutoCompleteTextView.setText(downloadItem.container.ifEmpty { getString(R.string.defaultValue) }, false)
 
-                (container!!.editText as AutoCompleteTextView?)!!.onItemClickListener =
+                val containerClickListener =
                     AdapterView.OnItemClickListener { _: AdapterView<*>?, _: View?, index: Int, _: Long ->
                         downloadItem.container = containers[index]
                         if (containers[index] == getString(R.string.defaultValue)) downloadItem.container = ""
@@ -319,6 +337,22 @@ class DownloadAudioFragment(private var resultItem: ResultItem? = null, private 
                             selectedThumbnailPrefs = null
                         }
                     }
+                (container!!.editText as AutoCompleteTextView?)!!.onItemClickListener = containerClickListener
+
+                // YTindir: an audio choice from the quick list (Opus, M4A, MP3), made here or in the video
+                // tab: its codec, and its file type in the container field
+                launch {
+                    formatViewModel.quickPick.collect { picked ->
+                        if (picked == null || picked.type != DownloadType.audio) return@collect
+                        formatViewModel.quickPick.value = null
+                        val index = containers.indexOf(picked.audioContainer ?: picked.format.container)
+                        if (index >= 0) {
+                            containerClickListener.onItemClick(null, null, index, 0)
+                            containerAutoCompleteTextView.setText(containers[index], false)
+                        }
+                        listener.onFormatClick(FormatTuple(picked.format, null))
+                    }
+                }
 
 
                 view.findViewById<LinearLayout>(R.id.adjust).apply {

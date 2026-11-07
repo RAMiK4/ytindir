@@ -87,6 +87,8 @@ class FormatSelectionBottomSheetDialog(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         formatViewModel = ViewModelProvider(requireActivity())[FormatViewModel::class.java]
+        // YTindir: the dubbed formats' groups start closed
+        formatViewModel.openFormatGroups.value = setOf()
         formatUtil = FormatUtil(requireContext())
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
         downloadViewModel = ViewModelProvider(this)[DownloadViewModel::class.java]
@@ -145,7 +147,8 @@ class FormatSelectionBottomSheetDialog(
 
         lifecycleScope.launch {
             formatViewModel.showFilterBtn.collectLatest {
-                filterBtn.isVisible = it
+                // YTindir: no format filter or format source choice: every format, read by yt-dlp
+                filterBtn.isVisible = false
             }
         }
 
@@ -440,6 +443,10 @@ class FormatSelectionBottomSheetDialog(
             updateFormatsJob?.cancel(CancellationException())
             parentFragmentManager.beginTransaction().remove(parentFragmentManager.findFragmentByTag("formatSheet")!!).commit()
         }
+    }
+
+    override fun onGroupToggle(group: String) {
+        formatViewModel.toggleFormatGroup(group)
     }
 
     override fun onItemSelect(item: Format, audioFormats: List<Format>?) {

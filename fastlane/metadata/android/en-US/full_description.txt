@@ -3,6 +3,7 @@
 <b>Features</b>
 
 - Audio and video downloads from more than 1000 websites, with format and quality selection
+- Quick download list for YouTube in YouTube's style: 4K, 2K, 1080p and 720p with file sizes, M4A or MP3 audio, and the thumbnail
 - Best quality from Instagram, X and TikTok by default, saved with short names
 - Trimming and cropping; cut files are saved as Title_1, Title_2…
 - Clean file names, without characters Windows or file managers refuse

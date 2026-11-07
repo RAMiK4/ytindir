@@ -730,4 +730,21 @@
     <string name="sort_most_viewed">Most viewed</string>
     <string name="sort_oldest">Oldest</string>
     <plurals name="result_views"><item quantity="one">%s view</item><item quantity="other">%s views</item></plurals>
+    <string name="quick_download_quality">Download quality</string>
+    <string name="quick_audio_only">Audio only</string>
+    <string name="quick_thumbnail">Thumbnail</string>
+    <string name="quick_thumbnail_downloading">Downloading the thumbnail</string>
+    <string name="quick_all_formats">All formats</string>
+    <string name="quick_all_formats_summary">Reads the formats of the link, with file sizes</string>
+    <string name="format_group_original">%1$s • Original audio</string>
+    <string name="format_group_dubbed">%1$s • Dubbed audio (%2$d)</string>
+    <string name="youtube_quick_format_list">YouTube quick quality list</string>
+    <string name="youtube_quick_format_list_summary">Tapping the quality on the download card opens a short list like YouTube\'s download menu. Off: the list of all formats opens</string>
+    <string name="quick_hint_best_quality">Best quality</string>
+    <string name="quick_hint_better_quality">Better quality</string>
+    <string name="quick_hint_recommended">Recommended</string>
+    <string name="quick_hint_smaller_file">Smaller file</string>
+    <string name="quick_source_audio">Source audio</string>
+    <string name="quick_original_size">Original size</string>
+    <string name="quick_thumbnail_saved">Thumbnail saved</string>
 </resources>
