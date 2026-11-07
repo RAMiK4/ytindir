@@ -37,8 +37,10 @@ import com.deniscerri.ytdl.database.viewmodel.HistoryViewModel
 import com.deniscerri.ytdl.database.viewmodel.ResultViewModel
 import com.deniscerri.ytdl.ui.BaseActivity
 import com.deniscerri.ytdl.util.Extensions.extractURL
+import com.deniscerri.ytdl.util.Extensions.isYoutubeURL
 import com.deniscerri.ytdl.util.FormatUtil
 import com.deniscerri.ytdl.util.QuickFormats
+import com.deniscerri.ytdl.util.YoutubeThumbnail
 import com.deniscerri.ytdl.util.ThemeUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -267,6 +269,15 @@ class ShareActivity : BaseActivity() {
                     givenType = downloadType
                 )
                 val formatUtil = FormatUtil(app)
+                if (isThumbnail && url.isYoutubeURL()) {
+                    // YouTube's own JPG, saved right away
+                    val saved = runCatching { YoutubeThumbnail.save(app, url, "", item.downloadPath) }
+                    withContext(Dispatchers.Main) {
+                        saved.onSuccess { Toast.makeText(app, app.getString(R.string.quick_thumbnail_saved), Toast.LENGTH_SHORT).show() }
+                            .onFailure { e -> Toast.makeText(app, e.message ?: app.getString(R.string.errored), Toast.LENGTH_LONG).show() }
+                    }
+                    return@runCatching DownloadViewModel.QueueDownloadsResult("", listOf())
+                }
                 if (isThumbnail) {
                     val thumbnailFormat = PreferenceManager.getDefaultSharedPreferences(app).getString("thumbnail_format", "jpg").orEmpty()
                     item = QuickFormats.thumbnailItem(item, item.downloadPath, thumbnailFormat)

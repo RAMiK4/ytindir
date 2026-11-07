@@ -1577,6 +1577,9 @@ class YTDLPUtil(private val context: Context, private val commandTemplateDao: Co
 
                 if (downloadItem.audioPreferences.bitrate.isNotBlank()) {
                     request.addOption("--audio-quality", downloadItem.audioPreferences.bitrate)
+                } else if (downloadItem.format.format_id == QuickFormats.AUDIO_MP3) {
+                    // YTindir: the quick list's MP3 is 192 kbps
+                    request.addOption("--audio-quality", "${QuickFormats.MP3_KBPS}K")
                 }
 
             }

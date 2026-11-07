@@ -723,11 +723,14 @@
     <string name="quick_download_quality">İndirme kalitesi</string>
     <string name="quick_audio_only">Yalnızca ses</string>
     <string name="quick_thumbnail">Küçük resim</string>
-    <string name="quick_best_quality">En iyi kalite</string>
-    <string name="quick_plays_everywhere">Her yerde oynar</string>
-    <string name="quick_ogg_file">Ogg dosyası</string>
-    <string name="quick_thumbnail_summary">Orijinal boyut, %s klasörüne kaydedilir</string>
     <string name="quick_thumbnail_downloading">Küçük resim indiriliyor</string>
     <string name="quick_all_formats">Tüm formatlar</string>
     <string name="quick_all_formats_summary">Bağlantının formatlarını dosya boyutlarıyla getirir</string>
+    <string name="quick_hint_larger_file">Daha büyük dosya</string>
+    <string name="quick_hint_better_quality">Daha iyi kalite</string>
+    <string name="quick_hint_recommended">Önerilen</string>
+    <string name="quick_hint_smaller_file">Daha küçük dosya</string>
+    <string name="quick_source_audio">Kaynak ses</string>
+    <string name="quick_original_size">Orijinal boyut</string>
+    <string name="quick_thumbnail_saved">Küçük resim kaydedildi</string>
 </resources>

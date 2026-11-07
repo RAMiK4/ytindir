@@ -1,5 +1,6 @@
 package com.deniscerri.ytdl.util
 
+import com.deniscerri.ytdl.R
 import com.deniscerri.ytdl.database.enums.DownloadType
 import com.deniscerri.ytdl.database.models.DownloadItem
 import com.deniscerri.ytdl.database.models.Format
@@ -205,4 +206,34 @@ object QuickFormats {
     fun fpsLabel(format: Format): String? = format.fpsValue().takeIf { it > 31 }?.let { "${it.toInt()} fps" }
 
     fun kbpsLabel(format: Format): String? = format.tbrValue().takeIf { it > 0 }?.let { "${it.toInt()} kbps" }
+
+    /** What a quality is good for, next to FHD, the recommended one */
+    fun hint(height: Int): Int = when {
+        height >= 2160 -> R.string.quick_hint_larger_file
+        height >= 1440 -> R.string.quick_hint_better_quality
+        height >= 1080 -> R.string.quick_hint_recommended
+        else -> R.string.quick_hint_smaller_file
+    }
+
+    fun fps(format: Format): Int? = format.fpsValue().toInt().takeIf { it > 0 }
+
+    fun kbps(format: Format): Int? = format.tbrValue().takeIf { it > 0 }?.let { Math.round(it) }
+
+    /** YouTube's AAC audio (itag 140) */
+    const val USUAL_AAC_KBPS = 128
+    const val MP3_KBPS = 192
+
+    /**
+     * The size of a [MP3_KBPS] MP3 of the link: its length from the AAC stream (size and bitrate),
+     * else from the card's duration ("1:02:03"), null if neither is known.
+     */
+    fun mp3SizeEstimate(aac: Format?, duration: String): Long? {
+        val seconds = aac?.let { f ->
+            val kbps = f.tbrValue()
+            if (f.filesize > 0 && kbps > 0) f.filesize * 8 / (kbps * 1000) else null
+        }?.toDouble() ?: duration.split(":").mapNotNull { it.trim().toIntOrNull() }
+            .takeIf { it.isNotEmpty() && duration.isNotBlank() }
+            ?.fold(0) { total, part -> total * 60 + part }?.toDouble()
+        return seconds?.takeIf { it > 0 }?.let { (it * MP3_KBPS * 1000 / 8).toLong() }
+    }
 }

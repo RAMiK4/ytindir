@@ -750,11 +750,14 @@
     <string name="quick_download_quality">Качество загрузки</string>
     <string name="quick_audio_only">Только аудио</string>
     <string name="quick_thumbnail">Обложка</string>
-    <string name="quick_best_quality">Лучшее качество</string>
-    <string name="quick_plays_everywhere">Воспроизводится везде</string>
-    <string name="quick_ogg_file">Файл Ogg</string>
-    <string name="quick_thumbnail_summary">Исходный размер, сохраняется в папку %s</string>
     <string name="quick_thumbnail_downloading">Скачивание обложки</string>
     <string name="quick_all_formats">Все форматы</string>
     <string name="quick_all_formats_summary">Загружает форматы ссылки с размерами файлов</string>
+    <string name="quick_hint_larger_file">Файл больше</string>
+    <string name="quick_hint_better_quality">Качество выше</string>
+    <string name="quick_hint_recommended">Рекомендуется</string>
+    <string name="quick_hint_smaller_file">Файл меньше</string>
+    <string name="quick_source_audio">Исходный звук</string>
+    <string name="quick_original_size">Исходный размер</string>
+    <string name="quick_thumbnail_saved">Обложка сохранена</string>
 </resources>
