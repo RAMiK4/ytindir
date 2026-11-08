@@ -137,13 +137,19 @@ object UiUtil {
         // YTindir: the quick card's video choices are "2160p" (not "~2160p") with a 4K / 2K / HD badge
         if (QuickFormats.isQuickVideo(chosenFormat)) formatNote = chosenFormat.format_note
         // YTindir: "medium" is the usual audio quality, no label for it (only "high" keeps one)
-        if (chosenFormat.vcodec.isBlank() || chosenFormat.vcodec == "none") formatNote = QuickFormats.audioNoteLabel(formatNote)
+        val isAudioOnly = chosenFormat.vcodec.isBlank() || chosenFormat.vcodec == "none"
+        if (isAudioOnly) formatNote = QuickFormats.audioNoteLabel(formatNote)
         // YTindir: the quick list's MP3 is converted from the link's best audio, at a set bitrate
         val isQuickMp3 = chosenFormat.format_id == QuickFormats.AUDIO_MP3
-        formatCard.findViewById<TextView>(R.id.format_note).text =
-            if (isQuickMp3) QuickFormats.MP3_SOURCE_LABEL else formatNote.uppercase()
+        formatCard.findViewById<TextView>(R.id.format_note).text = formatNote.uppercase()
+        // YTindir: like the quick list: the quality badge (4K, 2K, HD) next to a video, the bitrate next to audio
+        val audioKbps = when {
+            !isAudioOnly -> null
+            isQuickMp3 -> "${QuickFormats.MP3_KBPS} kbps"
+            else -> QuickFormats.kbpsLabel(chosenFormat)
+        }
         formatCard.findViewById<TextView>(R.id.quality_badge)?.apply {
-            val badge = QuickFormats.badge(QuickFormats.heightOf(chosenFormat))
+            val badge = if (isAudioOnly) audioKbps else QuickFormats.badge(QuickFormats.heightOf(chosenFormat))
             text = badge
             isVisible = badge != null
         }
@@ -175,7 +181,10 @@ object UiUtil {
             }
         }
         val codec =
-            if (chosenFormat.encoding != "") {
+            // YTindir: the quick MP3's chip says what it is made from
+            if (isQuickMp3) {
+                QuickFormats.MP3_SOURCE_LABEL
+            } else if (chosenFormat.encoding != "") {
                 chosenFormat.encoding.uppercase()
             }else if (chosenFormat.vcodec != "none" && chosenFormat.vcodec != ""){
                 chosenFormat.vcodec.uppercase()
@@ -184,7 +193,7 @@ object UiUtil {
             }
 
         formatCard.findViewById<TextView>(R.id.codec).apply {
-            if (codec == "" || codec == "none" || isQuickMp3){
+            if (codec == "" || codec == "none"){
                 visibility = View.GONE
             }else{
                 visibility = View.VISIBLE
@@ -229,9 +238,9 @@ object UiUtil {
         }
 
         formatCard.findViewById<TextView>(R.id.bitrate).apply {
-            if (isQuickMp3) {
-                isVisible = true
-                text = "${QuickFormats.MP3_KBPS} kbps"
+            // YTindir: an audio bitrate is in the badge next to the title now
+            if (audioKbps != null) {
+                isVisible = false
             } else if (chosenFormat.tbr.isNullOrBlank() || (chosenFormat.vcodec.isNotBlank() && chosenFormat.vcodec != "none")) {
                 isVisible = false
             }else{

@@ -5,7 +5,7 @@
     <color name="grey">#323232</color>
     <color name="light_grey">#A6A6A6</color>
     <color name="icon_bg">#FFFFFF</color>
-    <color name="icon_fg">#00FF88</color>
+    <color name="icon_fg">#00CC77</color>
 
 
     <color name="blue_md_theme_light_primary">#0058CB</color>
@@ -438,7 +438,7 @@
     <color name="ytindr_light_outlineVariant">#C6C6C6</color>
     <color name="ytindr_light_inverseSurface">#2A2A2A</color>
     <color name="ytindr_light_inverseOnSurface">#F2F2F2</color>
-    <color name="ytindr_light_inversePrimary">#00FF88</color>
+    <color name="ytindr_light_inversePrimary">#00CC77</color>
     <color name="ytindr_light_surfaceContainerLowest">#FFFFFF</color>
     <color name="ytindr_light_surfaceContainerLow">#F3F3F3</color>
     <color name="ytindr_light_surfaceContainer">#F5F5F5</color>
@@ -446,10 +446,10 @@
     <color name="ytindr_light_surfaceContainerHighest">#EAEAEA</color>
     <color name="ytindr_light_surfaceDim">#DADADA</color>
     <color name="ytindr_light_surfaceBright">#F7F7F7</color>
-    <color name="ytindr_dark_primary">#00FF88</color>
+    <color name="ytindr_dark_primary">#00CC77</color>
     <color name="ytindr_dark_onPrimary">#00391B</color>
     <color name="ytindr_dark_primaryContainer">#00532A</color>
-    <color name="ytindr_dark_onPrimaryContainer">#6BFFAF</color>
+    <color name="ytindr_dark_onPrimaryContainer">#7DEDB8</color>
     <color name="ytindr_dark_secondary">#B6CCBC</color>
     <color name="ytindr_dark_onSecondary">#213528</color>
     <color name="ytindr_dark_secondaryContainer">#1F2A23</color>
