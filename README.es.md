@@ -21,11 +21,12 @@ YTindir descarga audio y vídeo de YouTube, Instagram, TikTok, Facebook, VK, X y
 | Fuentes | Resoluciones compatibles |
 | --- | --- |
 | **YouTube** | 8K 60fps, 4K 60fps, 2K 60fps, 1080p FHD 60fps y otras resoluciones |
-| **Instagram** | 2K 60fps, 1080p FHD 60fps y otras resoluciones |
+| **Instagram** | 2K 60fps, 1080p FHD 60fps (publicaciones, reels, historias) y otras resoluciones |
 | **TikTok** | 1080p FHD 60fps (en calidad original) y otras resoluciones |
+| **X (Twitter)** | 2K 60fps, 1080p FHD 60fps y otras resoluciones |
 | **Facebook** | 2K 60fps, 1080p FHD 60fps y otras resoluciones |
 | **VK** | 2K 60fps, 1080p FHD 60fps y otras resoluciones |
-| **Otros sitios** | La resolución más alta que ofrezca el sitio y otras resoluciones |
+| **Otros sitios** | Las resoluciones compatibles más altas que ofrezca el sitio |
 
 ## ✨ Funciones
 
