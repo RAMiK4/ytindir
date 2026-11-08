@@ -14,16 +14,18 @@
 
 <p align="center"><a href="README.md">English</a> · <a href="README.tr.md">Türkçe</a> · <b>Русский</b> · <a href="README.es.md">Español</a></p>
 
-YTindir скачивает аудио и видео с YouTube, Instagram, TikTok, X и [более чем 1000 других сайтов](https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md). Приложение основано на [yt-dlp](https://github.com/yt-dlp/yt-dlp) и [YTDLnis](https://github.com/deniscerri/ytdlnis): интерфейс упрощён, внешний вид обновлён, а при изменениях на сайтах приложение само поддерживает себя в рабочем состоянии.
+YTindir скачивает аудио и видео с YouTube, Instagram, TikTok, Facebook, VK, X и [более чем 1000 других сайтов](https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md). Приложение основано на [yt-dlp](https://github.com/yt-dlp/yt-dlp) и [YTDLnis](https://github.com/deniscerri/ytdlnis): интерфейс упрощён, внешний вид обновлён, а при изменениях на сайтах приложение само поддерживает себя в рабочем состоянии.
 
 ## 🎬 Качество
 
-| Сайт | До |
+| Источники | Поддерживаемые разрешения |
 | --- | --- |
-| **YouTube** | 8K 60 fps, 4K, 2K и 1080p FHD 60 fps |
-| **Instagram** | 2K 60 fps и 1080p 60 fps (публикации, Reels и истории) |
-| **TikTok** | 1080p 60 fps в исходном качестве |
-| **Другие сайты** | Максимальное качество, которое предлагает сайт |
+| **YouTube** | 8K 60fps, 4K 60fps, 2K 60fps, 1080p FHD 60fps и другие разрешения |
+| **Instagram** | 2K 60fps, 1080p FHD 60fps и другие разрешения |
+| **TikTok** | 1080p FHD 60fps (в исходном качестве) и другие разрешения |
+| **Facebook** | 2K 60fps, 1080p FHD 60fps и другие разрешения |
+| **VK** | 2K 60fps, 1080p FHD 60fps и другие разрешения |
+| **Другие сайты** | Максимальное разрешение, которое предлагает сайт и другие разрешения |
 
 ## ✨ Возможности
 

@@ -14,16 +14,18 @@
 
 <p align="center"><a href="README.md">English</a> · <b>Türkçe</b> · <a href="README.ru.md">Русский</a> · <a href="README.es.md">Español</a></p>
 
-YTindir; YouTube, Instagram, TikTok, X ve [1000'den fazla siteden](https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md) ses ve video indirir. [yt-dlp](https://github.com/yt-dlp/yt-dlp) ve [YTDLnis](https://github.com/deniscerri/ytdlnis) üzerine kuruludur; arayüzü sadeleştirilmiş, görünümü yenilenmiş ve sitelerdeki değişikliklere karşı kendi kendini güncelleyecek şekilde ayarlanmıştır.
+YTindir; YouTube, Instagram, TikTok, Facebook, VK, X ve [1000'den fazla siteden](https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md) ses ve video indirir. [yt-dlp](https://github.com/yt-dlp/yt-dlp) ve [YTDLnis](https://github.com/deniscerri/ytdlnis) üzerine kuruludur; arayüzü sadeleştirilmiş, görünümü yenilenmiş ve sitelerdeki değişikliklere karşı kendi kendini güncelleyecek şekilde ayarlanmıştır.
 
 ## 🎬 Kalite
 
-| Site | En yüksek |
+| Kaynaklar | Desteklenen çözünürlükler |
 | --- | --- |
-| **YouTube** | 8K 60 fps, 4K, 2K ve 1080p FHD 60 fps |
-| **Instagram** | 2K 60 fps ve 1080p 60 fps (gönderiler, reels ve hikâyeler) |
-| **TikTok** | Kaynak kalitede 1080p 60 fps |
-| **Diğer siteler** | Sitenin sunduğu en yüksek kalite |
+| **YouTube** | 8K 60fps, 4K 60fps, 2K 60fps, 1080p FHD 60fps ve diğer çözünürlükler |
+| **Instagram** | 2K 60fps, 1080p FHD 60fps ve diğer çözünürlükler |
+| **TikTok** | 1080p FHD 60fps (kaynak kalitede) ve diğer çözünürlükler |
+| **Facebook** | 2K 60fps, 1080p FHD 60fps ve diğer çözünürlükler |
+| **VK** | 2K 60fps, 1080p FHD 60fps ve diğer çözünürlükler |
+| **Diğer siteler** | Sitenin sunduğu en yüksek çözünürlük ve diğer çözünürlükler |
 
 ## ✨ Özellikler
 
