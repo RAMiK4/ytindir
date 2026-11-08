@@ -7,16 +7,14 @@
 <div align="center">
 
 [![Descargar](https://img.shields.io/github/v/release/RAMiK4/ytindir?style=for-the-badge&label=Descargar&color=00E673)](https://github.com/RAMiK4/ytindir/releases/latest)
-![Android](https://img.shields.io/badge/Android-7.0%2B-00E673?style=for-the-badge&logo=android&logoColor=white)
-![Licencia](https://img.shields.io/badge/Licencia-GPL--3.0-2C2C2C?style=for-the-badge)
 
 </div>
 
 <p align="center"><a href="README.md">English</a> · <a href="README.tr.md">Türkçe</a> · <a href="README.ru.md">Русский</a> · <b>Español</b></p>
 
-YTindir descarga audio y vídeo de YouTube, Instagram, TikTok, Facebook, VK, X y [más de 1000 sitios web](https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md). Está basado en [yt-dlp](https://github.com/yt-dlp/yt-dlp) y [YTDLnis](https://github.com/deniscerri/ytdlnis), con una interfaz más sencilla, un aspecto renovado y una configuración que se mantiene funcionando cuando los sitios cambian.
+YTindir descarga audio y vídeo de YouTube, Instagram, TikTok, Facebook, VK, X y más de 1000 sitios web. Está basado en yt-dlp y YTDLnis, con una interfaz más sencilla, un aspecto renovado y una configuración que se mantiene funcionando cuando los sitios cambian.
 
-## 🎬 Calidad
+## 🎬 Calidad de descarga
 
 | Fuentes | Resoluciones compatibles |
 | --- | --- |
@@ -52,7 +50,6 @@ Descarga el APK en **[Releases](https://github.com/RAMiK4/ytindir/releases/lates
 - **[RAMiK4](https://github.com/RAMiK4)**: desarrollo, diseño y funciones adicionales de YTindir
 - **[YTDLnis](https://github.com/deniscerri/ytdlnis)**, de Denis Çerri y sus colaboradores: YTindir es una versión modificada de este proyecto
 - **[yt-dlp](https://github.com/yt-dlp/yt-dlp)** y **[youtubedl-android](https://github.com/yausername/youtubedl-android)**
-- Fuente del logotipo: [Archivo](https://github.com/Omnibus-Type/Archivo), SIL Open Font License
 
 Al igual que el original, YTindir tiene licencia **[GPL-3.0](LICENSE)**.
 

@@ -7,16 +7,14 @@
 <div align="center">
 
 [![İndir](https://img.shields.io/github/v/release/RAMiK4/ytindir?style=for-the-badge&label=%C4%B0ndir&color=00E673)](https://github.com/RAMiK4/ytindir/releases/latest)
-![Android](https://img.shields.io/badge/Android-7.0%2B-00E673?style=for-the-badge&logo=android&logoColor=white)
-![Lisans](https://img.shields.io/badge/Lisans-GPL--3.0-2C2C2C?style=for-the-badge)
 
 </div>
 
 <p align="center"><a href="README.md">English</a> · <b>Türkçe</b> · <a href="README.ru.md">Русский</a> · <a href="README.es.md">Español</a></p>
 
-YTindir; YouTube, Instagram, TikTok, Facebook, VK, X ve [1000'den fazla siteden](https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md) ses ve video indirir. [yt-dlp](https://github.com/yt-dlp/yt-dlp) ve [YTDLnis](https://github.com/deniscerri/ytdlnis) üzerine kuruludur; arayüzü sadeleştirilmiş, görünümü yenilenmiş ve sitelerdeki değişikliklere karşı kendi kendini güncelleyecek şekilde ayarlanmıştır.
+YTindir; YouTube, Instagram, TikTok, Facebook, VK, X ve 1000'den fazla siteden ses ve video indirir. yt-dlp ve YTDLnis üzerine kuruludur; arayüzü sadeleştirilmiş, görünümü yenilenmiş ve sitelerdeki değişikliklere karşı kendi kendini güncelleyecek şekilde ayarlanmıştır.
 
-## 🎬 Kalite
+## 🎬 İndirme kalitesi
 
 | Kaynaklar | Desteklenen çözünürlükler |
 | --- | --- |
@@ -52,7 +50,6 @@ APK'yı **[Releases](https://github.com/RAMiK4/ytindir/releases/latest)** sayfas
 - **[RAMiK4](https://github.com/RAMiK4)**: YTindir'in geliştirmesi, tasarımı ve ek özellikleri
 - **[YTDLnis](https://github.com/deniscerri/ytdlnis)**, Denis Çerri ve katkıda bulunanlar: YTindir bu projenin değiştirilmiş bir sürümüdür
 - **[yt-dlp](https://github.com/yt-dlp/yt-dlp)** ve **[youtubedl-android](https://github.com/yausername/youtubedl-android)**
-- Logo yazı tipi: [Archivo](https://github.com/Omnibus-Type/Archivo), SIL Open Font License
 
 Orijinali gibi YTindir de **[GPL-3.0](LICENSE)** lisanslıdır.
 
