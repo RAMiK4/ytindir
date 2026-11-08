@@ -59,7 +59,6 @@
             app:title="@string/download_over_metered_networks" />
 
         <SwitchPreferenceCompat
-        app:isPreferenceVisible="false"
             android:widgetLayout="@layout/preferece_material_switch"
             app:defaultValue="false"
             android:icon="@drawable/ic_ipv4"
@@ -76,7 +75,6 @@
             app:title="@string/use_cookies" />
 
         <EditTextPreference
-        app:isPreferenceVisible="false"
             android:icon="@drawable/baseline_network_locked_24"
             app:key="proxy"
             app:defaultValue=""

@@ -94,18 +94,22 @@ class DownloadAudioFragment(private var resultItem: ResultItem? = null, private 
         return fragmentView
     }
 
-    // YTindir: the last choice from the quick list, made again on the new formats when the data arrives
-    private var lastQuickPick: QuickPick? = null
+    // YTindir: a quick choice made before the formats were read, made again on the real ones when they arrive
+    private var pendingQuickPick: QuickPick? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         lifecycleScope.launch {
             downloadItem = withContext(Dispatchers.IO) {
                 if (savedInstanceState?.containsKey("updated") == true) {
                     downloadItem.apply {
+                        // YTindir: the user's choice stays when the new data still has it
+                        val previousFormat = format
                         title = resultItem!!.title
                         author = resultItem!!.author
                         allFormats = resultItem!!.formats.toMutableList()
-                        format = downloadViewModel.getFormat(allFormats, DownloadType.audio, url)
+                        format = allFormats.firstOrNull {
+                            it.format_id == previousFormat.format_id && !previousFormat.format_id.contains("ytdlnisgeneric")
+                        } ?: downloadViewModel.getFormat(allFormats, DownloadType.audio, url)
                         duration = resultItem!!.duration
                         playlistIndex = resultItem!!.playlistIndex
                         playlistURL = resultItem!!.playlistURL
@@ -245,6 +249,8 @@ class DownloadAudioFragment(private var resultItem: ResultItem? = null, private 
                 formatViewModel.checkFreeSpace(filesize, downloadItem.downloadPath)
                 val listener = object : OnFormatClickListener {
                     override fun onFormatClick(formatTuple: FormatTuple) {
+                        // a choice of its own: an earlier quick choice is not made again
+                        pendingQuickPick = null
                         formatTuple.format?.apply {
                             downloadItem.format = this
                             val filesize = UiUtil.populateFormatCard(requireContext(), formatCard, this, null, showSize = downloadItem.downloadSections.isEmpty())
@@ -310,7 +316,9 @@ class DownloadAudioFragment(private var resultItem: ResultItem? = null, private 
                     )
                 )
 
-                if (currentDownloadItem == null || !containers.contains(downloadItem.container.ifEmpty { getString(R.string.defaultValue) })){
+                // YTindir: not again when the data arrives, that would undo the user's choice
+                val isUpdate = savedInstanceState?.containsKey("updated") == true
+                if ((currentDownloadItem == null && !isUpdate) || !containers.contains(downloadItem.container.ifEmpty { getString(R.string.defaultValue) })){
                     downloadItem.container = if (containerPreference == getString(R.string.defaultValue)) "" else containerPreference!!
                 }
                 containerAutoCompleteTextView.setText(downloadItem.container.ifEmpty { getString(R.string.defaultValue) }, false)
@@ -355,13 +363,15 @@ class DownloadAudioFragment(private var resultItem: ResultItem? = null, private 
                             containerAutoCompleteTextView.setText(containers[index], false)
                         }
                         listener.onFormatClick(FormatTuple(picked.format, null))
-                        lastQuickPick = picked
+                        // only a placeholder (picked before the formats were read) is made again on the real ones
+                        pendingQuickPick = picked.takeIf { QuickFormats.isQuickAudio(it.format) }
                     }
                 }
 
                 // YTindir: a quick choice made before the data arrived stays chosen, on the link's real formats now
                 if (savedInstanceState?.containsKey("updated") == true) {
-                    lastQuickPick?.let { picked ->
+                    pendingQuickPick?.let { picked ->
+                        pendingQuickPick = null
                         formatViewModel.quickPick.value = QuickFormats.resolveAudioPick(picked, downloadItem.allFormats) {
                             FormatUtil(requireContext()).sortAudioFormats(it, url = downloadItem.url)
                         }

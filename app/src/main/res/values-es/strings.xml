@@ -142,7 +142,6 @@
     <string name="access_all_directories">Permitir el acceso a todos los directorios</string>
     <string name="split_by_chapters">Dividido por capítulos</string>
     <string name="items_imported">Elementos importados</string>
-    <string name="help_translate">Ayuda a traducir</string>
     <string name="redownload">Volver a descargar</string>
     <string name="in_queue">En espera</string>
     <string name="clear_cancelled">Borrar cancelados</string>
@@ -161,7 +160,6 @@
     <string name="create">Crear</string>
     <string name="preferred_download_type">Tipo de descarga preferido</string>
     <string name="access_all_directories_summary">Permitir que la aplicación se descargue en directorios restringidos por defecto</string>
-    <string name="help_translate_summary">Traduce esta aplicación a tu idioma con Weblate</string>
     <string name="cache_cleared">Archivos temporales borrados</string>
     <string name="copy_log">Copiar el registro</string>
     <string name="create_shortcut">Crear un acceso directo</string>
@@ -673,12 +671,8 @@
     <string name="lyrics_plain">Texto plano</string>
     <string name="embed_lyrics_summary">Obtiene la letra de lrclib.net y la incrusta en las descargas de audio</string>
     <string name="save_lrc_file_summary">Guarda la letra sincronizada como archivo .lrc junto al audio</string>
-    <string name="based_on_ytdlnis">Basado en YTDLnis</string>
     <string name="custom_channels">Fork personalizado</string>
     <string name="custom_channels_summary">Actualiza desde tus propios repositorios de yt-dlp</string>
-    <string name="translators">Traductores</string>
-    <string name="translators_summary">Personas que han ayudado a traducir esta aplicación en Weblate</string>
-    <string name="translators_unavailable">La lista de traductores no está disponible en esta build. Aún así puedes ver a todo el que ha contribuido en Weblate.</string>
     <string name="toggle_all">Alternar todo</string>
     <string name="merge_cuts">Fusionar cortes en un solo archivo</string>
     <string name="preferred_format_size_audio">Tamaño de formato de audio preferido</string>

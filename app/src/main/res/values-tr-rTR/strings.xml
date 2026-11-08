@@ -154,7 +154,6 @@
     <string name="confirm_delete_logs_desc">Tüm günlük listesini kalıcı olarak sil.</string>
     <string name="access_all_directories_summary">Uygulamanın varsayılan olarak kısıtlı klasörlere indirmesine izin ver</string>
     <string name="clear_cancelled">İptal edilenleri temizle</string>
-    <string name="help_translate">Çeviriye yardım et</string>
     <string name="all_items_selected">Tüm öğeler seçildi</string>
     <string name="clear_errored">Hatalıları temizle</string>
     <string name="update_template">Şablonu güncelle</string>
@@ -163,7 +162,6 @@
     <string name="preferred_download_type_summary">İndirme kartının açılacağı varsayılan sekme</string>
     <string name="selected">Seçili</string>
     <string name="items_imported">İçe aktarılan öğeler</string>
-    <string name="help_translate_summary">Weblate üzerinden bu uygulamayı kendi diline çevir</string>
     <string name="download_rescheduled_to">İndirme bu zamana planlandı:</string>
     <string name="clear_temporary_files">Geçici dosyaları temizle</string>
     <string name="file_size">Dosya boyutu</string>
@@ -616,7 +614,6 @@
     <string name="check_clipboard_home">Ana ekranda panoyu kontrol et</string>
     <string name="clear_info_json">Info JSON\'ları temizle</string>
     <string name="burn_subs">Altyazıları videoya işle</string>
-    <string name="based_on_ytdlnis">YTDLnis tabanlı</string>
     <string name="update_status_up_to_date">Güncel</string>
     <string name="update_status_installed">Kurulu sürüm</string>
     <string name="version_update_available">%1$s → %2$s</string>
@@ -706,7 +703,7 @@
     <string name="hint_age_restricted">Bu videoda yaş sınırı var. İzleyebilen bir hesabı Daha Fazla → Çerezler\'den ekleyip çerezleri aç.</string>
     <string name="hint_private">Bu video ya da hesap gizli. Yalnızca onu görebilen bir hesapla, Daha Fazla → Çerezler\'den eklenerek indirilebilir.</string>
     <string name="hint_login_required">Bu içerik için hesap gerekiyor. Daha Fazla → Çerezler\'den siteye giriş yapıp çerezleri aç.</string>
-    <string name="hint_geo_blocked">Bu video senin ülkende kullanılamıyor. VPN (ya da Ayarlar → Gelişmiş\'teki proxy) işe yarayabilir.</string>
+    <string name="hint_geo_blocked">Bu video senin ülkende kullanılamıyor. VPN (ya da Ayarlar → İndirmeler\'deki proxy) işe yarayabilir.</string>
     <string name="hint_unavailable">Bu video kaldırılmış ya da artık kullanılamıyor. Bağlantının uygulamada veya tarayıcıda hâlâ açıldığını kontrol et.</string>
     <string name="hint_rate_limited">Site çok fazla istek aldığı için bir süre yanıt vermiyor. Birkaç dakika bekle ya da Daha Fazla → Çerezler\'den hesabını ekle.</string>
     <string name="hint_forbidden">Site indirmeyi reddetti. Tekrar dene; devam ederse Ayarlar → Güncellemeler → yt-dlp\'den yt-dlp\'yi güncelle ya da çerezleri aç.</string>
@@ -746,9 +743,6 @@
         <item quantity="other">%d öğe</item>
     </plurals>
     <string name="reorder_queue">Kuyruğu yeniden sırala</string>
-    <string name="translators">Çevirmenler</string>
-    <string name="translators_summary">Bu uygulamanın Weblate\'te çevrilmesine yardım edenler</string>
-    <string name="translators_unavailable">Çevirmen listesi bu sürümde yok. Katkıda bulunan herkesi Weblate\'te görebilirsin.</string>
     <string name="crop_unavailable_please_update_item">Kırpma özelliğini kullanmak için öğe verilerini güncellemen gerekir</string>
     <plurals name="updates_available_summary">
         <item quantity="one">%d güncelleme var</item>

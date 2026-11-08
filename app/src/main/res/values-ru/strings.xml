@@ -144,7 +144,6 @@
     <string name="import_from_clipboard">Импорт из буфера обмена</string>
     <string name="command">Команда</string>
     <string name="date_added">Дата добавления</string>
-    <string name="help_translate">Помочь с переводом</string>
     <string name="template">Шаблон</string>
     <string name="logs">Журналы</string>
     <string name="command_templates">Шаблоны команд</string>
@@ -154,7 +153,6 @@
     <string name="items_imported">Импортированные элементы</string>
     <string name="log_downloads_summary">Создавать файл журнала для каждой загрузки</string>
     <string name="cancelled">Отменено</string>
-    <string name="help_translate_summary">Переведите это приложение на свой язык с помощью Weblate</string>
     <string name="enable_mtime">Сохранять дату файла с сайта</string>
     <string name="enable_mtime_summary">Выкл.: дата файла — день загрузки, поэтому новые загрузки в галерее идут первыми. Вкл.: дата, которую указывает сайт (обычно дата публикации)</string>
     <string name="error_restarting_download">Ошибка при возобновлении загрузки</string>
@@ -659,9 +657,6 @@
     <string name="retry_all">Повторить все попытки</string>
     <string name="download_anyway">Скачать всё равно</string>
     <string name="toggle_all">Переключить все</string>
-    <string name="translators">Переводчики</string>
-    <string name="translators_summary">Люди, которые помогли перевести это приложение на Weblate</string>
-    <string name="translators_unavailable">Список переводчиков недоступен в этой сборке. Всех, кто помог с переводом, можно посмотреть на Weblate.</string>
     <string name="merge_cuts">Объединить вырезанные фрагменты в один файл</string>
     <string name="write_ytdlp_terminal">Автоматическая запись yt-dlp в терминале</string>
     <string name="clear">Очистить</string>
@@ -703,7 +698,6 @@
     <string name="lyrics_plain">Обычный текст</string>
     <string name="embed_lyrics_summary">Загрузить тексты песен с lrclib.net и встроить их в аудиофайлы для скачивания</string>
     <string name="save_lrc_file_summary">Сохранить синхронизированные тексты песен в формате .lrc рядом с загруженными аудиофайлами</string>
-    <string name="based_on_ytdlnis">Основано на YTDLnis</string>
     <plurals name="updates_available_summary">
         <item quantity="one">Доступно %d обновление</item>
         <item quantity="few">Доступно %d обновления</item>
@@ -733,7 +727,7 @@
     <string name="hint_age_restricted">У этого видео возрастное ограничение. Добавьте аккаунт, которому оно доступно, в Больше → Cookies и включите cookies.</string>
     <string name="hint_private">Это видео или аккаунт закрыты. Скачать можно только с аккаунтом, которому они доступны, добавленным в Больше → Cookies.</string>
     <string name="hint_login_required">Для этого контента нужен аккаунт. Войдите на сайт в Больше → Cookies и включите cookies.</string>
-    <string name="hint_geo_blocked">Это видео недоступно в вашей стране. Поможет VPN (или прокси в Настройки → Дополнительно).</string>
+    <string name="hint_geo_blocked">Это видео недоступно в вашей стране. Поможет VPN (или прокси в Настройки → Загрузки).</string>
     <string name="hint_unavailable">Это видео удалено или больше недоступно. Проверьте, открывается ли ссылка в приложении или браузере.</string>
     <string name="hint_rate_limited">Сайт получил слишком много запросов и временно их ограничил. Подождите несколько минут или добавьте аккаунт в Больше → Cookies.</string>
     <string name="hint_forbidden">Сайт отказал в загрузке. Повторите попытку; если ошибка повторяется, обновите yt-dlp в Настройки → Обновления → yt-dlp или включите cookies.</string>

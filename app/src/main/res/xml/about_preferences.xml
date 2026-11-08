@@ -14,7 +14,7 @@
         app:title="@string/package_name" />
 
     <Preference
-        app:icon="@drawable/ic_code"
+        app:icon="@drawable/baseline_star_half_24"
         app:key="ytindir_project"
         app:summary="github.com/RAMiK4/ytindir"
         app:title="YTindir (by Ramik ☆)">
@@ -24,7 +24,7 @@
     </Preference>
 
     <Preference
-        app:icon="@drawable/baseline_star_half_24"
+        app:icon="@drawable/ic_code"
         app:key="powered_by"
         app:selectable="false"
         app:summary="YTDLnis · yt-dlp"

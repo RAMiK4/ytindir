@@ -208,9 +208,7 @@
     <string name="split_by_chapters">按章节拆分</string>
     <string name="preferred_download_type">首选下载类型</string>
     <string name="items_imported">已导入项目</string>
-    <string name="help_translate_summary">使用 Weblate 将该应用翻译成您的语言</string>
     <string name="file_size">文件大小</string>
-    <string name="help_translate">帮助翻译</string>
     <string name="download_card_summary">下载前修改那个项目的设置，停用此选项会立即启动下载</string>
     <string name="clear_temporary_files_summary">删除缓存文件、infosjsons 和其他临时配置</string>
     <string name="cache_cleared">临时文件已清除</string>
@@ -636,9 +634,6 @@
     <string name="retry_all">全部重试</string>
     <string name="download_anyway">仍要下载</string>
     <string name="toggle_all">全部切换</string>
-    <string name="translators">译者</string>
-    <string name="translators_summary">在 Weblate 上帮助翻译本应用的人</string>
-    <string name="translators_unavailable">这个版本没有译者名单，你仍可以在 Weblate 上看到所有做过贡献的人。</string>
     <string name="merge_cuts">将片段合并到一个文件</string>
     <string name="write_ytdlp_terminal">在终端中自动写 yt-dlp</string>
     <string name="clear">清除</string>
@@ -680,7 +675,6 @@
     <string name="lyrics_plain">纯文本</string>
     <string name="embed_lyrics_summary">从 lrclib.net 获取歌词并将它们嵌入音频下载中</string>
     <string name="save_lrc_file_summary">将同步的歌词保存为音频下载文件旁边的 .lrc 文件</string>
-    <string name="based_on_ytdlnis">基于 YTDLnis</string>
     <plurals name="updates_available_summary">
         <item quantity="other">有 %d 个更新</item>
     </plurals>

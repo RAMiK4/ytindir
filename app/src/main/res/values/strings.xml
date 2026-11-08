@@ -165,11 +165,6 @@
     <string name="clear_errored">Clear errored</string>
     <string name="split_by_chapters">Split by chapters</string>
     <string name="items_imported">Items imported</string>
-    <string name="help_translate">Help translate</string>
-    <string name="help_translate_summary">Translate this app into your language using Weblate</string>
-    <string name="translators">Translators</string>
-    <string name="translators_summary">People who helped translate this app on Weblate</string>
-    <string name="translators_unavailable">The translators list is not available in this build. You can still see everyone who contributed on Weblate.</string>
     <string name="restart">Restart</string>
     <string name="download_rescheduled_to">Download rescheduled to:</string>
     <string name="file_size">File size</string>
@@ -708,7 +703,6 @@
     <string name="embed_lyrics_summary">Fetch lyrics from lrclib.net and embed them in audio downloads</string>
     <string name="save_lrc_file_summary">Save synced lyrics as a .lrc file next to audio downloads</string>
     <string name="ytindr_tone" translatable="false">YTindir</string>
-    <string name="based_on_ytdlnis">Based on YTDLnis</string>
     <string name="crop_unsupported">Cropping is not available for this item</string>
     <string name="hint_instagram_stories_login">Instagram shows stories only to logged-in accounts. Log in to Instagram in More → Cookies and turn Cookies on.</string>
     <string name="hint_instagram_logged_out">Instagram didn\'t return the post. The Instagram account saved in Cookies may have been logged out: log in again in More → Cookies, or try once more.</string>
@@ -716,7 +710,7 @@
     <string name="hint_age_restricted">This video is age-restricted. Add an account that can watch it in More → Cookies and turn Cookies on.</string>
     <string name="hint_private">This video or account is private. It can only be downloaded with an account that can see it, added in More → Cookies.</string>
     <string name="hint_login_required">This content needs an account. Log in to the site in More → Cookies and turn Cookies on.</string>
-    <string name="hint_geo_blocked">This video isn\'t available in your country. A VPN (or a proxy in Settings → Advanced) can help.</string>
+    <string name="hint_geo_blocked">This video isn\'t available in your country. A VPN (or a proxy in Settings → Downloads) can help.</string>
     <string name="hint_unavailable">This video was removed or isn\'t available any more. Check that the link still opens in the app or browser.</string>
     <string name="hint_rate_limited">The site got too many requests and is pausing them. Wait a few minutes, or add your account in More → Cookies.</string>
     <string name="hint_forbidden">The site refused the download. Try again; if it keeps happening, update yt-dlp in Settings → Updates → yt-dlp, or turn Cookies on.</string>

@@ -39,7 +39,9 @@
             android:title="@string/other_youtube_extractor_args" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/command_templates">
+    <!-- YTindir: hidden, the command templates are hidden -->
+    <PreferenceCategory android:title="@string/command_templates"
+        app:isPreferenceVisible="false">
         <SwitchPreferenceCompat
             android:widgetLayout="@layout/preferece_material_switch"
             android:icon="@drawable/ic_terminal"

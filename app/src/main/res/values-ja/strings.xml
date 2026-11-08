@@ -155,8 +155,6 @@
     <string name="in_queue">順番待ち</string>
     <string name="clear_cancelled">キャンセル済みの項目を消去</string>
     <string name="items_imported">インポートされました</string>
-    <string name="help_translate">翻訳にご協力ください</string>
-    <string name="help_translate_summary">ウェブサイト にて本アプリを翻訳できます</string>
     <string name="restart">再起動</string>
     <string name="download_rescheduled_to">スケジュールされたダウンロード:</string>
     <string name="file_size">ファイルサイズ</string>
@@ -595,7 +593,6 @@
     <string name="lyrics_plain">プレーンテキスト</string>
     <string name="embed_lyrics_summary">lrclib.net から歌詞を取得して音声ダウンロードに埋め込みます</string>
     <string name="save_lrc_file_summary">同期された歌詞を音声の横に .lrc ファイルとして保存します</string>
-    <string name="based_on_ytdlnis">YTDLnis ベース</string>
     <string name="custom_channels">カスタムフォーク</string>
     <string name="custom_channels_summary">自分の yt-dlp リリースリポジトリから更新</string>
 </resources>

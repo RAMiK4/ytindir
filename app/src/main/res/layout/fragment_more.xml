@@ -81,6 +81,13 @@
                     style="@style/YTindir.MoreRow"
                     android:text="@string/logs"
                     app:drawableStartCompat="@drawable/ic_baseline_file_open_24" />
+                <View android:id="@+id/more_divider_terminal" android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginStart="60dp" android:background="?attr/colorOutlineVariant" android:alpha="0.5"/>
+                <!-- YTindir: yt-dlp commands of your own, in a terminal -->
+                <TextView
+                    android:id="@+id/terminal"
+                    style="@style/YTindir.MoreRow"
+                    android:text="@string/terminal"
+                    app:drawableStartCompat="@drawable/ic_terminal" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -104,7 +111,6 @@
         </com.google.android.material.card.MaterialCardView>
 
         <!-- Gizli özellikler: kod bu kimliklere hâlâ başvurduğu için görünmez tutuluyor -->
-        <TextView android:id="@+id/terminal" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
         <TextView android:id="@+id/command_templates" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
         <TextView android:id="@+id/observe_sources" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
     </LinearLayout>

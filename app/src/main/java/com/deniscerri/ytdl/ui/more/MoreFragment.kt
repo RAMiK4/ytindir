@@ -84,8 +84,8 @@ class MoreFragment : Fragment() {
         view.findViewById<View>(R.id.more_divider_1).isVisible = downloads.isVisible && downloadQueue.isVisible
         view.findViewById<View>(R.id.more_divider_2).isVisible = downloads.isVisible || downloadQueue.isVisible
 
-        // YTindir: hidden features
-        terminal.isVisible = false
+        // YTindir: the terminal is back (unless it's in the navigation bar); these stay hidden
+        view.findViewById<View>(R.id.more_divider_terminal).isVisible = terminal.isVisible
         commandTemplates.isVisible = false
         observeSources.isVisible = false
 
