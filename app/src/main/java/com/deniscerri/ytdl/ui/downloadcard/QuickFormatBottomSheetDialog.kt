@@ -37,6 +37,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.MutableStateFlow
+import com.google.android.material.progressindicator.LinearProgressIndicator
+import com.deniscerri.ytdl.database.viewmodel.ResultViewModel
 import kotlinx.coroutines.withContext
 
 /**
@@ -49,11 +53,22 @@ import kotlinx.coroutines.withContext
  */
 class QuickFormatBottomSheetDialog : BottomSheetDialogFragment() {
 
-    /** the item of the tab that opened the list */
-    var item: DownloadItem? = null
+    companion object {
+        private const val THUMBNAIL_ROW = "quick_thumbnail_row"
+    }
+
+    /**
+     * The item of the tab that opened the list, read again whenever the tab's item changes (its data and
+     * formats arrive while the list is open), so the list always shows the current title, qualities and sizes
+     */
+    var itemProvider: (() -> DownloadItem?)? = null
 
     /** opens the usual format list (every format, and reading them for a quick download) */
     var onAllFormats: (() -> Unit)? = null
+
+    // the real size of YouTube's thumbnail, read once
+    private var thumbnailBytes = 0L
+    private var thumbnailSizeRequested = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
         inflater.inflate(R.layout.quick_format_sheet, container, false)
@@ -68,14 +83,51 @@ class QuickFormatBottomSheetDialog : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val item = item
         // recreated without the card (e.g. after the process was killed): nothing to pick for
-        if (item == null) {
+        if (itemProvider?.invoke() == null) {
             dismissAllowingStateLoss()
             return
         }
 
+        val formatViewModel = ViewModelProvider(requireActivity())[FormatViewModel::class.java]
+        val resultViewModel = ViewModelProvider(requireActivity())[ResultViewModel::class.java]
+        val progress = view.findViewById<LinearProgressIndicator>(R.id.quick_sheet_progress)
+        val loading = MutableStateFlow(false)
+
+        // the list again whenever the card's item changed (and once now)
+        viewLifecycleOwner.lifecycleScope.launch {
+            formatViewModel.quickItemVersion.collect {
+                itemProvider?.invoke()?.let { render(view, it, loading.value) }
+            }
+        }
+        // a progress bar while the link's data or formats are read
+        viewLifecycleOwner.lifecycleScope.launch {
+            combine(resultViewModel.updatingData, resultViewModel.updatingFormats) { data, formats -> data || formats }
+                .collect { isLoading ->
+                    loading.value = isLoading
+                    progress.isVisible = isLoading
+                    itemProvider?.invoke()?.let { renderHeader(view, it, isLoading) }
+                }
+        }
+    }
+
+    /** The title of what is being downloaded, with its channel and length under it */
+    private fun renderHeader(view: View, item: DownloadItem, loading: Boolean) {
+        view.findViewById<TextView>(R.id.quick_sheet_title).text = item.title.ifBlank {
+            if (loading) getString(R.string.loading) + "…" else item.url
+        }
+        val duration = item.duration.takeUnless { it.isBlank() || it == "-1" || it == "0:00" }
+        val subtitle = listOfNotNull(item.author.takeIf { it.isNotBlank() }, duration).joinToString(" · ")
+        view.findViewById<TextView>(R.id.quick_sheet_subtitle).apply {
+            text = subtitle
+            isVisible = subtitle.isNotBlank()
+        }
+    }
+
+    private fun render(view: View, item: DownloadItem, loading: Boolean) {
+        renderHeader(view, item, loading)
         val list = view.findViewById<LinearLayout>(R.id.quick_format_list)
+        list.removeAllViews()
         val preferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
         val formatViewModel = ViewModelProvider(requireActivity())[FormatViewModel::class.java]
         val downloadViewModel = ViewModelProvider(requireActivity())[DownloadViewModel::class.java]
@@ -159,11 +211,22 @@ class QuickFormatBottomSheetDialog : BottomSheetDialogFragment() {
             saveThumbnail(item, videoPath)
             dismiss()
         }
+        thumbnailRow.tag = THUMBNAIL_ROW
         if (item.url.isYoutubeURL()) {
-            // the real size of YouTube's JPG, without the approximate sign
-            viewLifecycleOwner.lifecycleScope.launch {
-                val bytes = withContext(Dispatchers.IO) { YoutubeThumbnail.fetchSize(item.url) }
-                if (bytes > 0) thumbnailRow.findViewById<TextView>(R.id.quick_size).text = FileUtil.convertFileSize(bytes)
+            // the real size of YouTube's JPG, without the approximate sign (read once, the list is drawn again
+            // as the link's data arrives)
+            if (thumbnailBytes > 0) {
+                thumbnailRow.findViewById<TextView>(R.id.quick_size).text = FileUtil.convertFileSize(thumbnailBytes)
+            } else if (!thumbnailSizeRequested) {
+                thumbnailSizeRequested = true
+                viewLifecycleOwner.lifecycleScope.launch {
+                    val bytes = withContext(Dispatchers.IO) { YoutubeThumbnail.fetchSize(item.url) }
+                    if (bytes > 0) {
+                        thumbnailBytes = bytes
+                        view.findViewById<LinearLayout>(R.id.quick_format_list)
+                            .findViewWithTag<View>(THUMBNAIL_ROW)?.findViewById<TextView>(R.id.quick_size)?.text = FileUtil.convertFileSize(bytes)
+                    }
+                }
             }
         }
 

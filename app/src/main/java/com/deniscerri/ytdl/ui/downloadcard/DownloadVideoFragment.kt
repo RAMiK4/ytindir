@@ -40,6 +40,7 @@ import com.deniscerri.ytdl.util.Extensions.isYoutubeURL
 import com.deniscerri.ytdl.util.FileUtil
 import com.deniscerri.ytdl.util.FormatUtil
 import com.deniscerri.ytdl.util.QuickFormats
+import com.deniscerri.ytdl.util.QuickPick
 import com.deniscerri.ytdl.util.UiUtil
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.chip.Chip
@@ -77,6 +78,8 @@ class DownloadVideoFragment(private var resultItem: ResultItem? = null, private 
     lateinit var downloadItem: DownloadItem
 
     private var disabledCutClicked: Boolean = false
+    // YTindir: the last choice from the quick list, made again on the new formats when the data arrives
+    private var lastQuickPick: QuickPick? = null
     private var disabledCropClicked: Boolean = false
 
 
@@ -329,7 +332,7 @@ class DownloadVideoFragment(private var resultItem: ResultItem? = null, private 
                     if (!nonSpecific && quickList && downloadItem.url.isYoutubeURL()) {
                         if (parentFragmentManager.findFragmentByTag("quickFormatSheet") == null) {
                             QuickFormatBottomSheetDialog().apply {
-                                item = downloadItem
+                                itemProvider = { if (this@DownloadVideoFragment::downloadItem.isInitialized) downloadItem else null }
                                 onAllFormats = { showFormatSheet() }
                             }.show(parentFragmentManager, "quickFormatSheet")
                         }
@@ -347,7 +350,25 @@ class DownloadVideoFragment(private var resultItem: ResultItem? = null, private 
                             picked.format.copy(container = downloadItem.container.ifEmpty { picked.format.container })
                         } else picked.format
                         listener.onFormatClick(FormatTuple(format, picked.audioFormats))
+                        lastQuickPick = picked
                     }
+                }
+
+                // YTindir: a quick choice made before the data arrived stays chosen, on the link's real formats now
+                if (savedInstanceState?.containsKey("updated") == true) {
+                    lastQuickPick?.let { picked ->
+                        val real = QuickFormats.resolveVideoPick(picked, downloadItem.allFormats) {
+                            downloadViewModel.getPreferredAudioFormats(it)
+                        }
+                        formatViewModel.quickPick.value = real
+                    }
+                }
+                formatViewModel.quickItemVersion.value++
+
+                // YTindir: a new YouTube download opens on the quick list
+                if (savedInstanceState?.containsKey("updated") != true && formatViewModel.quickAutoOpen.value == DownloadType.video) {
+                    formatViewModel.quickAutoOpen.value = null
+                    formatCard.post { if (isAdded) formatCard.performClick() }
                 }
 
                 formatCard.setOnLongClickListener {

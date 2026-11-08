@@ -215,6 +215,28 @@ object QuickFormats {
         return listOfNotNull(opus?.let { "opus" to it }, aac?.let { "m4a" to it })
     }
 
+    /**
+     * A video choice made before the link's formats were read, on its real formats now: the real stream of
+     * the same quality with the preferred audio, the choice as it was when the link has none there.
+     */
+    fun resolveVideoPick(picked: QuickPick, formats: List<Format>, preferredAudioIDs: (List<Format>) -> List<String>): QuickPick {
+        if (formats.isEmpty()) return picked
+        val height = if (isQuickVideo(picked.format)) heightOf(picked.format) else null
+        val real = when {
+            height != null -> realVideoChoices(formats).firstOrNull { qualityHeight(it) == height }
+            else -> formats.firstOrNull { it.format_id == picked.format.format_id }
+        } ?: return picked
+        val audioIDs = preferredAudioIDs(formats)
+        return picked.copy(format = real, audioFormats = formats.filter { audioIDs.contains(it.format_id) })
+    }
+
+    /** An audio choice made before the link's formats were read: M4A becomes the link's real AAC stream */
+    fun resolveAudioPick(picked: QuickPick, formats: List<Format>, sort: (List<Format>) -> List<Format>): QuickPick {
+        if (picked.format.format_id != AUDIO_M4A) return picked
+        val aac = realAudioChoices(formats, sort).firstOrNull { it.first == "m4a" }?.second ?: return picked
+        return picked.copy(format = aac)
+    }
+
     /** the quality a real video choice stands for (1080 for a 1920x1072 stream) */
     fun qualityHeight(format: Format): Int? = heightOf(format)?.let { qualityOf(it) ?: it }
 

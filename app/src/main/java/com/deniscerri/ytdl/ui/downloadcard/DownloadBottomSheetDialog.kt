@@ -45,6 +45,7 @@ import com.deniscerri.ytdl.receiver.ShareActivity
 import com.deniscerri.ytdl.ui.BaseActivity
 import com.deniscerri.ytdl.ui.more.cookies.WebViewActivity
 import com.deniscerri.ytdl.util.UiUtil
+import com.deniscerri.ytdl.util.Extensions.isYoutubeURL
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.deniscerri.ytdl.util.FloatingNavUtil
@@ -93,8 +94,12 @@ class DownloadBottomSheetDialog : BottomSheetDialogFragment() {
     private var currentDownloadItem: DownloadItem? = null
     private var incognito: Boolean = false
 
+    // YTindir: recreated (e.g. after rotation): the quick list doesn't open by itself again
+    private var restored = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        restored = savedInstanceState != null
         downloadViewModel = ViewModelProvider(requireActivity())[DownloadViewModel::class.java]
         historyViewModel = ViewModelProvider(requireActivity())[HistoryViewModel::class.java]
         resultViewModel = ViewModelProvider(requireActivity())[ResultViewModel::class.java]
@@ -193,6 +198,14 @@ class DownloadBottomSheetDialog : BottomSheetDialogFragment() {
 
         //remove outdated player url of 1hr so it can refetch it in the cut player
         if (result.creationTime > System.currentTimeMillis() - 3600000) result.urls = ""
+        // YTindir: a new YouTube download opens on the quick list (unless it's turned off in the settings),
+        // in the tab the card opens on; it fills in as the data and formats arrive
+        ViewModelProvider(requireActivity())[FormatViewModel::class.java].quickAutoOpen.value =
+            if (!restored && currentDownloadItem == null && result.url.isYoutubeURL() &&
+                !result.url.endsWith(".txt") && sharedPreferences.getBoolean("youtube_quick_format_list", true)) {
+                if (type == DownloadType.audio || isAudioOnly) DownloadType.audio else DownloadType.video
+            } else null
+
         val fragmentManager = parentFragmentManager
         fragmentAdapter = DownloadFragmentAdapter(
             fragmentManager,

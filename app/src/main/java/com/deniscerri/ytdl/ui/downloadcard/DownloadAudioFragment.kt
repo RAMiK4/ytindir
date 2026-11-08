@@ -39,6 +39,7 @@ import com.deniscerri.ytdl.util.Extensions.isYoutubeURL
 import com.deniscerri.ytdl.util.FileUtil
 import com.deniscerri.ytdl.util.FormatUtil
 import com.deniscerri.ytdl.util.QuickFormats
+import com.deniscerri.ytdl.util.QuickPick
 import com.deniscerri.ytdl.util.UiUtil
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.chip.Chip
@@ -92,6 +93,9 @@ class DownloadAudioFragment(private var resultItem: ResultItem? = null, private 
         shownFields = preferences.getStringSet("modify_download_card", requireContext().resources.getStringArray(R.array.modify_download_card_values).toSet())!!.toList()
         return fragmentView
     }
+
+    // YTindir: the last choice from the quick list, made again on the new formats when the data arrives
+    private var lastQuickPick: QuickPick? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         lifecycleScope.launch {
@@ -283,7 +287,7 @@ class DownloadAudioFragment(private var resultItem: ResultItem? = null, private 
                     if (!nonSpecific && quickList && downloadItem.url.isYoutubeURL()) {
                         if (parentFragmentManager.findFragmentByTag("quickFormatSheet") == null) {
                             QuickFormatBottomSheetDialog().apply {
-                                item = downloadItem
+                                itemProvider = { if (this@DownloadAudioFragment::downloadItem.isInitialized) downloadItem else null }
                                 onAllFormats = { showFormatSheet() }
                             }.show(parentFragmentManager, "quickFormatSheet")
                         }
@@ -351,7 +355,24 @@ class DownloadAudioFragment(private var resultItem: ResultItem? = null, private 
                             containerAutoCompleteTextView.setText(containers[index], false)
                         }
                         listener.onFormatClick(FormatTuple(picked.format, null))
+                        lastQuickPick = picked
                     }
+                }
+
+                // YTindir: a quick choice made before the data arrived stays chosen, on the link's real formats now
+                if (savedInstanceState?.containsKey("updated") == true) {
+                    lastQuickPick?.let { picked ->
+                        formatViewModel.quickPick.value = QuickFormats.resolveAudioPick(picked, downloadItem.allFormats) {
+                            FormatUtil(requireContext()).sortAudioFormats(it, url = downloadItem.url)
+                        }
+                    }
+                }
+                formatViewModel.quickItemVersion.value++
+
+                // YTindir: a new YouTube download opens on the quick list
+                if (savedInstanceState?.containsKey("updated") != true && formatViewModel.quickAutoOpen.value == DownloadType.audio) {
+                    formatViewModel.quickAutoOpen.value = null
+                    formatCard.post { if (isAdded) formatCard.performClick() }
                 }
 
 
