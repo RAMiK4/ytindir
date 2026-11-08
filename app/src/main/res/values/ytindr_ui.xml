@@ -3,6 +3,9 @@
 <resources>
     <color name="ytindr_nav_bg">#E6FFFFFF</color>
     <color name="ytindr_nav_stroke">#1A000000</color>
+    <!-- YTindir: the nav's tint over the blurred content behind it (Android 12+), and its light edge -->
+    <color name="ytindr_nav_glass">#A6FFFFFF</color>
+    <color name="ytindr_nav_glass_stroke">#26000000</color>
     <item name="ytindr_nav_padded" type="id"/>
 
     <style name="YTindir.Shape.Card" parent="">

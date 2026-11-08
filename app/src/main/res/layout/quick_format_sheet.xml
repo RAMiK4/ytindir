@@ -72,11 +72,14 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginEnd="8dp"
-            android:paddingHorizontal="8dp"
+            android:paddingHorizontal="10dp"
             android:maxLines="1"
             android:ellipsize="end"
             android:textSize="13sp"
-            android:text="@string/quick_all_formats" />
+            android:text="@string/quick_all_formats"
+            app:icon="@drawable/ic_format_list"
+            app:iconSize="18dp"
+            app:iconPadding="4dp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/quick_sheet_download"
@@ -85,9 +88,13 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginStart="8dp"
+            android:paddingHorizontal="10dp"
             android:maxLines="1"
+            android:textSize="13sp"
             android:text="@string/download"
-            app:icon="@drawable/baseline_download_24" />
+            app:icon="@drawable/baseline_download_24"
+            app:iconSize="18dp"
+            app:iconPadding="4dp" />
 
     </LinearLayout>
 
