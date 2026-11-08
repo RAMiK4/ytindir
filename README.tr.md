@@ -2,60 +2,57 @@
 	<img src="docs/ytindir-social-preview.png" alt="YTindir" width="100%">
 </p>
 
-<h3 align="center">
-	Sade, hızlı ve kendini onaran Android ses/video indirici
-</h3>
+<h3 align="center">Android için sade, hızlı ve kendini onaran ses ve video indirici</h3>
 
 <div align="center">
 
-[![İndir](https://img.shields.io/github/v/release/RAMiK4/ytindir?style=for-the-badge&label=%C4%B0ndir&color=00C46A)](https://github.com/RAMiK4/ytindir/releases/latest)
-![Android](https://img.shields.io/badge/Android-7.0%2B-00C46A?style=for-the-badge&logo=android&logoColor=white)
+[![İndir](https://img.shields.io/github/v/release/RAMiK4/ytindir?style=for-the-badge&label=%C4%B0ndir&color=00E673)](https://github.com/RAMiK4/ytindir/releases/latest)
+![Android](https://img.shields.io/badge/Android-7.0%2B-00E673?style=for-the-badge&logo=android&logoColor=white)
 ![Lisans](https://img.shields.io/badge/Lisans-GPL--3.0-2C2C2C?style=for-the-badge)
 
 </div>
 
-<p align="center"><a href="README.md">English</a> · <b>Türkçe</b></p>
+<p align="center"><a href="README.md">English</a> · <b>Türkçe</b> · <a href="README.ru.md">Русский</a> · <a href="README.es.md">Español</a></p>
 
-YTindir, [yt-dlp](https://github.com/yt-dlp/yt-dlp) kullanan kişisel bir indirme uygulamasıdır. yt-dlp'nin desteklediği [1000'den fazla siteden](https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md) ses ve video indirebilir. [YTDLnis](https://github.com/deniscerri/ytdlnis) tabanlıdır; gereksiz özellikleri gizlenmiş, görünümü yenilenmiş ve sitelerdeki değişikliklere karşı kendi kendini güncelleyecek şekilde ayarlanmıştır.
+YTindir; YouTube, Instagram, TikTok, X ve [1000'den fazla siteden](https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md) ses ve video indirir. [yt-dlp](https://github.com/yt-dlp/yt-dlp) ve [YTDLnis](https://github.com/deniscerri/ytdlnis) üzerine kuruludur; arayüzü sadeleştirilmiş, görünümü yenilenmiş ve sitelerdeki değişikliklere karşı kendi kendini güncelleyecek şekilde ayarlanmıştır.
+
+## 🎬 Kalite
+
+| Site | En yüksek |
+| --- | --- |
+| **YouTube** | 8K 60 fps, 4K, 2K ve 1080p FHD 60 fps |
+| **Instagram** | 2K 60 fps ve 1080p 60 fps (gönderiler, reels ve hikâyeler) |
+| **TikTok** | Kaynak kalitede 1080p 60 fps |
+| **Diğer siteler** | Sitenin sunduğu en yüksek kalite |
 
 ## ✨ Özellikler
 
-- 🎵 **Ses ve video indirme**, format ve kalite seçimiyle, 1000'den fazla siteden
-- ⚡ **YouTube için hızlı indirme listesi**, YouTube stilinde: dosya boyutlarıyla 4K, 2K, 1080p ve 720p, M4A ya da MP3 ses ve küçük resim; YouTube Morphe'nin yeni sürümlerinde YouTube'un kendi hızlı indirme menüsünden de
-- ⭐ **Instagram, X ve TikTok'tan en iyi kalite** varsayılan olarak (TikTok'ta mümkünse kaynak kalite), `kullanıcıadı_gönderiid` gibi kısa adlarla
-- ✂️ **Kesme ve kırpma**: videonun sadece bir bölümünü indirme ya da görüntüyü kırpma (örneğin kare); kesme ekranı yazdığınız süreden oynatır, kesilen dosyalar `Başlık_1`, `Başlık_2`… olarak kaydedilir
-- 🧹 **Temiz dosya adları**: Windows'un ve dosya yöneticilerinin kabul etmediği karakterler, emojiler ve virgüller olmadan
-- 📤 **Paylaş menüsünden indirme**: bir uygulamada "Paylaş"a basıp linki direkt indirme
-- 🔁 **Kendini onarma**: yt-dlp nightly kanalından otomatik güncellenir; bir indirme hata verirse (örneğin bir site değişikliği yüzünden) yt-dlp'yi güncelleyip indirmeyi bir kez daha kendiliğinden dener
-- 📋 **Hata kaydını tek dokunuşla kopyalama**
-- 🛡️ **YouTube PO token** desteği (BgUtils) ve indirmesi zor videolar için **özel yt-dlp kaynakları**
-- 🎤 **Senkronize şarkı sözleri**: lrclib.net'ten bulunur, uygulamada önizlenir ve ses dosyasına gömülür
-- 🍪 Çerez desteği: kendi hesabınızla açtığınız içerikler için
-- 🎨 Kendi **YTindir** renk tonu ya da **Material You**; açık ve koyu tema, yüksek kontrast modu (**AMOLED** ekranlar için saf siyah) ve yüzen cam görünümlü gezinme çubuğu
-- 📶 Wi-Fi ve mobil veride indirme
-- 🔄 Uygulama içi güncelleme: yeni sürüm çıkınca uygulama haber verir
-- 🌍 12 dil: İngilizce, Türkçe, Rusça, İspanyolca, Portekizce (Brezilya), Almanca, Fransızca, Arapça, Endonezce, Çince, Japonca ve Korece
-
-## 🙈 Gizlenen özellikler
-
-Arayüzü sade tutmak için şunlar gizlendi: terminal, komut şablonları, kaynak izleme, zamanlanmış indirme, altyazı, ekstra yt-dlp komutları ve gelişmiş yt-dlp ayarları. Kod içinde duruyorlar; ileride gerekirse tekrar açılabilirler.
+- ⚡ **YouTube için hızlı indirme listesi**: bağlantıyı paylaşınca hemen açılır; her kalitenin etiketi (8K, 4K, 2K, FHD, HD), kare hızı, kodeği ve gerçek dosya boyutuyla. Birini seçip **İndir**'e dokunmanız yeterli. M4A (kaynak ses), MP3 192 kbps ve orijinal küçük resim seçenekleri de var
+- 📋 Tam kontrol için **Tüm formatlar**: tüm video ve ses parçaları, orijinal ve dublajlı sesler ayrı gruplarda
+- 📤 Herhangi bir uygulamanın **Paylaş menüsünden** ya da yeni YouTube Morphe sürümlerinde doğrudan YouTube'un kendi indirme menüsünden indirme
+- ✂️ **Kesme ve kırpma**: videonun yalnızca bir bölümünü indirin ya da kırpın (örneğin kare)
+- 🎞️ **Uyumlu video**: sosyal medyadaki VP9, AV1 ve HEVC videolar, gereken oynatıcı ve düzenleyiciler için orijinale yakın kalitede H.264'e dönüştürülür
+- 🔁 **Kendini onarma**: yt-dlp kendini günceller; bir sitedeki değişiklik yüzünden indirme başarısız olursa YTindir yt-dlp'yi güncelleyip kendiliğinden yeniden dener
+- 💬 **Anlaşılır hatalar**: her hata neyin yanlış gittiğini ve ne yapılacağını açıklar; sertifika denetimi olmadan yeniden deneme gibi tek dokunuşluk çözümler sunar
+- 🎤 Ses dosyalarına gömülen **senkron şarkı sözleri**, **SponsorBlock**, temiz dosya adları ve sosyal medya için `kullaniciadi_gonderiid` gibi kısa adlar
+- 🍪 İndirmesi zor içerikler için **çerezler**, **PO token**, proxy ve IPv4 seçenekleri
+- 🔄 **Uygulama içi güncelleme**, yedekleme ve geri yükleme, yt-dlp komutları için terminal
+- 🎨 **YTindir** ya da **Material You** renkleri, açık ve koyu tema, AMOLED ekranlar için saf siyah ve buzlu cam görünümlü alt menü
+- 🌍 **12 dil**: İngilizce, Türkçe, Rusça, İspanyolca, Portekizce (Brezilya), Almanca, Fransızca, Arapça, Endonezce, Çince (Basitleştirilmiş), Japonca ve Korece
 
 ## 📥 Kurulum
 
-En son APK'yı **[Releases](https://github.com/RAMiK4/ytindir/releases/latest)** sayfasından indirin. Paket adı `com.rl.ytindr` olduğu için orijinal YTDLnis ile yan yana kurulabilir. Tüm sürümler aynı anahtarla imzalanır; yeni sürümler eskisinin üzerine kurulur.
+APK'yı **[Releases](https://github.com/RAMiK4/ytindir/releases/latest)** sayfasından indirin: çoğu telefon için **arm64**, tüm cihazlar için **universal**. Paket adı `com.rl.ytindr` olduğundan YTindir, YTDLnis'in yanına kurulur; yeni sürümler eskisinin üzerine veriler silinmeden kurulur.
 
-Her sürümde iki APK vardır: **arm64** (çoğu telefon) ve **universal** (tüm cihazlar). En yeni sürümün universal APK'sı her zaman şu bağlantıdadır:
-`https://github.com/RAMiK4/ytindir/releases/latest/download/YTindir-x-universal.apk`
+## 🙏 Emeği geçenler ve lisans
 
-Her `main` güncellemesini GitHub Actions derleyip otomatik olarak yayınlar.
-
-## 🙏 Teşekkürler ve lisans
-
-- **[YTDLnis](https://github.com/deniscerri/ytdlnis)**: Denis Çerri ve katkıda bulunanlar. YTindir bu projenin değiştirilmiş bir sürümüdür.
+- **[RAMiK4](https://github.com/RAMiK4)**: YTindir'in geliştirmesi, tasarımı ve ek özellikleri
+- **[YTDLnis](https://github.com/deniscerri/ytdlnis)**, Denis Çerri ve katkıda bulunanlar: YTindir bu projenin değiştirilmiş bir sürümüdür
 - **[yt-dlp](https://github.com/yt-dlp/yt-dlp)** ve **[youtubedl-android](https://github.com/yausername/youtubedl-android)**
+- Logo yazı tipi: [Archivo](https://github.com/Omnibus-Type/Archivo), SIL Open Font License
 
-Bu proje, orijinali gibi **[GPL-3.0](LICENSE)** lisansı altındadır.
+Orijinali gibi YTindir de **[GPL-3.0](LICENSE)** lisanslıdır.
 
-## ⚖️ Sorumluluk
+## ⚖️ Sorumluluk reddi
 
-YTindir yalnızca indirme hakkınız olan içerikler için tasarlanmıştır. Kullandığınız sitelerin kullanım koşullarına ve telif haklarına uymak kullanıcının sorumluluğundadır.
+YTindir yalnızca indirme hakkınız olan içerikler içindir. Kullandığınız sitelerin kullanım koşullarına ve telif haklarına uymak sizin sorumluluğunuzdadır.

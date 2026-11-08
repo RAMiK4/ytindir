@@ -2,56 +2,56 @@
 	<img src="docs/ytindir-social-preview.png" alt="YTindir: a clean, self-repairing downloader for Android" width="100%">
 </p>
 
+<h3 align="center">A clean, fast and self-repairing audio and video downloader for Android</h3>
+
 <div align="center">
 
-[![Download](https://img.shields.io/github/v/release/RAMiK4/ytindir?style=for-the-badge&label=Download&color=00C46A)](https://github.com/RAMiK4/ytindir/releases/latest)
-![Android](https://img.shields.io/badge/Android-7.0%2B-00C46A?style=for-the-badge&logo=android&logoColor=white)
+[![Download](https://img.shields.io/github/v/release/RAMiK4/ytindir?style=for-the-badge&label=Download&color=00E673)](https://github.com/RAMiK4/ytindir/releases/latest)
+![Android](https://img.shields.io/badge/Android-7.0%2B-00E673?style=for-the-badge&logo=android&logoColor=white)
 ![License](https://img.shields.io/badge/License-GPL--3.0-2C2C2C?style=for-the-badge)
 
 </div>
 
-<p align="center"><b>English</b> · <a href="README.tr.md">Türkçe</a></p>
+<p align="center"><b>English</b> · <a href="README.tr.md">Türkçe</a> · <a href="README.ru.md">Русский</a> · <a href="README.es.md">Español</a></p>
 
-YTindir is a personal download app powered by [yt-dlp](https://github.com/yt-dlp/yt-dlp). It can download audio and video from [more than 1000 websites](https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md). It is based on [YTDLnis](https://github.com/deniscerri/ytdlnis), with the advanced tools tucked away, a refreshed look, and a setup that keeps itself working when websites change.
+YTindir downloads audio and video from YouTube, Instagram, TikTok, X and [more than 1000 other websites](https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md). It is built on [yt-dlp](https://github.com/yt-dlp/yt-dlp) and [YTDLnis](https://github.com/deniscerri/ytdlnis), with a simpler interface, a refreshed look and a setup that keeps itself working when websites change.
+
+## 🎬 Quality
+
+| Site | Up to |
+| --- | --- |
+| **YouTube** | 8K 60 fps, 4K, 2K and 1080p FHD 60 fps |
+| **Instagram** | 2K 60 fps and 1080p 60 fps (posts, reels and stories) |
+| **TikTok** | 1080p 60 fps, in source quality |
+| **Other sites** | The highest quality the site offers |
 
 ## ✨ Features
 
-- 🎵 **Audio and video downloads** with format and quality selection
-- ⚡ **Quick download list for YouTube** in YouTube's style: 4K, 2K, 1080p and 720p with file sizes, M4A or MP3 audio, and the thumbnail; also straight from YouTube's own quick download menu in new versions of YouTube Morphe
-- ⭐ **Best quality from Instagram, X and TikTok** by default (TikTok in source quality when available), saved with short names like `username_postid`
-- ✂️ **Trimming and cropping**: download only part of a video, or crop it (for example to a square); the cut screen plays the video from the time you type, and cut files are saved as `Title_1`, `Title_2`…
-- 🧹 **Clean file names**: no characters that Windows or file managers refuse, no emojis or commas
-- 📤 **Download from the share menu**: tap "Share" in any app and download the link straight away
-- 🔁 **Self-repair**: yt-dlp updates itself from the nightly channel; if a download fails (for example after a website change), YTindir updates yt-dlp and retries the download once on its own
-- 🔄 **In-app updates**: the app tells you when a new YTindir version is out and installs it for you
-- 📋 **Copy the error log** with one tap
-- 🛡️ **YouTube PO token** support (BgUtils) and **custom yt-dlp sources** for videos that are hard to download
-- 🎤 **Synced lyrics** from lrclib.net, previewed in the app and embedded into the audio file
-- 🍪 **Cookie support** for content you open with your own account
-- 🎨 Its own **YTindir** colour tone or **Material You**, in light and dark themes, plus a high contrast mode (pure black for **AMOLED** screens) and a floating glass navigation bar
-- 📶 Downloads over Wi-Fi and mobile data
+- ⚡ **Quick download list for YouTube**: opens as soon as you share a link, with each quality's badge (8K, 4K, 2K, FHD, HD), frame rate, codec and real file size; pick one and tap **Download**. Also M4A (source audio), MP3 192 kbps and the original thumbnail
+- 📋 **All formats** when you want full control: every video and audio track, original and dubbed audio grouped apart
+- 📤 **Download from the share menu** of any app, or straight from YouTube's own download menu in new versions of YouTube Morphe
+- ✂️ **Trim and crop**: download only part of a video, or crop it (for example to a square)
+- 🎞️ **Compatible video**: VP9, AV1 and HEVC from social media converted to H.264 at near-original quality, for players and editors that need it
+- 🔁 **Self-repair**: yt-dlp updates itself; if a download fails after a website change, YTindir updates yt-dlp and retries on its own
+- 💬 **Clear errors**: each error explains what went wrong and what to do, with one-tap fixes such as retrying without the certificate check
+- 🎤 **Synced lyrics** embedded into audio files, **SponsorBlock**, clean file names and short names like `username_postid` for social media
+- 🍪 **Cookies**, **PO token**, proxy and IPv4 options for content that is hard to download
+- 🔄 **In-app updates**, backup and restore, and a terminal for yt-dlp commands
+- 🎨 **YTindir** or **Material You** colours, light and dark themes, pure black for AMOLED screens and a frosted glass navigation bar
 - 🌍 **12 languages**: English, Turkish, Russian, Spanish, Portuguese (Brazil), German, French, Arabic, Indonesian, Chinese (Simplified), Japanese and Korean
-
-## 🙈 Hidden features
-
-To keep the app simple, these are hidden: terminal, command templates, source watching, scheduled downloads, subtitles, extra yt-dlp commands and advanced yt-dlp settings. The code is still there, so they can be brought back later if needed.
 
 ## 📥 Installation
 
-Download the latest APK from the **[Releases](https://github.com/RAMiK4/ytindir/releases/latest)** page. The package name is `com.rl.ytindr`, so it can be installed next to the original YTDLnis. Every release is signed with the same key, so new versions install over the old one without losing data.
-
-Every release has two APKs: **arm64** (most phones) and **universal** (every device). The universal APK of the newest release is always at this link:
-`https://github.com/RAMiK4/ytindir/releases/latest/download/YTindir-x-universal.apk`
-
-Every update to `main` is built by GitHub Actions and published automatically.
+Download the APK from **[Releases](https://github.com/RAMiK4/ytindir/releases/latest)**: **arm64** for most phones, **universal** for every device. The package name is `com.rl.ytindr`, so YTindir installs next to YTDLnis, and new versions install over the old one without losing data.
 
 ## 🙏 Credits and license
 
-- **[YTDLnis](https://github.com/deniscerri/ytdlnis)** by Denis Çerri and contributors. YTindir is a modified version of this project.
+- **[RAMiK4](https://github.com/RAMiK4)**: YTindir's development, design and extra features
+- **[YTDLnis](https://github.com/deniscerri/ytdlnis)** by Denis Çerri and contributors: YTindir is a modified version of this project
 - **[yt-dlp](https://github.com/yt-dlp/yt-dlp)** and **[youtubedl-android](https://github.com/yausername/youtubedl-android)**
 - Logo font: [Archivo](https://github.com/Omnibus-Type/Archivo), SIL Open Font License
 
-Like the original, this project is licensed under **[GPL-3.0](LICENSE)**.
+Like the original, YTindir is licensed under **[GPL-3.0](LICENSE)**.
 
 ## ⚖️ Disclaimer
 
