@@ -6,7 +6,7 @@
       <stop offset="1" stop-color="#0F0F0F"/>
     </radialGradient>
     <linearGradient id="line" gradientUnits="userSpaceOnUse" x1="40" y1="175" x2="160" y2="25">
-      <stop offset="0" stop-color="#00CC77"/>
+      <stop offset="0" stop-color="#00E673"/>
       <stop offset="1" stop-color="#19C6FF"/>
     </linearGradient>
     <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
@@ -15,7 +15,7 @@
   </defs>
   <rect width="200" height="200" rx="44" fill="url(#bg)"/>
   <g fill="none" stroke-linecap="round" stroke-linejoin="round">
-    <g stroke="#00CC77" stroke-width="13" opacity="0.45" filter="url(#glow)">
+    <g stroke="#00E673" stroke-width="13" opacity="0.45" filter="url(#glow)">
       <path d="M44,34 L100,78 L156,34 L100,132 Z"/>
       <rect x="62" y="150" width="76" height="16" rx="4"/>
     </g>
