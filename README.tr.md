@@ -43,7 +43,7 @@ YTindir; YouTube, Instagram, TikTok, Facebook, VK, X ve 1000'den fazla siteden s
 
 ## 📥 Kurulum
 
-APK'yı **[Releases](https://github.com/RAMiK4/ytindir/releases/latest)** sayfasından indirin: çoğu telefon için **arm64**, tüm cihazlar için **universal**. Paket adı `com.rl.ytindr` olduğundan YTindir, YTDLnis'in yanına kurulur; yeni sürümler eskisinin üzerine veriler silinmeden kurulur.
+APK'yı **[Releases](https://github.com/RAMiK4/ytindir/releases/latest)** sayfasından indirin: çoğu telefon için **arm64**, tüm cihazlar için **universal**. YTindir başka uygulamalarla çakışma olmadan kolayca kurulur; yeni sürümler eskisinin üzerine veriler silinmeden kurulur.
 
 ## 🙏 Emeği geçenler ve lisans
 
