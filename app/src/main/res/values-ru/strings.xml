@@ -780,4 +780,5 @@
     <string name="use_current_position">Использовать текущую позицию</string>
     <string name="invalid_time">Неверное время</string>
     <string name="cut_preparing">Подготовка нарезки…</string>
+    <string name="powered_by">Основано на</string>
 </resources>

@@ -749,4 +749,5 @@
     <string name="quick_source_audio">Source audio</string>
     <string name="quick_original_size">Original size</string>
     <string name="quick_thumbnail_saved">Thumbnail saved</string>
+    <string name="powered_by">Powered by</string>
 </resources>

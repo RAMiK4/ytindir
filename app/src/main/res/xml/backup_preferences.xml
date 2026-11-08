@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- YTindir: backup and restore, a settings section of its own -->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <Preference
+        app:icon="@drawable/baseline_save_alt_24"
+        app:key="backup"
+        app:title="@string/backup"/>
+
+    <Preference
+        app:icon="@drawable/baseline_restore_page_24"
+        app:key="restore"
+        app:title="@string/restore"/>
+
+    <SwitchPreferenceCompat
+        android:widgetLayout="@layout/preferece_material_switch"
+        app:defaultValue="true"
+        app:icon="@drawable/ic_clock"
+        app:key="automatic_backup"
+        android:summary="@string/automatic_backup_summary"
+        app:title="@string/automatic_backup" />
+
+    <Preference
+        app:icon="@drawable/baseline_folder_24"
+        android:summary=""
+        app:key="backup_path"
+        app:title="@string/backup_path" />
+
+</PreferenceScreen>

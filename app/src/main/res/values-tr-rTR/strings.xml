@@ -765,4 +765,5 @@
     <string name="welcome_perm_folders_header">Geri yüklenen klasörler</string>
     <string name="welcome_perm_folders_summary">Yedeğin bu klasörleri kullanıyor ama uygulama onlara erişimini kaybetti. Her birine yeniden izin ver ya da yerine başka bir klasör seç.</string>
     <string name="crop_unsupported">Bu öğe için kırpma kullanılamıyor</string>
+    <string name="powered_by">Altyapı</string>
 </resources>
