@@ -43,7 +43,7 @@ YTindir descarga audio y vídeo de YouTube, Instagram, TikTok, Facebook, VK, X y
 
 ## 📥 Instalación
 
-Descarga el APK en **[Releases](https://github.com/RAMiK4/ytindir/releases/latest)**: **arm64** para la mayoría de los teléfonos, **universal** para cualquier dispositivo. El nombre del paquete es `com.rl.ytindr`, así que YTindir se instala junto a YTDLnis, y las nuevas versiones se instalan sobre la anterior sin perder datos.
+Descarga el APK en **[Releases](https://github.com/RAMiK4/ytindir/releases/latest)**: **arm64** para la mayoría de los teléfonos, **universal** para cualquier dispositivo. YTindir se instala fácilmente, sin conflictos con otras apps, y las nuevas versiones se instalan sobre la anterior sin perder datos.
 
 ## 🙏 Créditos y licencia
 
