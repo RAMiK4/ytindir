@@ -7,16 +7,14 @@
 <div align="center">
 
 [![Скачать](https://img.shields.io/github/v/release/RAMiK4/ytindir?style=for-the-badge&label=%D0%A1%D0%BA%D0%B0%D1%87%D0%B0%D1%82%D1%8C&color=00E673)](https://github.com/RAMiK4/ytindir/releases/latest)
-![Android](https://img.shields.io/badge/Android-7.0%2B-00E673?style=for-the-badge&logo=android&logoColor=white)
-![Лицензия](https://img.shields.io/badge/%D0%9B%D0%B8%D1%86%D0%B5%D0%BD%D0%B7%D0%B8%D1%8F-GPL--3.0-2C2C2C?style=for-the-badge)
 
 </div>
 
 <p align="center"><a href="README.md">English</a> · <a href="README.tr.md">Türkçe</a> · <b>Русский</b> · <a href="README.es.md">Español</a></p>
 
-YTindir скачивает аудио и видео с YouTube, Instagram, TikTok, Facebook, VK, X и [более чем 1000 других сайтов](https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md). Приложение основано на [yt-dlp](https://github.com/yt-dlp/yt-dlp) и [YTDLnis](https://github.com/deniscerri/ytdlnis): интерфейс упрощён, внешний вид обновлён, а при изменениях на сайтах приложение само поддерживает себя в рабочем состоянии.
+YTindir скачивает аудио и видео с YouTube, Instagram, TikTok, Facebook, VK, X и более чем 1000 других сайтов. Приложение основано на yt-dlp и YTDLnis: интерфейс упрощён, внешний вид обновлён, а при изменениях на сайтах приложение само поддерживает себя в рабочем состоянии.
 
-## 🎬 Качество
+## 🎬 Качество загрузки
 
 | Источники | Поддерживаемые разрешения |
 | --- | --- |
@@ -52,7 +50,6 @@ YTindir скачивает аудио и видео с YouTube, Instagram, TikTo
 - **[RAMiK4](https://github.com/RAMiK4)**: разработка, дизайн и дополнительные функции YTindir
 - **[YTDLnis](https://github.com/deniscerri/ytdlnis)**, Denis Çerri и участники проекта: YTindir является изменённой версией этого проекта
 - **[yt-dlp](https://github.com/yt-dlp/yt-dlp)** и **[youtubedl-android](https://github.com/yausername/youtubedl-android)**
-- Шрифт логотипа: [Archivo](https://github.com/Omnibus-Type/Archivo), SIL Open Font License
 
 Как и оригинал, YTindir распространяется по лицензии **[GPL-3.0](LICENSE)**.
 
