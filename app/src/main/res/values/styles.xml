@@ -107,6 +107,10 @@
         <item name="android:layout_marginHorizontal">16dp</item>
         <item name="android:layout_marginBottom">14dp</item>
         <item name="cardCornerRadius">24dp</item>
-        <item name="cardBackgroundColor">?attr/colorSurfaceContainer</item>
+        <!-- YTindir: a step above the screen and a thin edge, so the groups stand out in the light and
+             Material (wallpaper colour) themes too -->
+        <item name="cardBackgroundColor">?attr/colorSurfaceContainerHigh</item>
+        <item name="strokeColor">?attr/colorOutlineVariant</item>
+        <item name="strokeWidth">1dp</item>
     </style>
 </resources>

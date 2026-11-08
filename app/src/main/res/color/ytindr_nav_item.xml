@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- YTindir: bottom nav icons and labels in neutral tones: the chosen one full, the others softer -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="?attr/colorOnSurface" android:state_checked="true" />
+    <item android:alpha="0.62" android:color="?attr/colorOnSurface" />
+</selector>
