@@ -329,7 +329,7 @@
     <string name="multiple_download_card">Карточка для нескольких загрузок</string>
     <string name="format_filter">Фильтр форматов</string>
     <string name="format_smallest">Наименьший формат (по разрешению)</string>
-    <string name="dismiss">Отклонить</string>
+    <string name="dismiss">Закрыть</string>
     <string name="delete_all_sources">Удалить все источники</string>
     <string name="force_ipv4_desc">Выполнять все соединения через IPv4</string>
     <string name="force_ipv4">Принудительно IPv4</string>
@@ -338,9 +338,9 @@
     <string name="set_time">Установить время</string>
     <string name="never">Никогда</string>
     <string name="starts">Начинается</string>
-    <string name="on_time">Включено</string>
+    <string name="on_time">Дата</string>
     <string name="day">День</string>
-    <string name="occurrences">события</string>
+    <string name="occurrences">раз</string>
     <string name="observe_sources">Источники загрузки</string>
     <string name="new_source">Новый источник</string>
     <string name="confirm_delete_sources_desc">Удалить все источники навсегда</string>
@@ -766,4 +766,18 @@
     <string name="quick_source_audio">Исходный звук</string>
     <string name="quick_original_size">Исходный размер</string>
     <string name="quick_thumbnail_saved">Обложка сохранена</string>
+
+    <!-- YTindir: strings that were still missing in Russian -->
+    <string name="clean_filenames">Очищать имена файлов</string>
+    <string name="clean_filenames_summary">Удалять из имён файлов символы, которые не принимают некоторые файловые менеджеры и Windows (| / : , …), и эмодзи, не оставляя двойных пробелов</string>
+    <string name="convert_xhe_aac">Совместимое аудио (AAC)</string>
+    <string name="convert_xhe_aac_summary">Преобразовывать аудио xHE-AAC (Instagram, Facebook) в AAC-LC 192 кбит/с на устройстве, чтобы оно воспроизводилось в любом плеере и приложении</string>
+    <string name="social_h264">Конвертировать видео из соцсетей в H.264</string>
+    <string name="social_h264_summary">Instagram, X, TikTok, Facebook и VK: по-прежнему скачивается лучшее качество, а видео в VP9, AV1 или HEVC перед сохранением конвертируется в H.264 аппаратным кодировщиком телефона с качеством, близким к оригиналу</string>
+    <string name="instagram_app_api">Качество как в приложении Instagram</string>
+    <string name="instagram_app_api_summary">Если в cookies есть аккаунт Instagram, видео и mp3 получают более качественный звук, как в приложении Instagram; видео остаётся таким же, как на сайте</string>
+    <string name="original_source_quality">Оригинал (источник)</string>
+    <string name="use_current_position">Использовать текущую позицию</string>
+    <string name="invalid_time">Неверное время</string>
+    <string name="cut_preparing">Подготовка нарезки…</string>
 </resources>
