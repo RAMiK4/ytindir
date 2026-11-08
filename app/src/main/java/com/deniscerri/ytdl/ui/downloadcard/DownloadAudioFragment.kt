@@ -107,9 +107,11 @@ class DownloadAudioFragment(private var resultItem: ResultItem? = null, private 
                         title = resultItem!!.title
                         author = resultItem!!.author
                         allFormats = resultItem!!.formats.toMutableList()
+                        // YTindir: and a quick list choice (MP3, M4A) is not one of the link's formats: it stays
                         format = allFormats.firstOrNull {
                             it.format_id == previousFormat.format_id && !previousFormat.format_id.contains("ytdlnisgeneric")
-                        } ?: downloadViewModel.getFormat(allFormats, DownloadType.audio, url)
+                        } ?: previousFormat.takeIf { QuickFormats.isQuickAudio(it) }
+                            ?: downloadViewModel.getFormat(allFormats, DownloadType.audio, url)
                         duration = resultItem!!.duration
                         playlistIndex = resultItem!!.playlistIndex
                         playlistURL = resultItem!!.playlistURL
@@ -271,7 +273,9 @@ class DownloadAudioFragment(private var resultItem: ResultItem? = null, private 
                         }
                         formats = allFormats.filter { !genericAudioFormats.contains(it) }.toMutableList()
                         formats.removeAll(genericAudioFormats)
-                        val preferredFormat = downloadViewModel.getFormat(formats, DownloadType.audio, downloadItem.url)
+                        // YTindir: the quick list's MP3 stays chosen when the formats are read again
+                        val preferredFormat = downloadItem.format.takeIf { it.format_id == QuickFormats.AUDIO_MP3 }
+                            ?: downloadViewModel.getFormat(formats, DownloadType.audio, downloadItem.url)
                         downloadItem.format = preferredFormat
                         downloadItem.allFormats = formats
                         val filesize = UiUtil.populateFormatCard(requireContext(), formatCard, preferredFormat, null, showSize = downloadItem.downloadSections.isEmpty())

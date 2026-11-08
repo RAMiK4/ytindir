@@ -449,7 +449,9 @@ class DownloadBottomSheetDialog : BottomSheetDialogFragment() {
                 val applied = withTimeoutOrNull(5000) {
                     formatViewModel.quickTabSwitch.first { it == null }
                     formatViewModel.quickPick.first { it == null }
-                } != null
+                    // (first() gives back the null it waited for, so the block's own value tells it finished)
+                    true
+                } == true
                 if (applied && isAdded && download.isEnabled) download.performClick()
             }
         }
