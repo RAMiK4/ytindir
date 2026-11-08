@@ -126,8 +126,8 @@
     <string name="select_format">Select format</string>
     <string name="please_wait">Please wait</string>
     <string name="remove_search_history">Clear search history</string>
-    <string name="enable_mtime">Enable mtime</string>
-    <string name="enable_mtime_summary">Set the HTTP Last-Modified header as last modified time</string>
+    <string name="enable_mtime">Keep the site\'s file date</string>
+    <string name="enable_mtime_summary">Off: the file\'s date is the day it was downloaded, so new downloads come first in the gallery. On: the date the site gives the file (usually its upload date)</string>
     <string name="update_formats">Update formats</string>
     <string name="error_updating_formats">Error updating formats!</string>
     <string name="log_downloads">Log downloads</string>

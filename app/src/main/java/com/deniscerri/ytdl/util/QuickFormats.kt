@@ -158,10 +158,11 @@ object QuickFormats {
 
     // ---- the link's real formats, once they are read ----
 
-    private val REAL_HEIGHTS = listOf(4320, 2160, 1440, 1080, 720, 480)
+    private val REAL_HEIGHTS = listOf(4320, 2160, 1440, 1080, 720, 480, 360, 240, 144)
 
-    /** the quality a real height belongs to: 1080 for 1072 or 1200, null below 480p */
-    private fun qualityOf(height: Int): Int? = REAL_HEIGHTS.firstOrNull { height >= it * 0.9 }
+    /** the quality a real height belongs to: 1080 for 1072 or 1200, 144 for anything smaller */
+    private fun qualityOf(height: Int): Int? =
+        REAL_HEIGHTS.firstOrNull { height >= it * 0.9 } ?: REAL_HEIGHTS.last().takeIf { height > 0 }
 
     private fun Format.isVideo() = vcodec.isNotBlank() && vcodec != "none"
     private fun Format.isAudio() = !isVideo() && acodec.isNotBlank() && acodec != "none"
@@ -181,8 +182,13 @@ object QuickFormats {
     fun realVideoChoices(formats: List<Format>): List<Format> {
         val videos = formats.filter { it.isVideo() && !it.format_id.contains("ytdlnisgeneric") }
         val byQuality = videos.groupBy { f -> heightOf(f)?.let { qualityOf(it) } }
-        // 480p only for links without HD
-        val heights = if (byQuality.keys.any { it != null && it >= 720 }) REAL_HEIGHTS.filter { it >= 720 } else REAL_HEIGHTS
+        // 480p only for links without HD, and the qualities below it only for links without 480p either
+        // (as in the "All formats" list), so a low quality video still gets its video choices
+        val heights = when {
+            byQuality.keys.any { it != null && it >= 720 } -> REAL_HEIGHTS.filter { it >= 720 }
+            byQuality.keys.any { it != null && it >= 480 } -> REAL_HEIGHTS.filter { it >= 480 }
+            else -> REAL_HEIGHTS
+        }
         return heights.mapNotNull { height ->
             val candidates = byQuality[height].orEmpty()
             if (candidates.isEmpty()) return@mapNotNull null

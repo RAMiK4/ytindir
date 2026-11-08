@@ -107,8 +107,8 @@
     <string name="remove_search_history">Arama geçmişini temizle</string>
     <string name="container">Kapsayıcı</string>
     <string name="terminal">Terminal</string>
-    <string name="enable_mtime">Değiştirilme zamanını koru</string>
-    <string name="enable_mtime_summary">HTTP Last-Modified başlığını dosyanın son değiştirilme zamanı olarak kullan</string>
+    <string name="enable_mtime">Sitedeki dosya tarihini koru</string>
+    <string name="enable_mtime_summary">Kapalı: dosyanın tarihi indirildiği gündür, yeni indirmeler galeride en üstte görünür. Açık: sitenin dosyaya verdiği tarih (genellikle yüklenme tarihi) kullanılır</string>
     <string name="restart">Yeniden başlat</string>
     <string name="clear_temporary_files_summary">Çöken/hatalı/iptal edilen indirmelerden önbelleğe alınmış dosyaları sil</string>
     <string name="downloads_running_try_later">İndirmeler zaten çalışıyor. Daha sonra tekrar dene</string>
