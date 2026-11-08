@@ -90,6 +90,7 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import com.google.android.material.chip.ChipDrawable
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointForward
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -2226,36 +2227,64 @@ object UiUtil {
         }
     }
 
-    fun handleNoResults(context: Activity, message: String, url: String? = null, continueAnyway: Boolean = false, continued: () -> Unit, closed: () -> Unit, cookieFetch: () -> Unit) {
-        val errDialog = MaterialAlertDialogBuilder(context)
-            .setTitle(R.string.no_results)
-            // YTindir: what the error means and what to do, above the error itself
-            .setMessage(ErrorHints.withHint(context, message, url))
+    fun handleNoResults(context: Activity, message: String, url: String? = null, continueAnyway: Boolean = false, continued: () -> Unit, closed: () -> Unit, cookieFetch: () -> Unit, retry: (() -> Unit)? = null) {
+        // YTindir: the message scrolls on its own and the actions sit in a compact row below it,
+        // so every action stays on screen however long the error is
+        val view = context.layoutInflater.inflate(R.layout.dialog_error_result, null)
+        // what the error means and what to do, above the error itself
+        view.findViewById<TextView>(R.id.error_message).text = ErrorHints.withHint(context, message, url)
+        val actions = view.findViewById<ChipGroup>(R.id.error_actions)
 
-        errDialog.setPositiveButton(R.string.copy_log) { d:DialogInterface?, _:Int ->
+        val dialog = MaterialAlertDialogBuilder(context)
+            .setTitle(R.string.no_results)
+            .setView(view)
+            .setOnCancelListener { closed() }
+            .create()
+
+        fun addAction(text: String, icon: Int, action: () -> Unit) {
+            val chip = Chip(context)
+            chip.setChipDrawable(ChipDrawable.createFromAttributes(context, null, 0, com.google.android.material.R.style.Widget_Material3_Chip_Assist))
+            chip.text = text
+            chip.setChipIconResource(icon)
+            chip.isChipIconVisible = true
+            chip.setOnClickListener { action() }
+            actions.addView(chip)
+        }
+
+        addAction(context.getString(R.string.copy_log), R.drawable.ic_copy) {
             val clipboard: ClipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             clipboard.setText(message)
-            d?.dismiss()
+            dialog.dismiss()
+        }
+
+        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+        val certificateRelated = message.contains("CERTIFICATE_VERIFY_FAILED", true) || message.contains("certificate verify failed", true)
+        if (certificateRelated && retry != null && !prefs.getBoolean("no_check_certificates", false)) {
+            addAction(context.getString(R.string.skip_certificate_check_and_retry), R.drawable.baseline_network_locked_24) {
+                prefs.edit().putBoolean("no_check_certificates", true).apply()
+                dialog.dismiss()
+                retry()
+            }
         }
 
         val cookieRelated = message.contains("cookie", true) || message.contains("sign in", true)
         if (cookieRelated && !url.isNullOrBlank()) {
-            errDialog.setNeutralButton(context.getString(R.string.get_cookies)) { d: DialogInterface?, _ : Int ->
+            addAction(context.getString(R.string.get_cookies), R.drawable.baseline_cookie_24) {
+                dialog.dismiss()
                 cookieFetch()
             }
         }else if (continueAnyway) {
-            errDialog.setNeutralButton(R.string.continue_anyway) {d: DialogInterface?, _:Int ->
+            addAction(context.getString(R.string.continue_anyway), R.drawable.outline_arrow_forward_24) {
+                dialog.dismiss()
                 continued()
             }
         }
 
-
-
-        errDialog.setOnCancelListener {
-            closed()
+        addAction(context.getString(R.string.cancel), R.drawable.baseline_close_24) {
+            dialog.cancel()
         }
 
-        errDialog.show()
+        dialog.show()
     }
 
     fun showErrorDialog(context: Context, it: String){

@@ -514,6 +514,9 @@ class DownloadBottomSheetDialog : BottomSheetDialogFragment() {
                             },
                             closed = {
                                 dismiss()
+                            },
+                            retry = {
+                                initUpdateData()
                             }
                         )
                     }

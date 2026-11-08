@@ -713,6 +713,8 @@
     <string name="hint_unsupported">Bu bağlantı desteklenmiyor. Gönderinin kendi bağlantısını (profil ya da arama sayfası değil) paylaşıp tekrar dene.</string>
     <string name="hint_format_unavailable">Seçilen kalite bu video için yok. İndirme kartını yeniden açıp başka bir kalite seç.</string>
     <string name="hint_no_space">Telefonda yer kalmadı. Biraz yer açıp tekrar dene.</string>
+    <string name="hint_certificate">Sitenin güvenlik sertifikası doğrulanamadı. Telefonun tarih ve saatinin doğru olduğundan emin ol. Bir VPN, reklam engelleyici, antivirüs ya da bağlı olduğun ağ (iş, okul, halka açık Wi-Fi) bağlantıya müdahale ediyor olabilir: onsuz dene ya da aşağıdaki düğmeyle sertifika denetimini atlayıp yeniden dene.</string>
+    <string name="skip_certificate_check_and_retry">Sertifikayı denetleme, yeniden dene</string>
     <string name="hint_network">Bağlantı kurulamadı. İnternet bağlantını (ve ayarlıysa proxy\'yi) kontrol edip tekrar dene.</string>
     <string name="hint_extractor_broken">Site bir şeyi değiştirdi ve yt-dlp şu an okuyamıyor. Ayarlar → Güncellemeler → yt-dlp\'den yt-dlp\'yi güncelle (düzeltmeler önce Nightly\'ye gelir) ve tekrar dene.</string>
     <string name="sort_relevance">Alaka</string>

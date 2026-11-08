@@ -56,6 +56,9 @@ object ErrorHints {
         Rule(R.string.hint_no_space) { m, _ ->
             has(m, "No space left", "ENOSPC")
         },
+        Rule(R.string.hint_certificate) { m, _ ->
+            has(m, "CERTIFICATE_VERIFY_FAILED", "certificate verify failed")
+        },
         Rule(R.string.hint_network) { m, _ ->
             has(m, "Unable to download webpage", "timed out", "Failed to resolve", "Name or service not known",
                 "No address associated", "Network is unreachable", "Connection reset", "Connection refused",
