@@ -55,6 +55,8 @@ class FormatViewModel(private val application: Application) : AndroidViewModel(a
     // ...and a counter the tabs raise when their item changed (data or formats read), so an open
     // quick list shows the new title, qualities and sizes
     val quickItemVersion = MutableStateFlow(0)
+    // ...and the quick list's Download button: the card starts the download once it took the choice
+    val quickDownload = MutableStateFlow(false)
 
     // YTindir: the open groups of dubbed formats in the format list (closed when the list opens)
     val openFormatGroups = MutableStateFlow(setOf<String>())

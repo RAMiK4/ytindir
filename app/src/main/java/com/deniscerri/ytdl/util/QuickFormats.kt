@@ -310,6 +310,8 @@ object QuickFormats {
     /** YouTube's AAC audio (itag 140) */
     const val USUAL_AAC_KBPS = 128
     const val MP3_KBPS = 192
+    // YTindir: what the quick MP3 is made from, shown in its row and on the download card
+    const val MP3_SOURCE_LABEL = "Opus → MP3"
 
     /**
      * The size of a [MP3_KBPS] MP3 of the link: its length from the AAC stream (size and bitrate),

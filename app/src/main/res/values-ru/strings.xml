@@ -753,6 +753,8 @@
     <string name="format_group_dubbed">%1$s • Озвучка / дубляж (%2$d)</string>
     <string name="youtube_quick_format_list">Быстрый список качества YouTube</string>
     <string name="youtube_quick_format_list_summary">Нажатие на качество в карточке загрузки открывает короткий список, как меню загрузки YouTube. Если выключено, открывается список всех форматов</string>
+    <string name="quick_pick_opens_card">Выбор открывает карточку загрузки</string>
+    <string name="quick_pick_opens_card_summary">Нажатие на качество или формат в быстром списке возвращает к карточке загрузки, чтобы изменить другие параметры. Если выключено, выбор отмечается, а кнопка «Скачать» в списке начинает загрузку</string>
     <string name="quick_hint_best_quality">Лучшее качество</string>
     <string name="quick_hint_better_quality">Качество выше</string>
     <string name="quick_hint_recommended">Рекомендуется</string>

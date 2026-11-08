@@ -729,6 +729,8 @@
     <string name="format_group_dubbed">%1$s • Seslendirme / dublaj (%2$d)</string>
     <string name="youtube_quick_format_list">YouTube hızlı kalite listesi</string>
     <string name="youtube_quick_format_list_summary">İndirme kartında kaliteye dokununca YouTube\'un indirme menüsü gibi kısa bir liste açılır. Kapalıyken tüm formatlar listesi açılır</string>
+    <string name="quick_pick_opens_card">Seçim indirme kartını açar</string>
+    <string name="quick_pick_opens_card_summary">Hızlı listede bir kaliteye veya biçime dokununca daha fazlasını değiştirmek için indirme kartına dönülür. Kapalıyken seçim işaretlenir ve listedeki İndir düğmesi indirmeyi başlatır</string>
     <string name="quick_hint_best_quality">En iyi kalite</string>
     <string name="quick_hint_better_quality">Daha iyi kalite</string>
     <string name="quick_hint_recommended">Önerilen</string>

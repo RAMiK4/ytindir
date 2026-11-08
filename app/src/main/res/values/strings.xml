@@ -736,6 +736,8 @@
     <string name="format_group_dubbed">%1$s • Dubbed audio (%2$d)</string>
     <string name="youtube_quick_format_list">YouTube quick quality list</string>
     <string name="youtube_quick_format_list_summary">Tapping the quality on the download card opens a short list like YouTube\'s download menu. Off: the list of all formats opens</string>
+    <string name="quick_pick_opens_card">Choice opens the download card</string>
+    <string name="quick_pick_opens_card_summary">Tapping a quality or format in the quick list goes back to the download card to change more. Off: it is marked, and Download in the list starts the download</string>
     <string name="quick_hint_best_quality">Best quality</string>
     <string name="quick_hint_better_quality">Better quality</string>
     <string name="quick_hint_recommended">Recommended</string>

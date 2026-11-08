@@ -1,5 +1,6 @@
+<!-- YTindir: home screen shortcut icons in the app icon's green (the file names are kept) -->
 <vector android:height="24dp"
     android:viewportHeight="24" android:viewportWidth="24"
     android:width="24dp" xmlns:android="http://schemas.android.com/apk/res/android">
-    <path android:fillColor="#db2e2e" android:pathData="M5,20h14v-2H5V20zM19,9h-4V3H9v6H5l7,7L19,9z"/>
+    <path android:fillColor="#00C46A" android:pathData="M5,20h14v-2H5V20zM19,9h-4V3H9v6H5l7,7L19,9z"/>
 </vector>

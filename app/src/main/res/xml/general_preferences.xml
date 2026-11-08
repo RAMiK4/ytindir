@@ -235,6 +235,17 @@
             app:title="@string/youtube_quick_format_list"
             app:summary="@string/youtube_quick_format_list_summary" />
 
+        <!-- YTindir: off (the default), a choice in the quick list is only marked and its Download button
+             starts the download; on, a choice closes the list and goes back to the download card -->
+        <SwitchPreferenceCompat
+            android:widgetLayout="@layout/preferece_material_switch"
+            app:defaultValue="false"
+            android:icon="@drawable/baseline_download_24"
+            android:key="quick_pick_opens_card"
+            android:dependency="youtube_quick_format_list"
+            app:title="@string/quick_pick_opens_card"
+            app:summary="@string/quick_pick_opens_card_summary" />
+
         <SwitchPreferenceCompat
             android:widgetLayout="@layout/preferece_material_switch"
             app:defaultValue="true"

@@ -61,9 +61,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import java.net.URL
 
 
@@ -434,6 +436,21 @@ class DownloadBottomSheetDialog : BottomSheetDialogFragment() {
                     }
                     handleDuplicatesAndDismiss(result.duplicateDownloadIDs)
                 }
+            }
+        }
+
+        // YTindir: Download in the quick list: once the card took the choice (its tab and its format),
+        // the download starts as if the card's own Download button was tapped
+        formatViewModel.quickDownload.value = false
+        lifecycleScope.launch {
+            formatViewModel.quickDownload.collect { requested ->
+                if (!requested) return@collect
+                formatViewModel.quickDownload.value = false
+                val applied = withTimeoutOrNull(5000) {
+                    formatViewModel.quickTabSwitch.first { it == null }
+                    formatViewModel.quickPick.first { it == null }
+                } != null
+                if (applied && isAdded && download.isEnabled) download.performClick()
             }
         }
 

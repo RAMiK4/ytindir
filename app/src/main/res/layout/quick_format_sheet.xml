@@ -38,9 +38,11 @@
         android:visibility="gone"
         app:trackCornerRadius="2dp" />
 
+    <!-- weight: a long list scrolls and the buttons under it stay on screen -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
 
         <LinearLayout
             android:id="@+id/quick_format_list"
@@ -51,5 +53,35 @@
             android:paddingBottom="8dp" />
 
     </androidx.core.widget.NestedScrollView>
+
+    <!-- YTindir: Download starts the download with the marked choice, All formats opens the full list -->
+    <LinearLayout
+        android:id="@+id/quick_sheet_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="24dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="16dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/quick_sheet_download"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:text="@string/download"
+            app:icon="@drawable/baseline_download_24" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/quick_sheet_all_formats"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:text="@string/quick_all_formats" />
+
+    </LinearLayout>
 
 </LinearLayout>
