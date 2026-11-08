@@ -17,7 +17,8 @@ import com.deniscerri.ytdl.ui.more.settings.updating.UpdateSettingsModule
 import com.deniscerri.ytdl.ui.more.settings.updating.ytdlp.YtdlpUpdateSettingsModule
 
 object SettingsRegistry {
-    private val xmlToModule = mapOf(
+    // YTindir: backup and about have no module: their results open their screen
+    private val xmlToModule: Map<Int, SettingModule?> = mapOf(
         R.xml.general_preferences to GeneralSettingsModule,
         R.xml.folders_preference to FolderSettingsModule,
         R.xml.temporary_files_preferences to TemporaryFilesModule,
@@ -26,7 +27,9 @@ object SettingsRegistry {
         R.xml.updating_preferences to UpdateSettingsModule,
         R.xml.ytdlp_update_preferences to YtdlpUpdateSettingsModule,
         R.xml.app_update_preferences to AppUpdateSettingsModule,
-        R.xml.advanced_preferences to AdvancedSettingsModule
+        R.xml.advanced_preferences to AdvancedSettingsModule,
+        R.xml.backup_preferences to null,
+        R.xml.about_preferences to null
     )
 
     fun getModuleForXml(xmlRes: Int) = xmlToModule[xmlRes]
@@ -73,6 +76,8 @@ object SettingsRegistry {
 
         for (i in 0 until group.preferenceCount) {
             val p = group.getPreference(i)
+            // YTindir: settings hidden from their screen aren't found by the search either
+            if (!p.isVisible) continue
             // custom widgets like the update status card can't be shown as a search result
             if (p is NonSearchablePreference) continue
             if (p !is PreferenceGroup && p.title.isNullOrBlank()) continue

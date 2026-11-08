@@ -40,6 +40,7 @@ import com.deniscerri.ytdl.util.Extensions.isYoutubeURL
 import com.deniscerri.ytdl.util.FileUtil
 import com.deniscerri.ytdl.util.FormatUtil
 import com.deniscerri.ytdl.util.QuickFormats
+import com.deniscerri.ytdl.util.QuickPick
 import com.deniscerri.ytdl.util.UiUtil
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.chip.Chip
@@ -77,6 +78,8 @@ class DownloadVideoFragment(private var resultItem: ResultItem? = null, private 
     lateinit var downloadItem: DownloadItem
 
     private var disabledCutClicked: Boolean = false
+    // YTindir: a quick choice made before the formats were read, made again on the real ones when they arrive
+    private var pendingQuickPick: QuickPick? = null
     private var disabledCropClicked: Boolean = false
 
 
@@ -108,10 +111,17 @@ class DownloadVideoFragment(private var resultItem: ResultItem? = null, private 
             downloadItem = withContext(Dispatchers.IO){
                 if (savedInstanceState?.containsKey("updated") == true) {
                     downloadItem.apply {
+                        // YTindir: the user's choice stays when the new data still has it (the data and the
+                        // formats can arrive one after the other); the preferred format only otherwise
+                        val previousFormat = format
+                        val previousAudio = videoPreferences.audioFormatIDs.toList()
                         title = resultItem!!.title
                         author = resultItem!!.author
                         allFormats = resultItem!!.formats.toMutableList()
-                        format = downloadViewModel.getFormat(allFormats, DownloadType.video, url)
+                        val kept = allFormats.firstOrNull {
+                            it.format_id == previousFormat.format_id && !previousFormat.format_id.contains("ytdlnisgeneric")
+                        }
+                        format = kept ?: downloadViewModel.getFormat(allFormats, DownloadType.video, url)
                         duration = resultItem!!.duration
                         playlistIndex = resultItem!!.playlistIndex
                         playlistURL = resultItem!!.playlistURL
@@ -120,7 +130,9 @@ class DownloadVideoFragment(private var resultItem: ResultItem? = null, private 
                         website = resultItem!!.website
                         url = resultItem!!.url
                         videoPreferences.apply {
-                            audioFormatIDs = downloadViewModel.getPreferredAudioFormats(allFormats)
+                            val keepAudio = kept != null && previousAudio.isNotEmpty() &&
+                                previousAudio.all { id -> allFormats.any { it.format_id == id } }
+                            audioFormatIDs = if (keepAudio) ArrayList(previousAudio) else downloadViewModel.getPreferredAudioFormats(allFormats)
                         }
                     }
                 }else if (currentDownloadItem != null){
@@ -274,6 +286,8 @@ class DownloadVideoFragment(private var resultItem: ResultItem? = null, private 
 
                 val listener = object : OnFormatClickListener {
                     override fun onFormatClick(formatTuple: FormatTuple) {
+                        // a choice of its own: an earlier quick choice is not made again
+                        pendingQuickPick = null
                         formatTuple.format?.apply {
                             downloadItem.format = this
                         }
@@ -329,7 +343,7 @@ class DownloadVideoFragment(private var resultItem: ResultItem? = null, private 
                     if (!nonSpecific && quickList && downloadItem.url.isYoutubeURL()) {
                         if (parentFragmentManager.findFragmentByTag("quickFormatSheet") == null) {
                             QuickFormatBottomSheetDialog().apply {
-                                item = downloadItem
+                                itemProvider = { if (this@DownloadVideoFragment::downloadItem.isInitialized) downloadItem else null }
                                 onAllFormats = { showFormatSheet() }
                             }.show(parentFragmentManager, "quickFormatSheet")
                         }
@@ -347,7 +361,27 @@ class DownloadVideoFragment(private var resultItem: ResultItem? = null, private 
                             picked.format.copy(container = downloadItem.container.ifEmpty { picked.format.container })
                         } else picked.format
                         listener.onFormatClick(FormatTuple(format, picked.audioFormats))
+                        // only a placeholder (picked before the formats were read) is made again on the real ones
+                        pendingQuickPick = picked.takeIf { QuickFormats.isQuickVideo(it.format) }
                     }
+                }
+
+                // YTindir: a quick choice made before the data arrived stays chosen, on the link's real formats now
+                if (savedInstanceState?.containsKey("updated") == true) {
+                    pendingQuickPick?.let { picked ->
+                        pendingQuickPick = null
+                        val real = QuickFormats.resolveVideoPick(picked, downloadItem.allFormats) {
+                            downloadViewModel.getPreferredAudioFormats(it)
+                        }
+                        formatViewModel.quickPick.value = real
+                    }
+                }
+                formatViewModel.quickItemVersion.value++
+
+                // YTindir: a new YouTube download opens on the quick list
+                if (savedInstanceState?.containsKey("updated") != true && formatViewModel.quickAutoOpen.value == DownloadType.video) {
+                    formatViewModel.quickAutoOpen.value = null
+                    formatCard.post { if (isAdded) formatCard.performClick() }
                 }
 
                 formatCard.setOnLongClickListener {
@@ -363,7 +397,9 @@ class DownloadVideoFragment(private var resultItem: ResultItem? = null, private 
                         containers
                     )
                 )
-                if (currentDownloadItem == null || !containers.contains(downloadItem.container.ifEmpty { getString(R.string.defaultValue) })){
+                // YTindir: not again when the data arrives, that would undo the user's choice
+                val isUpdate = savedInstanceState?.containsKey("updated") == true
+                if ((currentDownloadItem == null && !isUpdate) || !containers.contains(downloadItem.container.ifEmpty { getString(R.string.defaultValue) })){
                     downloadItem.container = if (containerPreference == getString(R.string.defaultValue)) "" else containerPreference!!
                 }
                 containerAutoCompleteTextView!!.setText(

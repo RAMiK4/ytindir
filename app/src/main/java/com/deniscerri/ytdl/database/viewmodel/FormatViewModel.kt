@@ -50,6 +50,13 @@ class FormatViewModel(private val application: Application) : AndroidViewModel(a
     val quickPick = MutableStateFlow<QuickPick?>(null)
     // ...and the tab the card switches to for it (kept until the card has switched)
     val quickTabSwitch = MutableStateFlow<DownloadType?>(null)
+    // ...the tab whose quick list opens by itself when the card opens (a new YouTube download)
+    val quickAutoOpen = MutableStateFlow<DownloadType?>(null)
+    // ...and a counter the tabs raise when their item changed (data or formats read), so an open
+    // quick list shows the new title, qualities and sizes
+    val quickItemVersion = MutableStateFlow(0)
+    // ...and the quick list's Download button: the card starts the download once it took the choice
+    val quickDownload = MutableStateFlow(false)
 
     // YTindir: the open groups of dubbed formats in the format list (closed when the list opens)
     val openFormatGroups = MutableStateFlow(setOf<String>())

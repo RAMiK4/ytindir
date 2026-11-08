@@ -39,6 +39,7 @@ import com.deniscerri.ytdl.util.Extensions.isYoutubeURL
 import com.deniscerri.ytdl.util.FileUtil
 import com.deniscerri.ytdl.util.FormatUtil
 import com.deniscerri.ytdl.util.QuickFormats
+import com.deniscerri.ytdl.util.QuickPick
 import com.deniscerri.ytdl.util.UiUtil
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.chip.Chip
@@ -93,15 +94,24 @@ class DownloadAudioFragment(private var resultItem: ResultItem? = null, private 
         return fragmentView
     }
 
+    // YTindir: a quick choice made before the formats were read, made again on the real ones when they arrive
+    private var pendingQuickPick: QuickPick? = null
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         lifecycleScope.launch {
             downloadItem = withContext(Dispatchers.IO) {
                 if (savedInstanceState?.containsKey("updated") == true) {
                     downloadItem.apply {
+                        // YTindir: the user's choice stays when the new data still has it
+                        val previousFormat = format
                         title = resultItem!!.title
                         author = resultItem!!.author
                         allFormats = resultItem!!.formats.toMutableList()
-                        format = downloadViewModel.getFormat(allFormats, DownloadType.audio, url)
+                        // YTindir: and a quick list choice (MP3, M4A) is not one of the link's formats: it stays
+                        format = allFormats.firstOrNull {
+                            it.format_id == previousFormat.format_id && !previousFormat.format_id.contains("ytdlnisgeneric")
+                        } ?: previousFormat.takeIf { QuickFormats.isQuickAudio(it) }
+                            ?: downloadViewModel.getFormat(allFormats, DownloadType.audio, url)
                         duration = resultItem!!.duration
                         playlistIndex = resultItem!!.playlistIndex
                         playlistURL = resultItem!!.playlistURL
@@ -241,6 +251,8 @@ class DownloadAudioFragment(private var resultItem: ResultItem? = null, private 
                 formatViewModel.checkFreeSpace(filesize, downloadItem.downloadPath)
                 val listener = object : OnFormatClickListener {
                     override fun onFormatClick(formatTuple: FormatTuple) {
+                        // a choice of its own: an earlier quick choice is not made again
+                        pendingQuickPick = null
                         formatTuple.format?.apply {
                             downloadItem.format = this
                             val filesize = UiUtil.populateFormatCard(requireContext(), formatCard, this, null, showSize = downloadItem.downloadSections.isEmpty())
@@ -261,7 +273,9 @@ class DownloadAudioFragment(private var resultItem: ResultItem? = null, private 
                         }
                         formats = allFormats.filter { !genericAudioFormats.contains(it) }.toMutableList()
                         formats.removeAll(genericAudioFormats)
-                        val preferredFormat = downloadViewModel.getFormat(formats, DownloadType.audio, downloadItem.url)
+                        // YTindir: the quick list's MP3 stays chosen when the formats are read again
+                        val preferredFormat = downloadItem.format.takeIf { it.format_id == QuickFormats.AUDIO_MP3 }
+                            ?: downloadViewModel.getFormat(formats, DownloadType.audio, downloadItem.url)
                         downloadItem.format = preferredFormat
                         downloadItem.allFormats = formats
                         val filesize = UiUtil.populateFormatCard(requireContext(), formatCard, preferredFormat, null, showSize = downloadItem.downloadSections.isEmpty())
@@ -283,7 +297,7 @@ class DownloadAudioFragment(private var resultItem: ResultItem? = null, private 
                     if (!nonSpecific && quickList && downloadItem.url.isYoutubeURL()) {
                         if (parentFragmentManager.findFragmentByTag("quickFormatSheet") == null) {
                             QuickFormatBottomSheetDialog().apply {
-                                item = downloadItem
+                                itemProvider = { if (this@DownloadAudioFragment::downloadItem.isInitialized) downloadItem else null }
                                 onAllFormats = { showFormatSheet() }
                             }.show(parentFragmentManager, "quickFormatSheet")
                         }
@@ -306,7 +320,9 @@ class DownloadAudioFragment(private var resultItem: ResultItem? = null, private 
                     )
                 )
 
-                if (currentDownloadItem == null || !containers.contains(downloadItem.container.ifEmpty { getString(R.string.defaultValue) })){
+                // YTindir: not again when the data arrives, that would undo the user's choice
+                val isUpdate = savedInstanceState?.containsKey("updated") == true
+                if ((currentDownloadItem == null && !isUpdate) || !containers.contains(downloadItem.container.ifEmpty { getString(R.string.defaultValue) })){
                     downloadItem.container = if (containerPreference == getString(R.string.defaultValue)) "" else containerPreference!!
                 }
                 containerAutoCompleteTextView.setText(downloadItem.container.ifEmpty { getString(R.string.defaultValue) }, false)
@@ -351,7 +367,26 @@ class DownloadAudioFragment(private var resultItem: ResultItem? = null, private 
                             containerAutoCompleteTextView.setText(containers[index], false)
                         }
                         listener.onFormatClick(FormatTuple(picked.format, null))
+                        // only a placeholder (picked before the formats were read) is made again on the real ones
+                        pendingQuickPick = picked.takeIf { QuickFormats.isQuickAudio(it.format) }
                     }
+                }
+
+                // YTindir: a quick choice made before the data arrived stays chosen, on the link's real formats now
+                if (savedInstanceState?.containsKey("updated") == true) {
+                    pendingQuickPick?.let { picked ->
+                        pendingQuickPick = null
+                        formatViewModel.quickPick.value = QuickFormats.resolveAudioPick(picked, downloadItem.allFormats) {
+                            FormatUtil(requireContext()).sortAudioFormats(it, url = downloadItem.url)
+                        }
+                    }
+                }
+                formatViewModel.quickItemVersion.value++
+
+                // YTindir: a new YouTube download opens on the quick list
+                if (savedInstanceState?.containsKey("updated") != true && formatViewModel.quickAutoOpen.value == DownloadType.audio) {
+                    formatViewModel.quickAutoOpen.value = null
+                    formatCard.post { if (isAdded) formatCard.performClick() }
                 }
 
 

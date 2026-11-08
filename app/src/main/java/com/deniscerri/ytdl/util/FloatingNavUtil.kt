@@ -49,6 +49,8 @@ object FloatingNavUtil {
             if (nav is BottomNavigationView) {
                 // keep labels and the press ripple inside the rounded pill
                 nav.clipToOutline = true
+                // YTindir: frosted glass over the screen content (Android 12+)
+                activity.findViewById<View>(R.id.frame_layout)?.let { GlassNavBackground.install(nav, it) }
                 // the nav floats above the system bar; don't let it grow by the system inset
                 ViewCompat.setOnApplyWindowInsetsListener(nav) { _, insets -> insets }
             }

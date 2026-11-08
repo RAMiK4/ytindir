@@ -157,8 +157,6 @@
     <string name="clear_errored">Kosongkan yang galat</string>
     <string name="split_by_chapters">Pisahkan per babak</string>
     <string name="items_imported">Butir diimpor</string>
-    <string name="help_translate">Bantu Terjemahkan</string>
-    <string name="help_translate_summary">Terjemahkan aplikasi ini ke dalam bahasamu menggunakan Weblate</string>
     <string name="restart">Mulai Ulang</string>
     <string name="download_rescheduled_to">Unduhan dijadwalkan ulang pada:</string>
     <string name="file_size">Ukuran berkas</string>
@@ -660,7 +658,6 @@
     <string name="lyrics_plain">Teks biasa</string>
     <string name="embed_lyrics_summary">Ambil lirik dari lrclib.net dan sematkan ke unduhan audio</string>
     <string name="save_lrc_file_summary">Simpan lirik tersinkron sebagai file .lrc di samping audio</string>
-    <string name="based_on_ytdlnis">Berbasis YTDLnis</string>
     <string name="custom_channels">Fork kustom</string>
     <string name="custom_channels_summary">Perbarui dari repositori rilis yt-dlp milikmu</string>
     <string name="search_results">Hasil Telusur</string>
@@ -675,9 +672,6 @@
         <item quantity="other">%d butir gagal diambil</item>
     </plurals>
     <string name="toggle_all">Alih alik semua</string>
-    <string name="translators">Para penerjemah</string>
-    <string name="translators_summary">Orang-orang yang membantu menerjemahkan aplikasi ini di Weblate</string>
-    <string name="translators_unavailable">Daftar penerjemah tidak tersedia di versi ini. Kamu masih bisa melihat semua orang yang berkontribusi di Weblate.</string>
     <string name="merge_cuts">Gabungkan potongan-potongan tersebut menjadi satu berkas</string>
     <string name="write_ytdlp_terminal">Tulis yt-dlp di terminal secara otomatis</string>
     <plurals name="updates_available_summary">

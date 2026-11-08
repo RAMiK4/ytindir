@@ -82,8 +82,10 @@ jobs:
             # visible to the repository's owner and collaborators (signed in), not to visitors or
             # the app's updater, so nobody gets a test build by accident
             TAG="v${VERSION}-beta-build${{ github.run_number }}"
-            cp $DIR/*arm64-v8a*.apk "out/YTindir-v${VERSION}-test_arm64.apk"
-            gh release create "$TAG" "out/YTindir-v${VERSION}-test_arm64.apk" \
+            # the build number in the file name tells test APKs apart: YTindir-v2.15.0-test_build81_arm64.apk
+            TEST_APK="out/YTindir-v${VERSION}-test_build${{ github.run_number }}_arm64.apk"
+            cp $DIR/*arm64-v8a*.apk "$TEST_APK"
+            gh release create "$TAG" "$TEST_APK" \
               --title "YTindir $VERSION test (${{ github.ref_name }}, build ${{ github.run_number }})" \
               --notes-file notes.md \
               --target "${{ github.sha }}" --draft

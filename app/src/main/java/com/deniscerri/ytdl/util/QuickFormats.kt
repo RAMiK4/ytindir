@@ -158,10 +158,11 @@ object QuickFormats {
 
     // ---- the link's real formats, once they are read ----
 
-    private val REAL_HEIGHTS = listOf(4320, 2160, 1440, 1080, 720, 480)
+    private val REAL_HEIGHTS = listOf(4320, 2160, 1440, 1080, 720, 480, 360, 240, 144)
 
-    /** the quality a real height belongs to: 1080 for 1072 or 1200, null below 480p */
-    private fun qualityOf(height: Int): Int? = REAL_HEIGHTS.firstOrNull { height >= it * 0.9 }
+    /** the quality a real height belongs to: 1080 for 1072 or 1200, 144 for anything smaller */
+    private fun qualityOf(height: Int): Int? =
+        REAL_HEIGHTS.firstOrNull { height >= it * 0.9 } ?: REAL_HEIGHTS.last().takeIf { height > 0 }
 
     private fun Format.isVideo() = vcodec.isNotBlank() && vcodec != "none"
     private fun Format.isAudio() = !isVideo() && acodec.isNotBlank() && acodec != "none"
@@ -181,8 +182,13 @@ object QuickFormats {
     fun realVideoChoices(formats: List<Format>): List<Format> {
         val videos = formats.filter { it.isVideo() && !it.format_id.contains("ytdlnisgeneric") }
         val byQuality = videos.groupBy { f -> heightOf(f)?.let { qualityOf(it) } }
-        // 480p only for links without HD
-        val heights = if (byQuality.keys.any { it != null && it >= 720 }) REAL_HEIGHTS.filter { it >= 720 } else REAL_HEIGHTS
+        // 480p only for links without HD, and the qualities below it only for links without 480p either
+        // (as in the "All formats" list), so a low quality video still gets its video choices
+        val heights = when {
+            byQuality.keys.any { it != null && it >= 720 } -> REAL_HEIGHTS.filter { it >= 720 }
+            byQuality.keys.any { it != null && it >= 480 } -> REAL_HEIGHTS.filter { it >= 480 }
+            else -> REAL_HEIGHTS
+        }
         return heights.mapNotNull { height ->
             val candidates = byQuality[height].orEmpty()
             if (candidates.isEmpty()) return@mapNotNull null
@@ -207,6 +213,28 @@ object QuickFormats {
         val opus = sort(audio.filter { it.acodec.startsWith("opus") }).firstOrNull()
         val aac = sort(audio.filter { it.acodec.startsWith("mp4a") || it.acodec.startsWith("aac") }).firstOrNull()
         return listOfNotNull(opus?.let { "opus" to it }, aac?.let { "m4a" to it })
+    }
+
+    /**
+     * A video choice made before the link's formats were read, on its real formats now: the real stream of
+     * the same quality with the preferred audio, the choice as it was when the link has none there.
+     */
+    fun resolveVideoPick(picked: QuickPick, formats: List<Format>, preferredAudioIDs: (List<Format>) -> List<String>): QuickPick {
+        if (formats.isEmpty()) return picked
+        val height = if (isQuickVideo(picked.format)) heightOf(picked.format) else null
+        val real = when {
+            height != null -> realVideoChoices(formats).firstOrNull { qualityHeight(it) == height }
+            else -> formats.firstOrNull { it.format_id == picked.format.format_id }
+        } ?: return picked
+        val audioIDs = preferredAudioIDs(formats)
+        return picked.copy(format = real, audioFormats = formats.filter { audioIDs.contains(it.format_id) })
+    }
+
+    /** An audio choice made before the link's formats were read: M4A becomes the link's real AAC stream */
+    fun resolveAudioPick(picked: QuickPick, formats: List<Format>, sort: (List<Format>) -> List<Format>): QuickPick {
+        if (picked.format.format_id != AUDIO_M4A) return picked
+        val aac = realAudioChoices(formats, sort).firstOrNull { it.first == "m4a" }?.second ?: return picked
+        return picked.copy(format = aac)
     }
 
     /** the quality a real video choice stands for (1080 for a 1920x1072 stream) */
@@ -282,6 +310,8 @@ object QuickFormats {
     /** YouTube's AAC audio (itag 140) */
     const val USUAL_AAC_KBPS = 128
     const val MP3_KBPS = 192
+    // YTindir: what the quick MP3 is made from, shown in its row and on the download card
+    const val MP3_SOURCE_LABEL = "Opus → MP3"
 
     /**
      * The size of a [MP3_KBPS] MP3 of the link: its length from the AAC stream (size and bitrate),

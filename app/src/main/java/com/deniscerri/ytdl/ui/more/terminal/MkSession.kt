@@ -288,7 +288,7 @@ object MkSession {
 
     /** Shell snippet that prints a short intro, like a Linux login message. */
     private fun welcomeBanner(tools: List<String>, currentDir: String): String {
-        val lines = mutableListOf("\\033[1mWelcome to the YTDLnis terminal\\033[0m")
+        val lines = mutableListOf("\\033[1mWelcome to the YTindir terminal\\033[0m")
         lines.add("Use \\033[1;32myt-dlp\\033[0m to run yt-dlp commands,")
         lines.add("e.g. yt-dlp --version")
         lines.add("Available commands: ${tools.joinToString(", ")}")

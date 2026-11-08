@@ -120,7 +120,6 @@
     <string name="clear_errored">Effacer échoués</string>
     <string name="split_by_chapters">Diviser par chapitres</string>
     <string name="items_imported">Éléments importés</string>
-    <string name="help_translate">Aider à traduire</string>
     <string name="restart">Redémarrer</string>
     <string name="download_rescheduled_to">Téléchargement reporté à :</string>
     <string name="file_size">Taille du fichier</string>
@@ -144,7 +143,6 @@
     <string name="create_template">Créer un modèle</string>
     <string name="export_from_clipboard">Exporter vers le presse-papiers</string>
     <string name="import_from_clipboard">Importer depuis le presse-papiers</string>
-    <string name="help_translate_summary">Traduisez cette application dans votre langue en utilisant Weblate</string>
     <string name="dont_ask_again">Ne plus demander</string>
     <string name="start">Début</string>
     <string name="restrict_filenames_summary">Limitez les noms de fichiers aux caractères ASCII et évitez les \"&amp;\" et les espaces dans les noms de fichiers</string>
@@ -677,7 +675,6 @@
     <string name="lyrics_plain">Texte brut</string>
     <string name="embed_lyrics_summary">Récupère les paroles sur lrclib.net et les intègre aux téléchargements audio</string>
     <string name="save_lrc_file_summary">Enregistre les paroles synchronisées en fichier .lrc à côté de l\'audio</string>
-    <string name="based_on_ytdlnis">Basé sur YTDLnis</string>
     <string name="custom_channels">Fork personnalisé</string>
     <string name="custom_channels_summary">Mettre à jour depuis vos propres dépôts yt-dlp</string>
 </resources>

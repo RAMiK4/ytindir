@@ -45,6 +45,7 @@ import com.deniscerri.ytdl.receiver.ShareActivity
 import com.deniscerri.ytdl.ui.BaseActivity
 import com.deniscerri.ytdl.ui.more.cookies.WebViewActivity
 import com.deniscerri.ytdl.util.UiUtil
+import com.deniscerri.ytdl.util.Extensions.isYoutubeURL
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.deniscerri.ytdl.util.FloatingNavUtil
@@ -60,9 +61,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import java.net.URL
 
 
@@ -93,8 +96,12 @@ class DownloadBottomSheetDialog : BottomSheetDialogFragment() {
     private var currentDownloadItem: DownloadItem? = null
     private var incognito: Boolean = false
 
+    // YTindir: recreated (e.g. after rotation): the quick list doesn't open by itself again
+    private var restored = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        restored = savedInstanceState != null
         downloadViewModel = ViewModelProvider(requireActivity())[DownloadViewModel::class.java]
         historyViewModel = ViewModelProvider(requireActivity())[HistoryViewModel::class.java]
         resultViewModel = ViewModelProvider(requireActivity())[ResultViewModel::class.java]
@@ -193,6 +200,14 @@ class DownloadBottomSheetDialog : BottomSheetDialogFragment() {
 
         //remove outdated player url of 1hr so it can refetch it in the cut player
         if (result.creationTime > System.currentTimeMillis() - 3600000) result.urls = ""
+        // YTindir: a new YouTube download opens on the quick list (unless it's turned off in the settings),
+        // in the tab the card opens on; it fills in as the data and formats arrive
+        ViewModelProvider(requireActivity())[FormatViewModel::class.java].quickAutoOpen.value =
+            if (!restored && currentDownloadItem == null && result.url.isYoutubeURL() &&
+                !result.url.endsWith(".txt") && sharedPreferences.getBoolean("youtube_quick_format_list", true)) {
+                if (type == DownloadType.audio || isAudioOnly) DownloadType.audio else DownloadType.video
+            } else null
+
         val fragmentManager = parentFragmentManager
         fragmentAdapter = DownloadFragmentAdapter(
             fragmentManager,
@@ -424,6 +439,23 @@ class DownloadBottomSheetDialog : BottomSheetDialogFragment() {
             }
         }
 
+        // YTindir: Download in the quick list: once the card took the choice (its tab and its format),
+        // the download starts as if the card's own Download button was tapped
+        formatViewModel.quickDownload.value = false
+        lifecycleScope.launch {
+            formatViewModel.quickDownload.collect { requested ->
+                if (!requested) return@collect
+                formatViewModel.quickDownload.value = false
+                val applied = withTimeoutOrNull(5000) {
+                    formatViewModel.quickTabSwitch.first { it == null }
+                    formatViewModel.quickPick.first { it == null }
+                    // (first() gives back the null it waited for, so the block's own value tells it finished)
+                    true
+                } == true
+                if (applied && isAdded && download.isEnabled) download.performClick()
+            }
+        }
+
         download.setOnLongClickListener {
             val dd = MaterialAlertDialogBuilder(requireContext())
             dd.setTitle(getString(R.string.save_for_later))
@@ -514,6 +546,9 @@ class DownloadBottomSheetDialog : BottomSheetDialogFragment() {
                             },
                             closed = {
                                 dismiss()
+                            },
+                            retry = {
+                                initUpdateData()
                             }
                         )
                     }

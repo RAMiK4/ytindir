@@ -150,11 +150,16 @@ object RuntimeManager {
                     binPaths.add(System.getenv("PATH") ?: "/system/bin")
                     PATH = binPaths.distinct().joinToString(":")
 
-                    ENV_SSL_CERT_FILE = if (pythonLocation.isDownloaded) {
-                        File(pythonLocation.ldDir.parentFile, "usr/etc/tls/cert.pem").absolutePath
+                    val pythonCertFile = if (pythonLocation.isDownloaded) {
+                        File(pythonLocation.ldDir.parentFile, "usr/etc/tls/cert.pem")
                     } else {
-                        pythonLocation.ldDir.absolutePath + "/usr/etc/tls/cert.pem"
+                        File(pythonLocation.ldDir.absolutePath + "/usr/etc/tls/cert.pem")
                     }
+                    // YTindir: Python's bundled CA list can be missing or out of date, and it never has the
+                    // certificates Android itself trusts (newer roots, ones the user or their network installed).
+                    // Without them yt-dlp fails with CERTIFICATE_VERIFY_FAILED, so hand it both lists together.
+                    ENV_SSL_CERT_FILE = CaBundle.build(appContext, pythonCertFile, File(baseDir, "cacert.pem"))
+                        ?: pythonCertFile.absolutePath
 
                     OPEN_SSL_CONF = ""
                     if (nodeLocation.ldDir.exists()) {

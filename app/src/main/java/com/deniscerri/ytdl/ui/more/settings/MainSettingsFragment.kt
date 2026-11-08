@@ -55,16 +55,8 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 
 
+/** YTindir: the settings sections; backup and restore and about are sections of their own now */
 class MainSettingsFragment : PreferenceFragmentCompat() {
-    private var backup : Preference? = null
-    private var restore : Preference? = null
-    private var backupPath : Preference? = null
-
-    private var updateUtil: UpdateUtil? = null
-    private var activeDownloadCount = 0
-
-    private lateinit var settingsViewModel: SettingsViewModel
-
     private lateinit var editor: SharedPreferences.Editor
 
 
@@ -128,14 +120,6 @@ class MainSettingsFragment : PreferenceFragmentCompat() {
             true
         }
 
-        findPreference<Preference>("youtube_po_token")?.apply {
-            summary = "YouTube · BgUtils"
-            setOnPreferenceClickListener {
-                navController.navigate(R.id.generateYoutubePoTokensFragment)
-                true
-            }
-        }
-
         val advanced = findPreference<Preference>("advanced")
         advanced?.summary = "PO Token$separator ${getString(R.string.other_youtube_extractor_args)}"
         advanced?.setOnPreferenceClickListener {
@@ -143,250 +127,20 @@ class MainSettingsFragment : PreferenceFragmentCompat() {
             true
         }
 
-        //about section -------------------------
-        updateUtil = UpdateUtil(requireContext())
-
-        WorkManager.getInstance(requireContext()).getWorkInfosByTagLiveData("download").observe(this){
-            activeDownloadCount = 0
-            it.forEach {w ->
-                if (w.state == WorkInfo.State.RUNNING) activeDownloadCount++
-            }
-        }
-        settingsViewModel = ViewModelProvider(this)[SettingsViewModel::class.java]
-
-        backup = findPreference("backup")
-        restore = findPreference("restore")
-        backupPath = findPreference("backup_path")
-
-        findPreference<Preference>("app_version")?.apply {
-            summary = BuildConfig.VERSION_NAME
+        findPreference<Preference>("backup_restore")?.apply {
+            summary = "${getString(R.string.backup)}$separator ${getString(R.string.restore)}$separator ${getString(R.string.automatic_backup)}"
             setOnPreferenceClickListener {
-                UiUtil.copyToClipboard("YTindir ${BuildConfig.VERSION_NAME}", requireActivity())
+                navController.navigate(R.id.action_mainSettingsFragment_to_backupSettingsFragment)
                 true
             }
         }
 
-        findPreference<Preference>("package_name")?.apply {
-            summary = BuildConfig.APPLICATION_ID
+        findPreference<Preference>("about")?.apply {
+            summary = "${getString(R.string.version)} ${BuildConfig.VERSION_NAME}$separator ${getString(R.string.license)}"
             setOnPreferenceClickListener {
-                UiUtil.copyToClipboard(summary.toString(), requireActivity())
+                navController.navigate(R.id.action_mainSettingsFragment_to_aboutSettingsFragment)
                 true
             }
         }
-
-        findPreference<Preference>("translators")?.setOnPreferenceClickListener {
-            TranslatorsDialog.show(requireContext())
-            true
-        }
-
-        backup!!.onPreferenceClickListener =
-            Preference.OnPreferenceClickListener {
-                val builder = MaterialAlertDialogBuilder(requireContext())
-                builder.setTitle(getString(R.string.select_backup_categories))
-                val values = resources.getStringArray(R.array.backup_category_values)
-                val entries = resources.getStringArray(R.array.backup_category_entries)
-                val checkedItems : ArrayList<Boolean> = arrayListOf()
-                values.forEach { _ ->
-                    checkedItems.add(true)
-                }
-
-                builder.setMultiChoiceItems(
-                    entries,
-                    checkedItems.toBooleanArray()
-                ) { _, which, isChecked ->
-                    checkedItems[which] = isChecked
-                }
-
-                builder.setPositiveButton(
-                    getString(R.string.ok)
-                ) { _: DialogInterface?, _: Int ->
-                    lifecycleScope.launch {
-                        if (checkedItems.all { !it }){
-                            Snackbar.make(requireView(), R.string.select_backup_categories, Snackbar.LENGTH_SHORT).show()
-                            return@launch
-                        }
-
-                        val selectedItems = values.mapIndexed { idx, it -> Pair<String, Boolean>(it, checkedItems[idx]) }.filter { it.second }.map { it.first }
-                        val pathResult = withContext(Dispatchers.IO){
-                            settingsViewModel.backup(selectedItems)
-                        }
-
-                        if (pathResult.isFailure) {
-                            val errorMessage = pathResult.exceptionOrNull()?.message ?: requireContext().getString(R.string.errored)
-                            val snack = Snackbar.make(requireView(), errorMessage, Snackbar.LENGTH_LONG)
-                            val snackbarView: View = snack.view
-                            val snackTextView = snackbarView.findViewById<View>(com.google.android.material.R.id.snackbar_text) as TextView
-                            snackTextView.maxLines = 9999999
-                            snack.setAction(android.R.string.copy){
-                                UiUtil.copyToClipboard(errorMessage ?: requireContext().getString(R.string.errored), requireActivity())
-                            }
-                            snack.show()
-                        }else {
-                            val s = Snackbar.make(
-                                requireView(),
-                                getString(R.string.backup_created_successfully),
-                                Snackbar.LENGTH_LONG
-                            )
-                            s.setAction(R.string.Open_File) {
-                                FileUtil.openFileIntent(requireActivity(), pathResult.getOrNull()!!)
-                            }
-                            s.show()
-                        }
-                    }
-                }
-
-                // handle the negative button of the alert dialog
-                builder.setNegativeButton(
-                    getString(R.string.cancel)
-                ) { _: DialogInterface?, _: Int -> }
-
-
-                val dialog = builder.create()
-                dialog.show()
-                true
-            }
-        restore!!.onPreferenceClickListener =
-            Preference.OnPreferenceClickListener {
-                val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-                    addCategory(Intent.CATEGORY_OPENABLE)
-                    type = "*/*"
-                    putExtra(Intent.EXTRA_MIME_TYPES, BackupSettingsUtil.RESTORE_MIME_TYPES)
-                }
-                intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
-                appRestoreResultLauncher.launch(intent)
-                true
-            }
-
-        backupPath?.apply {
-            summary = FileUtil.formatPath(FileUtil.getBackupPath(requireContext()))
-            setOnPreferenceClickListener {
-                val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-                intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
-                backupPathResultLauncher.launch(intent)
-                true
-            }
-        }
-    }
-
-    private var backupPathResultLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            result.data?.data?.let {
-                activity?.contentResolver?.takePersistableUriPermission(
-                    it,
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION or
-                            Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                )
-            }
-
-            val path = result.data!!.data.toString()
-            backupPath!!.summary = FileUtil.formatPath(path)
-            editor.putString("backup_path", path)
-            editor.apply()
-        }
-    }
-
-
-
-    private var appRestoreResultLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            result.data?.data?.let {
-                activity?.contentResolver?.takePersistableUriPermission(
-                    it,
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION or
-                            Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                )
-            }
-            lifecycleScope.launch {
-                runCatching {
-                    val (restoreData, summary) = BackupSettingsUtil.parse(requireContext(), result.data!!.data!!)
-                    val parsedDataMessage = StringBuilder(summary)
-
-                    showAppRestoreInfoDialog(
-                        onMerge = {
-                            lifecycleScope.launch {
-                                val res = withContext(Dispatchers.IO){
-                                    settingsViewModel.restoreData(restoreData, requireContext())
-                                }
-                                if (res) {
-                                    showRestoreFinishedDialog(restoreData, parsedDataMessage.toString())
-                                }else{
-                                    throw Error()
-                                }
-                            }
-                        },
-                        onReset =  {
-                            lifecycleScope.launch {
-                                val res = withContext(Dispatchers.IO){
-                                    settingsViewModel.restoreData(restoreData, requireContext(),true)
-                                }
-                                if (res) {
-                                    showRestoreFinishedDialog(restoreData, parsedDataMessage.toString())
-                                }else{
-                                    throw Error()
-                                }
-                            }
-                        }
-                    )
-
-                }.onFailure {
-                    it.printStackTrace()
-                    Snackbar.make(requireView(), it.message.toString(), Snackbar.LENGTH_INDEFINITE).show()
-                }
-            }
-
-        }
-    }
-
-
-
-    @SuppressLint("RestrictedApi")
-    private fun showAppRestoreInfoDialog(onMerge: () -> Unit, onReset: () -> Unit){
-        val builder = MaterialAlertDialogBuilder(requireContext())
-        builder.setTitle(getString(R.string.restore))
-        builder.setMessage(getString(R.string.restore_info))
-
-        builder.setNegativeButton(getString(R.string.cancel)) { dialog : DialogInterface?, _: Int ->
-            dialog?.dismiss()
-        }
-
-        builder.setPositiveButton(getString(R.string.restore)) { dialog : DialogInterface?, _: Int ->
-            onMerge()
-            dialog?.dismiss()
-        }
-
-        builder.setNeutralButton(getString(R.string.reset)) { dialog : DialogInterface?, _: Int ->
-            onReset()
-            dialog?.dismiss()
-        }
-
-
-        val dialog = builder.create()
-        dialog.show()
-        dialog.getButton(AlertDialog.BUTTON_NEUTRAL).gravity = Gravity.START
-    }
-
-    private fun showRestoreFinishedDialog(data: RestoreAppDataItem, restoreDataMessage: String) {
-        val preferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
-
-        val builder = MaterialAlertDialogBuilder(requireContext())
-        builder.setTitle(getString(R.string.restore))
-        builder.setMessage("${getString(R.string.restore_complete)}\n\n$restoreDataMessage")
-        builder.setCancelable(false)
-        builder.setPositiveButton(
-            getString(R.string.ok)
-        ) { _: DialogInterface?, _: Int ->
-            ThemeUtil.recreateAllActivities()
-        }
-
-        val dialog = builder.create()
-        dialog.show()
     }
 }

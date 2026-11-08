@@ -3,7 +3,22 @@
 <resources>
     <color name="ytindr_nav_bg">#E6FFFFFF</color>
     <color name="ytindr_nav_stroke">#1A000000</color>
+    <!-- YTindir: the nav's tint over the blurred content behind it (Android 12+), and its light edge -->
+    <color name="ytindr_nav_glass">#A6FFFFFF</color>
+    <color name="ytindr_nav_glass_stroke">#26000000</color>
     <item name="ytindr_nav_padded" type="id"/>
+    <!-- YTindir: the bottom nav's chosen item: a faint neutral capsule, no green -->
+    <color name="ytindr_nav_indicator">#0F000000</color>
+    <style name="YTindir.NavIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:width">52dp</item>
+        <item name="android:height">28dp</item>
+        <item name="android:color">@color/ytindr_nav_indicator</item>
+        <item name="shapeAppearance">@style/YTindir.Shape.Pill</item>
+    </style>
+    <style name="YTindir.Shape.Pill" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
 
     <style name="YTindir.Shape.Card" parent="">
         <item name="cornerFamily">rounded</item>

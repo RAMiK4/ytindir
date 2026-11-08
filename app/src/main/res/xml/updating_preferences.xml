@@ -42,6 +42,7 @@
 
     <PreferenceCategory android:title="@string/format">
         <ListPreference
+            app:isPreferenceVisible="false"
             android:defaultValue="filesize"
             android:entries="@array/format_ordering"
             android:entryValues="@array/format_ordering_values"
@@ -51,6 +52,7 @@
             app:title="@string/format_order" />
 
         <ListPreference
+            app:isPreferenceVisible="false"
             android:defaultValue="ALL"
             android:entries="@array/format_filtering"
             android:entryValues="@array/format_filtering_values"

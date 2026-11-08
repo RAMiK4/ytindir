@@ -107,6 +107,10 @@ class FormatAdapter(onItemClickListener: OnItemClickListener, activity: Activity
                     if (card.isChecked) {
                         selectedAudioFormats.remove(item)
                     }else {
+                        // YTindir: one audio track per language: another one of the same language replaces it
+                        // (several are only for different languages, e.g. the original and a dub)
+                        val lang = item.lang?.lowercase().orEmpty()
+                        selectedAudioFormats.removeAll { it.lang?.lowercase().orEmpty() == lang }
                         selectedAudioFormats.add(item)
                     }
                     notifyDataSetChanged()

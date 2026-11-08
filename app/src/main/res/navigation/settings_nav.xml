@@ -73,7 +73,21 @@
         <action
             android:id="@+id/action_mainSettingsFragment_to_advancedSettingsFragment"
             app:destination="@id/advancedSettingsFragment" />
+        <action
+            android:id="@+id/action_mainSettingsFragment_to_backupSettingsFragment"
+            app:destination="@id/backupSettingsFragment" />
+        <action
+            android:id="@+id/action_mainSettingsFragment_to_aboutSettingsFragment"
+            app:destination="@id/aboutSettingsFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/backupSettingsFragment"
+        android:name="com.deniscerri.ytdl.ui.more.settings.backup.BackupSettingsFragment"
+        android:label="BackupSettingsFragment" />
+    <fragment
+        android:id="@+id/aboutSettingsFragment"
+        android:name="com.deniscerri.ytdl.ui.more.settings.about.AboutSettingsFragment"
+        android:label="AboutSettingsFragment" />
     <fragment
         android:id="@+id/advancedSettingsFragment"
         android:name="com.deniscerri.ytdl.ui.more.settings.advanced.AdvancedSettingsFragment"

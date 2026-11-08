@@ -81,6 +81,8 @@ class SettingsActivity : BaseActivity(), SettingHost {
         R.xml.ytdlp_update_preferences to R.id.ytdlpUpdateSettingsFragment,
         R.xml.app_update_preferences to R.id.appUpdateSettingsFragment,
         R.xml.advanced_preferences to R.id.advancedSettingsFragment,
+        R.xml.backup_preferences to R.id.backupSettingsFragment,
+        R.xml.about_preferences to R.id.aboutSettingsFragment,
     )
     fun getDestinationIdForXml(xmlRes: Int): Int = xmlToNavId[xmlRes] ?: R.id.mainSettingsFragment
 

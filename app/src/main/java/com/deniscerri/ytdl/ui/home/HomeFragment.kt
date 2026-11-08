@@ -358,7 +358,10 @@ class HomeFragment : Fragment(), HomeAdapter.OnItemClickListener, SearchSuggesti
                                     myIntent.putExtra("url", "https://${URL(queryList.first()).host}")
                                     cookiesFetchedResultLauncher.launch(myIntent)
                                 },
-                                closed = {}
+                                closed = {},
+                                retry = {
+                                    startSearch()
+                                }
                             )
                         }
                         resultViewModel.uiState.update {it.copy(errorMessage  = null) }

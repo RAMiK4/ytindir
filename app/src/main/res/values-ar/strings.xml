@@ -154,8 +154,6 @@
     <string name="start">البداية</string>
     <string name="save_dir">الحفظ في المسار:</string>
     <string name="preferred_download_type_summary">التبويب الذي ستُفتح عليه بطاقة التنزيل</string>
-    <string name="help_translate">المساعدة في الترجمة</string>
-    <string name="help_translate_summary">المساعدة بِاقتراح ترجمات محسنة على Weblate</string>
     <string name="restart">إعادة التشغيل</string>
     <string name="confirm_delete_logs_desc">إزالة السجلات بالكامل.</string>
     <string name="select">اختيار</string>
@@ -695,7 +693,6 @@
     <string name="lyrics_plain">نص عادي</string>
     <string name="embed_lyrics_summary">جلب الكلمات من lrclib.net وتضمينها في تنزيلات الصوت</string>
     <string name="save_lrc_file_summary">حفظ الكلمات المتزامنة كملف ‎.lrc بجانب الصوت</string>
-    <string name="based_on_ytdlnis">مبني على YTDLnis</string>
     <string name="custom_channels">نسخة مخصصة</string>
     <string name="custom_channels_summary">التحديث من مستودعات yt-dlp الخاصة بك</string>
 </resources>

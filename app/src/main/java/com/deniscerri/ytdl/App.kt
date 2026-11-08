@@ -67,6 +67,14 @@ class App : Application() {
                 sp.edit().putBoolean("use_sponsorblock", false).putBoolean("sponsorblock_reset", true).apply()
             }
         }
+        // YTindir: the preferred format sizes and the format list's order are hidden settings now: back to their
+        // defaults once, so a value set before doesn't keep changing which format is picked or how the list is sorted
+        PreferenceManager.getDefaultSharedPreferences(this).let { sp ->
+            if (!sp.getBoolean("format_size_order_reset", false)) {
+                sp.edit().putString("preferred_format_size", "").putString("preferred_format_size_audio", "")
+                    .putString("format_order", "filesize").putBoolean("format_size_order_reset", true).apply()
+            }
+        }
         ThemeUtil.init(this)
 
         val processName = getProcessNameImpl()

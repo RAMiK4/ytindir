@@ -148,8 +148,6 @@
     <string name="clear_errored">Limpar downloads com falhas</string>
     <string name="split_by_chapters">Dividir por capítulos</string>
     <string name="items_imported">Itens importados</string>
-    <string name="help_translate">Ajude a traduzir</string>
-    <string name="help_translate_summary">Traduza este aplicativo para o seu idioma usando o Weblate</string>
     <string name="restart">Reiniciar</string>
     <string name="file_size">Tamanho do arquivo</string>
     <string name="clear_temporary_files">Limpar pasta de cache</string>
@@ -690,5 +688,4 @@
     <string name="lyrics_plain">Texto simples</string>
     <string name="embed_lyrics_summary">Busca a letra no lrclib.net e a incorpora nos downloads de áudio</string>
     <string name="save_lrc_file_summary">Salva a letra sincronizada como arquivo .lrc junto ao áudio</string>
-    <string name="based_on_ytdlnis">Baseado no YTDLnis</string>
 </resources>

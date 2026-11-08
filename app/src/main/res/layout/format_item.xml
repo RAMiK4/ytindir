@@ -201,7 +201,7 @@
                             android:clickable="false"
                             android:gravity="center"
                             android:outlineProvider="none"
-                            android:maxWidth="90dp"
+                            android:maxWidth="120dp"
                             android:maxLines="1"
                             android:minWidth="30dp"
                             android:paddingHorizontal="5dp"

@@ -6,30 +6,6 @@
         <SwitchPreferenceCompat
             android:widgetLayout="@layout/preferece_material_switch"
             app:defaultValue="false"
-            app:icon="@drawable/ic_money"
-            app:key="use_sponsorblock"
-            app:title="@string/use_sponsorblock" />
-
-        <MultiSelectListPreference
-            app:icon="@drawable/ic_money"
-            app:dialogTitle="@string/select_sponsorblock_filtering"
-            app:entries="@array/sponsorblock_settings_entries"
-            app:entryValues="@array/sponsorblock_settings_values"
-            app:key="sponsorblock_filters"
-            app:summary="@string/select_sponsorblock_filtering"
-            app:title="SponsorBlock" />
-
-        <EditTextPreference
-            app:icon="@drawable/ic_money"
-            app:key="sponsorblock_url"
-            app:useSimpleSummaryProvider="true"
-            app:defaultValue=""
-            app:title="@string/sponsorblock_api_url" />
-
-
-        <SwitchPreferenceCompat
-            android:widgetLayout="@layout/preferece_material_switch"
-            app:defaultValue="false"
             app:icon="@drawable/ic_clock"
             app:key="mtime"
             app:summary="@string/enable_mtime_summary"
@@ -368,7 +344,34 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/format">
+    <PreferenceCategory android:title="SponsorBlock">
+        <SwitchPreferenceCompat
+            android:widgetLayout="@layout/preferece_material_switch"
+            app:defaultValue="false"
+            app:icon="@drawable/ic_money"
+            app:key="use_sponsorblock"
+            app:title="@string/use_sponsorblock" />
+
+        <MultiSelectListPreference
+            app:icon="@drawable/ic_money"
+            app:dialogTitle="@string/select_sponsorblock_filtering"
+            app:entries="@array/sponsorblock_settings_entries"
+            app:entryValues="@array/sponsorblock_settings_values"
+            app:key="sponsorblock_filters"
+            app:summary="@string/select_sponsorblock_filtering"
+            app:title="SponsorBlock" />
+
+        <EditTextPreference
+            app:icon="@drawable/ic_money"
+            app:key="sponsorblock_url"
+            app:useSimpleSummaryProvider="true"
+            app:defaultValue=""
+            app:title="@string/sponsorblock_api_url" />
+    </PreferenceCategory>
+
+    <!-- YTindir: the preferred format sizes are no longer used by the app's own quality choices (hidden, reset once) -->
+    <PreferenceCategory android:title="@string/format"
+        app:isPreferenceVisible="false">
 
         <ListPreference
             app:icon="@drawable/ic_format"

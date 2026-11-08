@@ -103,7 +103,6 @@
     <string name="all_items_selected">모든 항목 선택됨</string>
     <string name="split_by_chapters">챕터로 나누기</string>
     <string name="items_imported">가져온 항목</string>
-    <string name="help_translate">번역 지원</string>
     <string name="access_all_directories_summary">기본적으로 제한된 디렉토리에서 앱 다운로드 허용</string>
     <string name="download_rescheduled_to">다운로드 일정 변경:</string>
     <string name="clear_temporary_files_summary">캐시 파일, infojson, 기타 임시 설정 삭제</string>
@@ -208,7 +207,6 @@
     <string name="confirm_delete_logs_desc">전체 로그 목록을 완전히 삭제합니다.</string>
     <string name="file_size">파일 크기</string>
     <string name="redownload">다시 다운로드</string>
-    <string name="help_translate_summary">웨블레이트를 사용하여 이 앱을 당신의 언어로 번역하세요</string>
     <string name="restart">재시작</string>
     <string name="ignore_battery_optimization">배터리 최적화 무시 설정</string>
     <string name="update_formats_summary">미디어 형식을 클릭하면 누락된 형식을 자동으로 검색합니다 (빠른 다운로드 사용시 유용)</string>
@@ -636,9 +634,6 @@
     <string name="custom_channels">사용자 지정 포크</string>
     <string name="duration">기간</string>
     <string name="toggle_all">모두 반전</string>
-    <string name="translators">번역자</string>
-    <string name="translators_summary">Weblate에서 이 앱을 번역하는 데 도움을 주신 분들입니다</string>
-    <string name="translators_unavailable">이 빌드에서는 번역자 목록을 확인할 수 없습니다. 그래도 Weblate에서 기여한 사람을 모두 확인할 수 있습니다.</string>
     <string name="welcome_next">다음</string>
     <string name="welcome_finish">마침</string>
     <string name="lyrics">가사</string>
@@ -680,7 +675,6 @@
     <string name="welcome_guide_summary">가이드에서는 앱 사용법, 다운로드 방법, 자주 발생하는 문제 해결 방법을 설명합니다. 언제든지 열 수 있습니다.</string>
     <string name="lyrics_source">lrclib.net에서 가사 제공</string>
     <string name="merge_cuts">자른 조각을 한 파일로 병합</string>
-    <string name="based_on_ytdlnis">YTDLnis 기반</string>
     <plurals name="updates_available_summary">
         <item quantity="other">%d개 업데이트 가능</item>
     </plurals>
