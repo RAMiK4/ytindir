@@ -21,11 +21,12 @@ YTindir; YouTube, Instagram, TikTok, Facebook, VK, X ve [1000'den fazla siteden]
 | Kaynaklar | Desteklenen çözünürlükler |
 | --- | --- |
 | **YouTube** | 8K 60fps, 4K 60fps, 2K 60fps, 1080p FHD 60fps ve diğer çözünürlükler |
-| **Instagram** | 2K 60fps, 1080p FHD 60fps ve diğer çözünürlükler |
+| **Instagram** | 2K 60fps, 1080p FHD 60fps (gönderi, reels, hikâye) ve diğer çözünürlükler |
 | **TikTok** | 1080p FHD 60fps (kaynak kalitede) ve diğer çözünürlükler |
+| **X (Twitter)** | 2K 60fps, 1080p FHD 60fps ve diğer çözünürlükler |
 | **Facebook** | 2K 60fps, 1080p FHD 60fps ve diğer çözünürlükler |
 | **VK** | 2K 60fps, 1080p FHD 60fps ve diğer çözünürlükler |
-| **Diğer siteler** | Sitenin sunduğu en yüksek çözünürlük ve diğer çözünürlükler |
+| **Diğer siteler** | Sitenin sunduğu desteklenen en yüksek çözünürlükler |
 
 ## ✨ Özellikler
 
