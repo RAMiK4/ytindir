@@ -293,6 +293,7 @@ class DownloadWorker(
                                 "URL: ${downloadItem.url}\n" +
                                 "Type: ${downloadItem.type}\n" +
                                 (tiktokSource?.let { "${it.note}\n" } ?: "") +
+                                (RuntimeManager.ffmpegError?.let { "FFmpeg: $it\n" } ?: "") +
                                 "Command:\n$commandString \n\n"
                         val logString = StringBuilder(initialLogDetails)
                         val logItem = LogItem(

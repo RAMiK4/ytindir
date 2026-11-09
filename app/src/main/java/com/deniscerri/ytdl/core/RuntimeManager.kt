@@ -3,7 +3,9 @@ package com.deniscerri.ytdl.core
 import android.content.Context
 import android.os.Build
 import android.os.Environment
+import androidx.preference.PreferenceManager
 import com.deniscerri.ytdl.App
+import com.deniscerri.ytdl.BuildConfig
 import com.deniscerri.ytdl.R
 import com.deniscerri.ytdl.core.models.ExecuteException
 import com.deniscerri.ytdl.core.models.ExecuteResponse
@@ -125,30 +127,7 @@ object RuntimeManager {
                     ytdlpPath = File(ytdlpDir, ytdlpBin)
                     initYTDLP(appContext, ytdlpDir)
 
-                    val locations = listOf(
-                        pythonLocation,
-                        ffmpegLocation,
-                        aria2Location,
-                        nodeLocation,
-                        quickJsLocation,
-                        denoLocation,
-                    )
-
-                    val ldPaths = mutableListOf<String>()
-                    locations.forEach {
-                        val usrLib = File(it.ldDir, "usr/lib")
-                        if (usrLib.exists()) {
-                            ldPaths.add(usrLib.absolutePath)
-                        } else if (it.ldDir.exists()) {
-                            ldPaths.add(it.ldDir.absolutePath)
-                        }
-                    }
-                    ldPaths.add(appContext.applicationInfo.nativeLibraryDir)
-                    ENV_LD_LIBRARY_PATH = ldPaths.distinct().joinToString(":")
-
-                    val binPaths = locations.filter { it.binDir.exists() }.map { it.binDir.absolutePath }.toMutableList()
-                    binPaths.add(System.getenv("PATH") ?: "/system/bin")
-                    PATH = binPaths.distinct().joinToString(":")
+                    buildSearchPaths(appContext)
 
                     val pythonCertFile = if (pythonLocation.isDownloaded) {
                         File(pythonLocation.ldDir.parentFile, "usr/etc/tls/cert.pem")
@@ -191,6 +170,13 @@ object RuntimeManager {
                     val ytdlpPluginsFolder = File(FileUtil.getBundledYTDLPPluginsPath(appContext))
                     copyAssetFolder(appContext, "yt_dlp_plugins", ytdlpPluginsFolder)
 
+                    // YTindir: make sure ffmpeg really starts here, otherwise every merge fails
+                    try {
+                        checkFfmpeg(appContext)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+
                     initialized = true
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -200,6 +186,128 @@ object RuntimeManager {
                     updateLatch.countDown()
                 }
             }
+        }
+    }
+
+    private fun buildSearchPaths(appContext: Context, firstLdDir: File? = null) {
+        val locations = listOf(
+            pythonLocation,
+            ffmpegLocation,
+            aria2Location,
+            nodeLocation,
+            quickJsLocation,
+            denoLocation,
+        )
+
+        val ldPaths = mutableListOf<String>()
+        firstLdDir?.let { ldPaths.add(it.absolutePath) }
+        locations.forEach {
+            val usrLib = File(it.ldDir, "usr/lib")
+            if (usrLib.exists()) {
+                ldPaths.add(usrLib.absolutePath)
+            } else if (it.ldDir.exists()) {
+                ldPaths.add(it.ldDir.absolutePath)
+            }
+        }
+        ldPaths.add(appContext.applicationInfo.nativeLibraryDir)
+        ENV_LD_LIBRARY_PATH = ldPaths.distinct().joinToString(":")
+
+        val binPaths = locations.filter { it.binDir.exists() }.map { it.binDir.absolutePath }.toMutableList()
+        binPaths.add(System.getenv("PATH") ?: "/system/bin")
+        PATH = binPaths.distinct().joinToString(":")
+    }
+
+    /** YTindir: why ffmpeg can't be used on this phone, null when it works. Shown in download logs. */
+    @Volatile
+    var ffmpegError: String? = null
+        private set
+
+    /**
+     * YTindir: yt-dlp only says "ffmpeg not found" when ffmpeg is there but won't start, and the
+     * file merely existing was all that was checked. It can fail to start when its unpacked
+     * libraries are broken, or when a separately installed package app (python or ffmpeg from
+     * another version) puts libraries with the same name but other contents ahead of its own.
+     * Try, in order: as it is, the bundled ffmpeg instead of the package app's, the bundled
+     * libraries unpacked again, and ffmpeg's own libraries searched first.
+     */
+    private fun checkFfmpeg(appContext: Context) {
+        ffmpegError = null
+        if (!ffmpegLocation.isAvailable) {
+            ffmpegError = "ffmpeg is missing from this install (${ffmpegLocation.executable.absolutePath})"
+            return
+        }
+        var error = probeFfmpeg(appContext) ?: return
+
+        if (ffmpegLocation.isDownloaded) {
+            val bundled = FFmpeg.bundledLocation(appContext)
+            if (bundled.isAvailable) {
+                ffmpegLocation = bundled
+                buildSearchPaths(appContext)
+                error = probeFfmpeg(appContext) ?: return
+            }
+        }
+
+        // unpacking again takes a while, so only once per app version when it doesn't help
+        val prefs = PreferenceManager.getDefaultSharedPreferences(appContext)
+        val reextractKey = "ffmpeg_reextracted_for"
+        val thisVersion = BuildConfig.VERSION_CODE.toString()
+        if (!ffmpegLocation.isDownloaded && prefs.getString(reextractKey, "") != thisVersion) {
+            prefs.edit().putString(reextractKey, thisVersion).apply()
+            if (FFmpeg.reextractBundled(appContext)) {
+                error = probeFfmpeg(appContext) ?: return
+            }
+        }
+
+        val ownLibs = File(ffmpegLocation.ldDir, "usr/lib").takeIf { it.exists() } ?: ffmpegLocation.ldDir
+        if (ownLibs.exists()) {
+            val before = ENV_LD_LIBRARY_PATH
+            buildSearchPaths(appContext, ownLibs)
+            if (probeFfmpeg(appContext) == null && probePython(appContext)) return
+            ENV_LD_LIBRARY_PATH = before
+        }
+
+        ffmpegError = error
+    }
+
+    /** Runs "ffmpeg -version" the way yt-dlp will; null when it works, otherwise what went wrong. */
+    private fun probeFfmpeg(appContext: Context): String? {
+        val result = runProbe(appContext, listOf(ffmpegLocation.executable.absolutePath, "-version"))
+            ?: return "ffmpeg did not finish starting"
+        val (exit, out) = result
+        return if (exit == 0 && out.contains("ffmpeg version")) null
+        else "ffmpeg won't start (exit $exit): ${out.trim().take(400)}"
+    }
+
+    private fun probePython(appContext: Context): Boolean {
+        val result = runProbe(appContext, listOf(pythonLocation.executable.absolutePath, "-c", "import ssl, sqlite3")) ?: return false
+        return result.first == 0
+    }
+
+    private fun runProbe(appContext: Context, command: List<String>): Pair<Int, String>? {
+        val outFile = File(appContext.cacheDir, "probe_${UUID.randomUUID()}.txt")
+        return try {
+            val pb = ProcessBuilder(command).redirectErrorStream(true).redirectOutput(outFile)
+            val env = pb.environment()
+            getEnvironment().forEach { (k, v) -> if (v != null) env[k] = v }
+            val process = pb.start()
+            // waitFor(timeout) needs Android 8, so poll (ffmpeg -version takes a few milliseconds)
+            val deadline = System.currentTimeMillis() + 15_000
+            var exit: Int? = null
+            while (exit == null) {
+                exit = try { process.exitValue() } catch (e: IllegalThreadStateException) { null }
+                if (exit == null) {
+                    if (System.currentTimeMillis() > deadline) {
+                        process.destroy()
+                        return null
+                    }
+                    Thread.sleep(20)
+                }
+            }
+            exit to (if (outFile.exists()) outFile.readText() else "")
+        } catch (e: Exception) {
+            -1 to (e.message ?: e.toString())
+        } finally {
+            outFile.delete()
         }
     }
 

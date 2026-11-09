@@ -138,6 +138,41 @@ abstract class PackageBase {
         }
     }
 
+    /**
+     * YTindir: the copy bundled in this app, ignoring a separately installed package app. Used when
+     * the package app's binary can't run here (built for another version of the other packages).
+     */
+    fun bundledLocation(context: Context): PackageLocation {
+        val baseDir = File(context.noBackupFilesDir, RuntimeManager.BASENAME)
+        val binDir = File(context.applicationInfo.nativeLibraryDir)
+        val exe = File(binDir, "lib$executableName.so")
+        return PackageLocation(
+            binDir = binDir,
+            ldDir = File(File(baseDir, packagesRoot), packageFolderName),
+            executable = exe,
+            isDownloaded = false,
+            isBundled = exe.exists(),
+            isAvailable = exe.exists(),
+            canUninstall = canUninstall
+        )
+    }
+
+    /**
+     * YTindir: unpacks the bundled libraries again, for when the unpacked copy is broken (an unpack
+     * cut short, files removed by a cleaner app...). The old check only compared the zip's size, so
+     * a broken copy stayed broken for good.
+     */
+    fun reextractBundled(context: Context): Boolean {
+        val baseDir = File(context.noBackupFilesDir, RuntimeManager.BASENAME)
+        val packageDir = File(baseDir, "$packagesRoot/$packageFolderName")
+        val bundledZip = File(context.applicationInfo.nativeLibraryDir, bundledZipName)
+        if (!bundledZip.exists()) return false
+        PreferenceManager.getDefaultSharedPreferences(context).edit(commit = true) { remove(bundledVerKey) }
+        FileUtils.deleteQuietly(packageDir)
+        initBundled(context, bundledZip, packageDir)
+        return packageDir.exists()
+    }
+
     private fun getDownloadedDir(context: Context) : File {
         val baseDir = File(context.noBackupFilesDir, RuntimeManager.BASENAME)
         return File(baseDir, "$downloadedPackagesRoot/$packageFolderName")
