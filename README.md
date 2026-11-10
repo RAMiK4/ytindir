@@ -47,7 +47,7 @@ Download the APK from **[Releases](https://github.com/RAMiK4/ytindir/releases/la
 
 ## 🙏 Credits and license
 
-- **[RAMiK4](https://github.com/RAMiK4)**: YTindir's development, design and extra features
+- **[Ramik ☆](https://github.com/RAMiK4)**: YTindir's development, design and extra features
 - **[YTDLnis](https://github.com/deniscerri/ytdlnis)** by Denis Çerri and contributors: YTindir is a modified version of this project
 - **[yt-dlp](https://github.com/yt-dlp/yt-dlp)** and **[youtubedl-android](https://github.com/yausername/youtubedl-android)**
 
