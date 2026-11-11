@@ -388,6 +388,11 @@ class DownloadAudioFragment(private var resultItem: ResultItem? = null, private 
                     formatViewModel.quickAutoOpen.value = null
                     formatCard.post { if (isAdded) formatCard.performClick() }
                 }
+                // YTindir: or on the full format list, when the app that shared the link asked for all formats
+                if (savedInstanceState?.containsKey("updated") != true && formatViewModel.allFormatsAutoOpen.value == DownloadType.audio) {
+                    formatViewModel.allFormatsAutoOpen.value = null
+                    formatCard.post { if (isAdded) showFormatSheet() }
+                }
 
 
                 view.findViewById<LinearLayout>(R.id.adjust).apply {

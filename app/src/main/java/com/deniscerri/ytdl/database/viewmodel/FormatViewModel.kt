@@ -52,6 +52,9 @@ class FormatViewModel(private val application: Application) : AndroidViewModel(a
     val quickTabSwitch = MutableStateFlow<DownloadType?>(null)
     // ...the tab whose quick list opens by itself when the card opens (a new YouTube download)
     val quickAutoOpen = MutableStateFlow<DownloadType?>(null)
+    // ...or the tab whose full format list opens by itself instead, when the app that shared the link
+    // asked for all formats (FORMAT_LIST=all, e.g. All formats in the quick download menu of YouTube)
+    val allFormatsAutoOpen = MutableStateFlow<DownloadType?>(null)
     // ...and a counter the tabs raise when their item changed (data or formats read), so an open
     // quick list shows the new title, qualities and sizes
     val quickItemVersion = MutableStateFlow(0)

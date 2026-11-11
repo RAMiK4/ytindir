@@ -207,6 +207,9 @@ class ShareActivity : BaseActivity() {
                     downloadCardViewModel.setDownloadItem(null)
                     val bundle = Bundle()
                     bundle.putSerializable("type", downloadType)
+                    // YTindir: FORMAT_LIST=all opens the card on the full format list instead of the quick list
+                    // (All formats in the quick download menu of YouTube)
+                    bundle.putBoolean("all_formats", intent.getStringExtra("FORMAT_LIST") == "all")
                     navController.setGraph(R.navigation.share_nav_graph, bundle)
                 }else{
                     Toast.makeText(this@ShareActivity, "${getString(R.string.downloading)} $inputQuery", Toast.LENGTH_SHORT).show()
