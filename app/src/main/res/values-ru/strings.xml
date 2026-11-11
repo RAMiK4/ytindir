@@ -747,7 +747,7 @@
     <string name="quick_audio_only">Только аудио</string>
     <string name="quick_thumbnail">Обложка</string>
     <string name="quick_thumbnail_downloading">Скачивание обложки</string>
-    <string name="quick_all_formats">Все форматы</string>
+    <string name="quick_all_options">Все параметры</string>
     <string name="quick_all_formats_summary">Загружает форматы ссылки с размерами файлов</string>
     <string name="format_group_original">%1$s • Оригинальная озвучка</string>
     <string name="format_group_dubbed">%1$s • Озвучка / дубляж (%2$d)</string>

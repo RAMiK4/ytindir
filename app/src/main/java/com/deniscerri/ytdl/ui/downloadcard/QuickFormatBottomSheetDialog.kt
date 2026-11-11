@@ -51,6 +51,7 @@ import kotlinx.coroutines.withContext
  * A video or audio choice goes to its tab of the card through [FormatViewModel.quickPick] and is
  * marked in the list; Download starts the download with it (or, with "quick_pick_opens_card" on,
  * the choice closes the list and goes back to the card). The thumbnail is queued as a download of its own.
+ * All options closes the list, back to the card with all its options.
  */
 class QuickFormatBottomSheetDialog : BottomSheetDialogFragment() {
 
@@ -63,9 +64,6 @@ class QuickFormatBottomSheetDialog : BottomSheetDialogFragment() {
      * formats arrive while the list is open), so the list always shows the current title, qualities and sizes
      */
     var itemProvider: (() -> DownloadItem?)? = null
-
-    /** opens the usual format list (every format, and reading them for a quick download) */
-    var onAllFormats: (() -> Unit)? = null
 
     // the row picked in this list ("v:1080", "a:mp3"), marked instead of the item's format: the card may
     // not have taken it yet, and a choice for the other tab is not on this tab's item
@@ -104,14 +102,9 @@ class QuickFormatBottomSheetDialog : BottomSheetDialogFragment() {
             formatViewModel.quickDownload.value = true
             dismiss()
         }
-        view.findViewById<View>(R.id.quick_sheet_all_formats).apply {
-            isVisible = onAllFormats != null
-            setOnClickListener {
-                val openAll = onAllFormats
-                dismiss()
-                openAll?.invoke()
-            }
-        }
+        // YTindir: All options closes the list, back to the card with all its options (folder, file name,
+        // and the full format list on its format card)
+        view.findViewById<View>(R.id.quick_sheet_all_options).setOnClickListener { dismiss() }
 
         // the list again whenever the card's item changed (and once now)
         viewLifecycleOwner.lifecycleScope.launch {

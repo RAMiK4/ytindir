@@ -202,12 +202,14 @@ class DownloadBottomSheetDialog : BottomSheetDialogFragment() {
         if (result.creationTime > System.currentTimeMillis() - 3600000) result.urls = ""
         // YTindir: a new YouTube download opens on the quick list (unless it's turned off in the settings),
         // in the tab the card opens on; it fills in as the data and formats arrive
-        // YTindir: or straight on the full format list, when the app that shared the link asked for it
-        val openAllFormats = arguments?.getBoolean("all_formats") == true
+        // YTindir: or on the card itself (FORMAT_LIST=none) or the full format list (FORMAT_LIST=all), when the
+        // app that shared the link asked for it
+        val formatList = arguments?.getString("format_list")
+        val openAllFormats = formatList == "all"
         val autoOpenType = if (type == DownloadType.audio || isAudioOnly) DownloadType.audio else DownloadType.video
         val autoOpenFormats = ViewModelProvider(requireActivity())[FormatViewModel::class.java]
         autoOpenFormats.quickAutoOpen.value =
-            if (!restored && !openAllFormats && currentDownloadItem == null && result.url.isYoutubeURL() &&
+            if (!restored && formatList == null && currentDownloadItem == null && result.url.isYoutubeURL() &&
                 !result.url.endsWith(".txt") && sharedPreferences.getBoolean("youtube_quick_format_list", true)) {
                 autoOpenType
             } else null

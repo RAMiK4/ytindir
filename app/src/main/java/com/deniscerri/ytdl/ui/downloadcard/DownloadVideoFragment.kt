@@ -344,7 +344,6 @@ class DownloadVideoFragment(private var resultItem: ResultItem? = null, private 
                         if (parentFragmentManager.findFragmentByTag("quickFormatSheet") == null) {
                             QuickFormatBottomSheetDialog().apply {
                                 itemProvider = { if (this@DownloadVideoFragment::downloadItem.isInitialized) downloadItem else null }
-                                onAllFormats = { showFormatSheet() }
                             }.show(parentFragmentManager, "quickFormatSheet")
                         }
                     } else {
